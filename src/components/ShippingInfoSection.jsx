@@ -1,17 +1,17 @@
 const orderSteps = [
   {
-    title: "اختر منتجاتك",
-    desc: "تصفح المنتجات المناسبة لبشرتك وأضف ما يناسبك إلى السلة بسهولة.",
+    title: "اختاري منتجاتك",
+    desc: "تصفحي الأنواع المختلفة واختاري الصابون الأنسب لاحتياج بشرتك، ثم أضيفي ما يناسبك إلى السلة بسهولة.",
     icon: "🧼",
   },
   {
-    title: "أرسل الطلب عبر واتساب",
-    desc: "عند الضغط على إتمام الطلب سيتم تجهيز رسالة واتساب تلقائيًا بكل تفاصيل السلة.",
+    title: "أرسلي الطلب عبر واتساب",
+    desc: "بعد تأكيد السلة، سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل طلبك لتكملي الخطوة بسرعة ووضوح.",
     icon: "💬",
   },
   {
     title: "نؤكد الطلب والتوصيل",
-    desc: "نراجع طلبك معك مباشرة ونحدد العنوان والموعد الأنسب للاستلام أو التوصيل.",
+    desc: "نتواصل معك مباشرة لتأكيد الطلب وبيانات التوصيل وتحديد الموعد الأنسب للاستلام أو الشحن.",
     icon: "📦",
   },
 ];
@@ -19,8 +19,8 @@ const orderSteps = [
 const shippingHighlights = [
   { label: "مدة التوصيل", value: "من ٢ إلى ٥ أيام عمل" },
   { label: "مناطق الشحن", value: "متاح لمعظم المحافظات داخل مصر" },
-  { label: "طريقة الطلب", value: "طلب مباشر وسريع عبر واتساب" },
-  { label: "خدمة العملاء", value: "رد سريع لمساعدتك في اختيار المنتج المناسب" },
+  { label: "طريقة الطلب", value: "طلب سريع ومباشر عبر واتساب" },
+  { label: "خدمة العملاء", value: "مساعدة سريعة لاختيار المنتج الأنسب لبشرتك" },
 ];
 
 export default function ShippingInfoSection() {
@@ -34,11 +34,11 @@ export default function ShippingInfoSection() {
         <div className="text-center mb-10">
           <span className="badge-natural mb-3 inline-block">الطلب والتوصيل</span>
           <h2 id="shipping-info-heading" className="section-title mb-3">
-            كيف تطلب؟ ومتى يصلك المنتج؟
+            كيف تطلبين؟ ومتى يصلك المنتج؟
           </h2>
           <p className="font-arabic text-sm text-charcoal-500 max-w-2xl mx-auto leading-relaxed">
-            جعلنا الطلب بسيطًا وواضحًا: اختر ما يناسب بشرتك، أرسل الطلب عبر واتساب، وسنتابع معك
-            خطوة بخطوة حتى يصل إليك بأمان.
+            جعلنا تجربة الطلب بسيطة وواضحة: اختاري ما يناسب بشرتك، أرسلي الطلب عبر
+            واتساب، وسنتابع معك خطوة بخطوة حتى يصل إليك بسهولة وأمان.
           </p>
         </div>
 
@@ -50,10 +50,14 @@ export default function ShippingInfoSection() {
 
             <div className="space-y-4">
               {orderSteps.map((step, index) => (
-                <div key={step.title} className="flex gap-4 items-start rounded-2xl bg-ivory-50 p-4 border border-ivory-200">
+                <div
+                  key={step.title}
+                  className="flex gap-4 items-start rounded-2xl bg-ivory-50 p-4 border border-ivory-200"
+                >
                   <div className="w-12 h-12 rounded-2xl bg-olive-100 text-2xl flex items-center justify-center flex-shrink-0">
                     <span aria-hidden="true">{step.icon}</span>
                   </div>
+
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1.5">
                       <span className="w-6 h-6 rounded-full bg-olive-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
@@ -63,6 +67,7 @@ export default function ShippingInfoSection() {
                         {step.title}
                       </h4>
                     </div>
+
                     <p className="font-arabic text-sm text-charcoal-500 leading-relaxed">
                       {step.desc}
                     </p>
@@ -78,21 +83,33 @@ export default function ShippingInfoSection() {
               aria-hidden="true"
             />
 
-            <h3 className="font-display text-xl font-semibold mb-5">معلومات مهمة قبل الطلب</h3>
+            <h3 className="font-display text-xl font-semibold mb-5">
+              معلومات مهمة قبل الطلب
+            </h3>
 
             <div className="space-y-3 mb-6">
               {shippingHighlights.map((item) => (
-                <div key={item.label} className="rounded-2xl bg-white/5 border border-white/10 p-4">
-                  <p className="font-arabic text-xs text-white/60 mb-1">{item.label}</p>
-                  <p className="font-arabic text-sm font-medium text-white/95 leading-relaxed">{item.value}</p>
+                <div
+                  key={item.label}
+                  className="rounded-2xl bg-white/5 border border-white/10 p-4"
+                >
+                  <p className="font-arabic text-xs text-white/60 mb-1">
+                    {item.label}
+                  </p>
+                  <p className="font-arabic text-sm font-medium text-white/95 leading-relaxed">
+                    {item.value}
+                  </p>
                 </div>
               ))}
             </div>
 
             <div className="rounded-2xl bg-[#25D366]/12 border border-[#25D366]/25 p-4">
-              <p className="font-display text-base font-semibold text-white mb-1.5">هل تحتاج توصية سريعة؟</p>
+              <p className="font-display text-base font-semibold text-white mb-1.5">
+                هل تحتاجين ترشيحًا سريعًا؟
+              </p>
               <p className="font-arabic text-sm text-white/70 leading-relaxed">
-                اكتب لنا نوع بشرتك أو المشكلة التي تريدين علاجها، وسنرشح لك الصابون الأنسب مباشرة عبر واتساب.
+                ارسلي لنا نوع بشرتك أو النتيجة التي تبحثين عنها، وسنساعدك في اختيار
+                الصابون الأنسب مباشرة عبر واتساب.
               </p>
             </div>
           </div>
