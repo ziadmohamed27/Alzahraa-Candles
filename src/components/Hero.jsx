@@ -46,7 +46,7 @@ function WhatsAppIcon() {
 /* ── Hero video cards data ──────────────────────────────────────────── */
 const heroVideos = [
   {
-    src: "/videos/olivia-video.mp4",
+    src: "/videos/olive-video.mp4",
     label: "صابون زيت الزيتون",
     rotate: "-3deg",
     size: "w-24 h-32 sm:w-32 sm:h-40",
