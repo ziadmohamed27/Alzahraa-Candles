@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -13,17 +15,25 @@
   }
 
   body {
-    font-family: 'Tajawal', sans-serif;
+    font-family: "Tajawal", sans-serif;
     background-color: #faf8f0;
     color: #282828;
     direction: rtl;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
   }
 
-  h1, h2, h3, h4 {
-    font-family: 'El Messiri', sans-serif;
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "El Messiri", sans-serif;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8aad44;
+    outline-offset: 3px;
   }
 }
 
@@ -81,60 +91,85 @@
     text-wrap: balance;
   }
 
-  .writing-mode-rtl {
-    direction: rtl;
+  .animation-delay-100 {
+    animation-delay: 100ms;
   }
 
-  .animation-delay-100 { animation-delay: 100ms; }
-  .animation-delay-200 { animation-delay: 200ms; }
-  .animation-delay-300 { animation-delay: 300ms; }
-  .animation-delay-400 { animation-delay: 400ms; }
-  .animation-delay-500 { animation-delay: 500ms; }
-  .animation-delay-600 { animation-delay: 600ms; }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
 
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #faf8f0; }
-::-webkit-scrollbar-thumb { background: #c8d9a0; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #8aad44; }
-
-/* Image zoom on card hover */
-.product-card:hover .product-img {
-  transform: scale(1.06);
+::-webkit-scrollbar {
+  width: 6px;
 }
 
+::-webkit-scrollbar-track {
+  background: #faf8f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c8d9a0;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8aad44;
+}
+
+/* Product image hover */
 .product-img {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Overlay gradient on hero */
+.product-card:hover .product-img {
+  transform: scale(1.06);
+}
+
+/* Hero overlay */
 .hero-overlay {
   background: linear-gradient(
     135deg,
-    rgba(250,248,240,0.97) 0%,
-    rgba(245,237,220,0.90) 40%,
-    rgba(200,217,160,0.25) 100%
+    rgba(250, 248, 240, 0.97) 0%,
+    rgba(245, 237, 220, 0.9) 40%,
+    rgba(200, 217, 160, 0.25) 100%
   );
 }
 
-/* Noise texture overlay */
+/* Grain texture */
 .texture-grain::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   pointer-events: none;
   border-radius: inherit;
-}
-
-/* Focus visible outline */
-:focus-visible {
-  outline: 2px solid #8aad44;
-  outline-offset: 3px;
 }
 
 /* Modal backdrop */
@@ -145,8 +180,14 @@
 
 /* Cart badge pulse */
 @keyframes cart-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
 }
 
 .cart-badge-pulse {
