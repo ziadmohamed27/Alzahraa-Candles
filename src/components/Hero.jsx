@@ -134,7 +134,7 @@ export default function Hero() {
         >
           <span className="w-2 h-2 rounded-full bg-olive-500 flex-shrink-0" aria-hidden="true" />
           <span className="font-arabic text-xs text-olive-700 font-medium">
-            ١٠٠٪ طبيعي · مصنوع يدويًا بعناية
+            مكونات طبيعية ١٠٠٪ · صناعة يدوية بعناية يومية
           </span>
         </div>
 
@@ -142,9 +142,10 @@ export default function Hero() {
           className="font-display text-[2.35rem] sm:text-5xl font-bold text-charcoal-800 leading-[1.2] mb-4 opacity-0 animate-fade-up animation-delay-100"
           style={{ animationFillMode: "forwards" }}
         >
-          اكتشف{" "}
+          دلّلي بشرتك
+          <br />
           <span className="text-olive-600 relative inline-block">
-            سحر الطبيعة
+            بصابون طبيعي فاخر
             <svg
               aria-hidden="true"
               viewBox="0 0 200 12"
@@ -160,15 +161,14 @@ export default function Hero() {
               />
             </svg>
           </span>
-          <br />
-          على بشرتك
         </h1>
 
         <p
           className="font-arabic text-base sm:text-lg text-charcoal-500 leading-relaxed mb-7 opacity-0 animate-fade-up animation-delay-200"
           style={{ animationFillMode: "forwards" }}
         >
-          {storeInfo.description} — صابون يدوي فاخر بمكونات طبيعية خالصة تعتني ببشرتك كل يوم
+          {storeInfo.description} — تركيبات طبيعية لطيفة تساعد على التنظيف والترطيب
+          والعناية اليومية، لتجربة استحمام أنعم وأقرب للطبيعة.
         </p>
 
         <div
@@ -196,9 +196,9 @@ export default function Hero() {
           style={{ animationFillMode: "forwards" }}
         >
           {[
-            { icon: "🌿", label: "خالٍ من الكيماويات" },
-            { icon: "🫧", label: "مرطّب ومغذّي" },
-            { icon: "💚", label: "صديق للبيئة" },
+            { icon: "🌿", label: "مكونات طبيعية" },
+            { icon: "🫧", label: "لطيف على البشرة" },
+            { icon: "💚", label: "عناية يومية" },
           ].map(({ icon, label }) => (
             <div key={label} className="flex flex-col items-center gap-1">
               <span className="text-xl sm:text-2xl" role="img" aria-label={label}>
@@ -212,7 +212,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── Video triptych ───────────────────────────────────────────── */}
       <div
         className="relative w-full max-w-sm mx-auto px-4 mt-10 opacity-0 animate-fade-up animation-delay-500"
         style={{ animationFillMode: "forwards" }}
