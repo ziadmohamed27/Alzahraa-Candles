@@ -1,23 +1,23 @@
 const values = [
   {
     icon: "🌿",
-    title: "مكونات طبيعية خالصة",
-    desc: "نختار بعناية كل مكوّن طبيعي خالٍ من المواد الكيميائية الضارة.",
+    title: "مكونات طبيعية مختارة",
+    desc: "نختار بعناية زيوتًا ومكونات طبيعية لطيفة على البشرة وخالية من الإضافات القاسية.",
   },
   {
     icon: "🤲",
-    title: "صناعة يدوية بمحبة",
-    desc: "تُصنع كل قطعة صابون بأيدي متخصصة وبقلب يحب ما يفعل.",
+    title: "صناعة يدوية بعناية",
+    desc: "كل قطعة تُحضّر باهتمام بالتفاصيل لتصلك بجودة ثابتة ولمسة طبيعية مميزة.",
   },
   {
     icon: "💧",
-    title: "ترطيب عميق دائم",
-    desc: "تركيبات مدروسة لمنح بشرتك رطوبة تدوم طوال اليوم.",
+    title: "عناية وترطيب يومي",
+    desc: "تركيبات تساعد على تنظيف البشرة بلطف مع الحفاظ على نعومتها وترطيبها.",
   },
   {
     icon: "🌍",
-    title: "صديق للبيئة",
-    desc: "تغليف قابل للتحلل وممارسات إنتاجية مستدامة.",
+    title: "اختيار أنعم للطبيعة",
+    desc: "نهتم بتقديم منتج أقرب للطبيعة بتغليف بسيط وممارسات أكثر لطفًا بالبيئة.",
   },
 ];
 
@@ -28,36 +28,36 @@ export default function AboutSection() {
       className="py-16 px-4 bg-white relative overflow-hidden"
       aria-labelledby="about-heading"
     >
-      {/* Decorative blob */}
       <div
         className="absolute -top-16 -right-16 w-64 h-64 rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(200,217,160,0.3) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(200,217,160,0.3) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
       <div
         className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(253,214,138,0.25) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(253,214,138,0.25) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
 
       <div className="max-w-lg mx-auto md:max-w-3xl relative z-10">
-        {/* Header */}
         <div className="text-center mb-10">
-          <span className="badge-natural mb-3 inline-block">قصتنا</span>
+          <span className="badge-natural mb-3 inline-block">ثقة وعناية</span>
           <h2 id="about-heading" className="section-title mb-3">
-            لماذا نختار الطبيعي؟
+            لماذا تختارين منتجاتنا الطبيعية؟
           </h2>
-          <p className="font-arabic text-sm text-charcoal-500 max-w-sm mx-auto leading-relaxed">
-            في عطر الطبيعة، نؤمن أن الجمال الحقيقي يبدأ بمكونات حقيقية. كل ما نصنعه هو امتداد لحبنا للطبيعة
-            وإيماننا العميق بقوتها على تجديد الحياة.
+          <p className="font-arabic text-sm text-charcoal-500 max-w-md mx-auto leading-relaxed">
+            لأن العناية اليومية الأفضل تبدأ بمكونات واضحة، ولمسة طبيعية، وصناعة
+            تهتم ببشرتك من أول استخدام. نحن نؤمن أن الصابون الطبيعي ليس مجرد
+            منتج، بل تجربة أنعم وأقرب لما تستحقه بشرتك كل يوم.
           </p>
         </div>
 
-        {/* Values grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {values.map((v, i) => (
             <div
@@ -67,7 +67,10 @@ export default function AboutSection() {
                 hover:border-olive-200 hover:bg-olive-50/50
                 transition-all duration-300 group
                 opacity-0 animate-fade-up"
-              style={{ animationDelay: `${i * 80}ms`, animationFillMode: "forwards" }}
+              style={{
+                animationDelay: `${i * 80}ms`,
+                animationFillMode: "forwards",
+              }}
             >
               <span
                 className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300"
@@ -86,18 +89,19 @@ export default function AboutSection() {
           ))}
         </div>
 
-        {/* Stats */}
         <div className="mt-10 grid grid-cols-3 gap-4">
           {[
-            { num: "٥٠٠+", label: "عميل سعيد" },
+            { num: "٥٠٠+", label: "تجربة موثوقة" },
             { num: "١٠٠٪", label: "مكونات طبيعية" },
-            { num: "٤", label: "منتجات مميزة" },
+            { num: "٤", label: "أنواع مميزة" },
           ].map(({ num, label }) => (
             <div key={label} className="text-center">
               <div className="font-display text-2xl md:text-3xl font-bold text-olive-600 mb-1">
                 {num}
               </div>
-              <div className="font-arabic text-xs text-charcoal-500">{label}</div>
+              <div className="font-arabic text-xs text-charcoal-500">
+                {label}
+              </div>
             </div>
           ))}
         </div>
