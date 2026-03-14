@@ -80,7 +80,6 @@ export default function ProductCard({ product, onViewDetails, index = 0 }) {
       onClick={() => onViewDetails(product)}
       aria-label={`منتج: ${product.name}`}
     >
-      {/* Quick-view button */}
       <button
         aria-label={`عرض تفاصيل ${product.name}`}
         onClick={(e) => {
@@ -99,7 +98,6 @@ export default function ProductCard({ product, onViewDetails, index = 0 }) {
         <EyeIcon />
       </button>
 
-      {/* Product image */}
       <div className="w-full overflow-hidden rounded-t-xl3" style={{ aspectRatio: "4/3" }}>
         <img
           src={imgError ? product.imageFallback : product.image}
@@ -111,24 +109,36 @@ export default function ProductCard({ product, onViewDetails, index = 0 }) {
         />
       </div>
 
-      {/* Card body */}
       <div className="p-4 flex flex-col flex-1">
-        {/* Product name */}
+        {product.badge && (
+          <span
+            className="inline-flex items-center self-start rounded-full px-2.5 py-1 mb-2
+              font-arabic text-[11px] font-medium"
+            style={{
+              color: product.accentColor,
+              backgroundColor: product.accentBg,
+            }}
+          >
+            {product.badge}
+          </span>
+        )}
+
         <h2 className="font-display text-[1.05rem] font-semibold text-charcoal-800 mb-1.5 leading-snug">
           {product.name}
         </h2>
 
-        {/* Description */}
+        <p className="font-arabic text-sm font-medium text-charcoal-700 mb-1.5">
+          {product.tag}
+        </p>
+
         <p className="font-arabic text-sm text-charcoal-500 leading-relaxed line-clamp-2 mb-2.5 flex-1">
           {product.description}
         </p>
 
-        {/* Weight */}
         <p className="font-arabic text-[11px] text-charcoal-400 mb-4">
           الوزن: {product.weight}
         </p>
 
-        {/* Price */}
         <div className="flex items-baseline gap-1 mb-4">
           <span className="price-tag">{product.price}</span>
           <span className="font-arabic text-sm font-medium text-price/80">
@@ -136,7 +146,6 @@ export default function ProductCard({ product, onViewDetails, index = 0 }) {
           </span>
         </div>
 
-        {/* Action buttons */}
         <div className="flex flex-col gap-2 mt-auto">
           <button
             aria-label={added ? `تمت إضافة ${product.name} للسلة` : `أضف ${product.name} إلى السلة`}
@@ -151,7 +160,7 @@ export default function ProductCard({ product, onViewDetails, index = 0 }) {
               }`}
           >
             {added ? <CheckIcon /> : <CartIcon />}
-            {added ? "تمت الإضافة ✓" : "أضف إلى السلة"}
+            {added ? "تمت الإضافة ✓" : "أضف إلى السلة الآن"}
           </button>
 
           <button
@@ -171,7 +180,6 @@ export default function ProductCard({ product, onViewDetails, index = 0 }) {
         </div>
       </div>
 
-      {/* Accent bottom line on hover */}
       <div
         className="absolute bottom-0 left-0 right-0 h-[3px] rounded-b-xl3
           scale-x-0 group-hover:scale-x-100
