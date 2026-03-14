@@ -1,4 +1,4 @@
-# عطر الطبيعة — Natural Soap Store
+# عطر الطبيعة —  (Demo)Natural Soap Store
 
 متجر صابون طبيعي مصنوع يدويًا | Arabic RTL E-commerce Frontend
 
