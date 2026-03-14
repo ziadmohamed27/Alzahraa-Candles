@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    direction: rtl;
+  }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: #faf8f0;
+    color: #282828;
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'El Messiri', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-price text-white font-arabic font-medium
+           px-5 py-2.5 rounded-xl2 text-sm
+           shadow-btn
+           transition-all duration-300 ease-spring
+           hover:bg-price-light hover:shadow-btn hover:-translate-y-0.5
+           active:scale-95 active:bg-price-dark
+           focus:outline-none focus:ring-2 focus:ring-price/50;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2
+           border border-olive-400 text-olive-600 font-arabic font-medium
+           px-5 py-2.5 rounded-xl2 text-sm
+           transition-all duration-300 ease-spring
+           hover:bg-olive-50 hover:border-olive-600 hover:-translate-y-0.5
+           active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-olive-400/50;
+  }
+
+  .product-card {
+    @apply bg-white rounded-xl3 shadow-card overflow-hidden
+           transition-all duration-300 ease-spring
+           hover:shadow-card-hover hover:-translate-y-1.5;
+  }
+
+  .section-title {
+    @apply font-display text-2xl md:text-3xl text-charcoal-800 font-semibold
+           leading-snug tracking-wide;
+  }
+
+  .price-tag {
+    @apply text-price font-display font-bold text-xl tracking-wide;
+  }
+
+  .badge-natural {
+    @apply inline-block text-xs font-arabic font-medium
+           bg-olive-100 text-olive-700 px-2.5 py-1 rounded-full;
+  }
+
+  .nav-icon-btn {
+    @apply w-10 h-10 flex items-center justify-center rounded-xl
+           text-charcoal-700 hover:bg-ivory-200
+           transition-colors duration-200 cursor-pointer;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .writing-mode-rtl {
+    direction: rtl;
+  }
+
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+  .animation-delay-600 { animation-delay: 600ms; }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #faf8f0; }
+::-webkit-scrollbar-thumb { background: #c8d9a0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #8aad44; }
+
+/* Image zoom on card hover */
+.product-card:hover .product-img {
+  transform: scale(1.06);
+}
+
+.product-img {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Overlay gradient on hero */
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(250,248,240,0.97) 0%,
+    rgba(245,237,220,0.90) 40%,
+    rgba(200,217,160,0.25) 100%
+  );
+}
+
+/* Noise texture overlay */
+.texture-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Focus visible outline */
+:focus-visible {
+  outline: 2px solid #8aad44;
+  outline-offset: 3px;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Cart badge pulse */
+@keyframes cart-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.cart-badge-pulse {
+  animation: cart-pulse 0.4s ease;
+}
