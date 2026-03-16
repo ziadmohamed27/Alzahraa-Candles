@@ -6,22 +6,20 @@ const CART_STORAGE_KEY = "natural-soap-cart";
 export function CartProvider({ children }) {
   const [items, setItems] = useState(() => {
     try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch (error) {
-      console.error("Failed to load cart from localStorage:", error);
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
       return [];
     }
   });
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // Persist cart on every change
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-    } catch (error) {
-      console.error("Failed to save cart to localStorage:", error);
-    }
+    } catch {}
   }, [items]);
 
   const addItem = useCallback((product) => {
@@ -34,6 +32,8 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...product, qty: 1 }];
     });
+    // Auto-open cart sidebar so the customer sees what they just added
+    setIsOpen(true);
   }, []);
 
   const removeItem = useCallback((id) => {
@@ -45,9 +45,7 @@ export function CartProvider({ children }) {
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, qty } : i)));
   }, []);
 
-  const clearCart = useCallback(() => {
-    setItems([]);
-  }, []);
+  const clearCart = useCallback(() => setItems([]), []);
 
   const totalItems = items.reduce((sum, i) => sum + i.qty, 0);
   const totalPrice = items
