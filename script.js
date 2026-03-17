@@ -38,7 +38,10 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
 function money(v){ return `${v.toFixed(2)} ج.م`; }
-function saveCart(){ localStorage.setItem('soap-cart', JSON.stringify(state.cart)); updateCartUI(); }
+function saveCart(){
+  localStorage.setItem('soap-cart', JSON.stringify(state.cart));
+  updateCartUI();
+}
 
 function showToast(message){
   const toast = $('#toast');
@@ -51,21 +54,39 @@ function showToast(message){
 
 function renderFilters(){
   const filters = [['all','الكل'],['dry','للبشرة الجافة'],['oily','للبشرة الدهنية'],['scrub','تقشير']];
-  $('#filters').innerHTML = filters.map(([id,label]) => `<button class="filter-btn ${state.filter===id?'active':''}" data-filter="${id}">${label}</button>`).join('');
+  $('#filters').innerHTML = filters.map(([id,label]) => `
+    <button class="filter-btn ${state.filter===id?'active':''}" data-filter="${id}">${label}</button>
+  `).join('');
 }
 
 function renderProducts(){
-  const list = state.filter === 'all' ? products : products.filter(p => p.category === state.filter || (state.filter === 'dry' && p.id === 3));
+  const list = state.filter === 'all'
+    ? products
+    : products.filter(p => p.category === state.filter || (state.filter === 'dry' && p.id === 3));
+
   $('#productGrid').innerHTML = list.map(p => `
     <article class="card product-card">
-      <img class="product-image" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.closest('article').classList.add('img-missing')">
+      <img
+        class="product-image view-product"
+        src="${p.image}"
+        alt="${p.name}"
+        loading="lazy"
+        data-id="${p.id}"
+        onerror="this.closest('article').classList.add('img-missing')"
+      >
       <div class="card-body">
-        <div class="badge-row"><span class="tag badge">${p.badge}</span><span class="tag best">${p.tag}</span></div>
+        <div class="badge-row">
+          <span class="tag badge">${p.badge}</span>
+          <span class="tag best">${p.tag}</span>
+        </div>
         <h3 class="product-title">${p.name}</h3>
         <p class="product-desc">${p.description}</p>
         <div class="quick-points">${p.highlights.map(h => `<span>${h}</span>`).join('')}</div>
         <div class="meta">
-          <div><small>أنسب استخدام</small><strong>${p.bestFor}</strong></div>
+          <div>
+            <small>أنسب استخدام</small>
+            <strong>${p.bestFor}</strong>
+          </div>
           <div class="price">${money(p.price)}</div>
         </div>
         <div class="card-actions">
@@ -73,7 +94,8 @@ function renderProducts(){
           <button class="btn btn-ghost view-product" data-id="${p.id}">عرض التفاصيل</button>
         </div>
       </div>
-    </article>`).join('');
+    </article>
+  `).join('');
 }
 
 function renderFeatures(){
@@ -82,7 +104,8 @@ function renderFeatures(){
       <div class="icon">${f.icon}</div>
       <h3>${f.title}</h3>
       <p>${f.desc}</p>
-    </article>`).join('');
+    </article>
+  `).join('');
 }
 
 function renderSteps(){
@@ -93,7 +116,8 @@ function renderSteps(){
         <h3>${s.title}</h3>
         <p>${s.desc}</p>
       </div>
-    </article>`).join('');
+    </article>
+  `).join('');
 }
 
 function renderShipping(){
@@ -101,7 +125,8 @@ function renderShipping(){
     <div class="ship-item">
       <span>${i.label}</span>
       <strong>${i.value}</strong>
-    </div>`).join('');
+    </div>
+  `).join('');
 }
 
 function renderFaq(){
@@ -109,7 +134,8 @@ function renderFaq(){
     <div class="faq-item">
       <button class="faq-q">${f.q}<span>＋</span></button>
       <div class="faq-a">${f.a}</div>
-    </div>`).join('');
+    </div>
+  `).join('');
 }
 
 function addToCart(id){
@@ -153,7 +179,8 @@ function updateCartUI(){
         </div>
       </div>
       <button class="remove-btn" data-action="remove" data-id="${item.id}">🗑️</button>
-    </div>`).join('');
+    </div>
+  `).join('');
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
@@ -179,7 +206,8 @@ function updateCartUI(){
       </div>
       <p class="helper">سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.</p>
       <button class="btn btn-whatsapp" id="checkoutBtn">إرسال الطلب عبر واتساب</button>
-    </div>`;
+    </div>
+  `;
 }
 
 function checkout(){
@@ -211,7 +239,8 @@ function openProduct(id){
           <a class="btn btn-whatsapp" target="_blank" rel="noopener" href="https://wa.me/201095314011">اسأل على واتساب</a>
         </div>
       </div>
-    </div>`;
+    </div>
+  `;
   $('#productModalOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -238,7 +267,9 @@ function guardMedia(){
   $$('video').forEach(video => {
     video.addEventListener('error', () => {
       const poster = video.getAttribute('poster');
-      if (poster) video.parentElement.innerHTML = `<img class="video-fallback" src="${poster}" alt="منتج طبيعي">`;
+      if (poster) {
+        video.parentElement.innerHTML = `<img class="video-fallback" src="${poster}" alt="منتج طبيعي">`;
+      }
     }, { once:true });
   });
 }
@@ -258,16 +289,26 @@ document.addEventListener('click', e => {
   }
 
   const view = e.target.closest('.view-product');
-  if(view) openProduct(Number(view.dataset.id));
+  if(view){
+    openProduct(Number(view.dataset.id));
+  }
 
-  if(e.target.id === 'closeProductModal' || e.target.id === 'productModalOverlay') closeProduct();
+  if(e.target.id === 'closeProductModal' || e.target.id === 'productModalOverlay'){
+    closeProduct();
+  }
 
   const cartToggle = e.target.closest('#cartToggle');
-  if(cartToggle) openCart();
+  if(cartToggle){
+    openCart();
+  }
 
-  if(e.target.id === 'closeCart' || e.target.id === 'cartOverlay') closeCart();
+  if(e.target.id === 'closeCart' || e.target.id === 'cartOverlay'){
+    closeCart();
+  }
 
-  if(e.target.id === 'checkoutBtn') checkout();
+  if(e.target.id === 'checkoutBtn'){
+    checkout();
+  }
 
   const qa = e.target.closest('.faq-q');
   if(qa){
@@ -285,15 +326,17 @@ document.addEventListener('click', e => {
       if(item.qty > 1) item.qty -= 1;
       else state.cart = state.cart.filter(i => i.id !== id);
     }
-    if(action === 'remove') state.cart = state.cart.filter(i => i.id !== id);
+    if(action === 'remove'){
+      state.cart = state.cart.filter(i => i.id !== id);
+    }
 
     saveCart();
   }
 });
 
-$('#floatingWhatsApp').addEventListener('click',() => window.open('https://wa.me/201095314011','_blank'));
-$('#menuBtn').addEventListener('click',() => $('#mobileMenu').classList.toggle('open'));
-$$('.mobile-menu a').forEach(a => a.addEventListener('click',() => $('#mobileMenu').classList.remove('open')));
+$('#floatingWhatsApp').addEventListener('click', () => window.open('https://wa.me/201095314011','_blank'));
+$('#menuBtn').addEventListener('click', () => $('#mobileMenu').classList.toggle('open'));
+$$('.mobile-menu a').forEach(a => a.addEventListener('click', () => $('#mobileMenu').classList.remove('open')));
 
 renderFilters();
 renderProducts();
