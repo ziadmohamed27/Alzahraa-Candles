@@ -1,75 +1,196 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>عطر الطبيعة | صابون طبيعي يدوي</title>
+  <meta name="description" content="صابون طبيعي مصنوع يدويًا بمكونات مختارة بعناية، مع طلب سريع عبر واتساب وتجربة بسيطة على الموبايل واللاب.">
+  <meta name="theme-color" content="#6b9228">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="container nav">
+      <button class="icon-btn" id="menuBtn" aria-label="فتح القائمة">☰</button>
+      <a class="brand" href="#top">
+        <span class="brand-title">عطر الطبيعة</span>
+        <span class="brand-sub">NATURAL SOAP</span>
+      </a>
+      <button class="icon-btn cart-btn" id="cartToggle" aria-label="فتح السلة">
+        🛍️
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+    <nav class="mobile-menu" id="mobileMenu">
+      <a href="#products">المنتجات</a>
+      <a href="#about">لماذا نحن</a>
+      <a href="#shipping">الطلب والتوصيل</a>
+      <a href="#faq">الأسئلة الشائعة</a>
+      <a href="#footer">تواصل معنا</a>
+    </nav>
+  </header>
 
-    <title>عطر الطبيعة | صابون طبيعي يدوي لبشرة أنعم وعناية يومية</title>
+  <main>
+    <section class="hero section">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="pill">%100 طبيعي · مصنوع يدويًا بعناية</span>
+          <h1>صابون طبيعي يدوي<br>لبشرة أنعم وعناية يومية</h1>
+          <p>مجموعة مختارة من صابون زيت الزيتون والعسل والفحم والقهوة، مع طلب بسيط وسريع عبر واتساب.</p>
+          <div class="hero-actions">
+            <a href="#products" class="btn btn-primary">تسوّق الآن</a>
+            <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">تواصل واتساب</a>
+          </div>
+          <div class="hero-features">
+            <div>🌿 مكونات واضحة</div>
+            <div>🫧 عناية يومية لطيفة</div>
+            <div>💬 مساعدة قبل الطلب</div>
+          </div>
+        </div>
+        <div class="hero-media">
+          <div class="media-card tall"><video autoplay muted loop playsinline poster="./images/honey.jpg"><source src="./videos/honey-video.mp4" type="video/mp4"></video></div>
+          <div class="media-column">
+            <div class="media-card"><video autoplay muted loop playsinline poster="./images/coffee.jpg"><source src="./videos/coffee-video.mp4" type="video/mp4"></video></div>
+            <div class="media-card"><video autoplay muted loop playsinline poster="./images/olive.jpg"><source src="./videos/olive-video.mp4" type="video/mp4"></video></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <meta
-      name="description"
-      content="اكتشفي مجموعة عطر الطبيعة من الصابون الطبيعي اليدوي بمكونات مختارة بعناية، لتنظيف لطيف وترطيب يومي وعناية أقرب للطبيعة."
-    />
-    <meta
-      name="keywords"
-      content="صابون طبيعي, صابون يدوي, صابون زيت الزيتون, صابون العسل, صابون الفحم, صابون القهوة, عناية بالبشرة, منتجات طبيعية"
-    />
-    <meta name="author" content="عطر الطبيعة" />
-    <meta name="theme-color" content="#8aad44" />
+    <section class="section" id="products">
+      <div class="container">
+        <div class="section-head center">
+          <span class="pill small">منتجاتنا</span>
+          <h2>اختاري الأنسب لبشرتك</h2>
+          <p>كل منتج موضح بفائدته الأساسية ونوع البشرة المناسب له لتسهيل القرار بسرعة.</p>
+        </div>
+        <div class="filters" id="filters"></div>
+        <div class="product-grid" id="productGrid"></div>
+      </div>
+    </section>
 
-    <meta property="og:locale" content="ar_AR" />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="عطر الطبيعة | صابون طبيعي يدوي لبشرة أنعم وعناية يومية"
-    />
-    <meta
-      property="og:description"
-      content="صابون طبيعي مصنوع يدويًا بمكونات مختارة بعناية لتمنح بشرتك تنظيفًا لطيفًا، نعومة يومية، وتجربة أقرب للطبيعة."
-    />
-    <meta property="og:image" content="/images/olive.jpg" />
-    <meta property="og:site_name" content="عطر الطبيعة" />
+    <section class="section alt" id="testimonials">
+      <div class="container">
+        <div class="section-head center">
+          <span class="pill small">آراء العملاء</span>
+          <h2>انطباعات مختصرة بعد الاستخدام</h2>
+          <p>أمثلة بسيطة تعكس إحساس العميلات بالمنتج أثناء الاستخدام اليومي.</p>
+        </div>
+        <div class="testimonials-grid" id="testimonialsGrid"></div>
+      </div>
+    </section>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="عطر الطبيعة | صابون طبيعي يدوي لبشرة أنعم وعناية يومية"
-    />
-    <meta
-      name="twitter:description"
-      content="اكتشفي مجموعة من الصابون الطبيعي اليدوي بمكونات لطيفة وعناية يومية مستوحاة من الطبيعة."
-    />
-    <meta name="twitter:image" content="/images/olive.jpg" />
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-head center">
+          <span class="pill small">ثقة وجودة</span>
+          <h2>لماذا تختارين منتجاتنا؟</h2>
+          <p>تجربة واضحة وبسيطة: مكونات أقرب للطبيعة، خيارات لطيفة، ومساعدة مباشرة قبل الطلب.</p>
+        </div>
+        <div class="feature-grid" id="featureGrid"></div>
+        <div class="stats-grid">
+          <div class="stat-card"><strong>4</strong><span>أنواع أساسية</span></div>
+          <div class="stat-card"><strong>طبيعي</strong><span>عناية يومية بسيطة</span></div>
+          <div class="stat-card"><strong>واتساب</strong><span>طلب سريع ومباشر</span></div>
+        </div>
+      </div>
+    </section>
 
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Store",
-        "name": "عطر الطبيعة",
-        "description": "متجر صابون طبيعي مصنوع يدويًا بمكونات مختارة بعناية للعناية اليومية بالبشرة.",
-        "image": "/images/olive.jpg",
-        "telephone": "+201095314011",
-        "email": "hello@itralnatura.com",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "EG"
-        },
-        "sameAs": [
-          "https://instagram.com/itralnatura"
-        ]
-      }
-    </script>
+    <section class="section alt" id="shipping">
+      <div class="container shipping-layout">
+        <div>
+          <div class="section-head">
+            <span class="pill small">الطلب والتوصيل</span>
+            <h2>كيف تطلب؟ ومتى يصلك المنتج؟</h2>
+            <p>اختر المنتجات المناسبة، أضفها إلى السلة، ثم أرسل الطلب عبر واتساب ليتم تأكيد العنوان والتوصيل معك مباشرة.</p>
+          </div>
+          <div class="steps" id="steps"></div>
+        </div>
+        <div class="shipping-panel">
+          <h3>معلومات مهمة قبل الطلب</h3>
+          <div class="shipping-items" id="shippingItems"></div>
+          <div class="shipping-help">
+            <strong>هل تحتاج ترشيحًا سريعًا؟</strong>
+            <p>اكتب لنا نوع بشرتك أو النتيجة التي تريدها، وسنرشح لك الخيار الأنسب عبر واتساب.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <section class="section" id="faq">
+      <div class="container faq-wrap">
+        <div class="section-head center">
+          <span class="pill small">الأسئلة الشائعة</span>
+          <h2>أسئلة تمنع التردد قبل الشراء</h2>
+          <p>إجابات مختصرة تساعدك على اختيار المنتج المناسب ومعرفة طريقة الطلب والتوصيل.</p>
+        </div>
+        <div class="faq-list" id="faqList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="footer">
+    <div class="footer-cta">
+      <div class="container footer-cta-inner">
+        <div>
+          <h3>هل لديك استفسار؟ نحن هنا للمساعدة</h3>
+          <p>تواصل معنا مباشرة عبر واتساب للحصول على ترشيح مناسب لبشرتك.</p>
+        </div>
+        <a class="btn btn-whatsapp" href="https://wa.me/201095314011" target="_blank" rel="noopener">تواصل واتساب الآن</a>
+      </div>
+    </div>
+    <div class="container footer-grid">
+      <div>
+        <h3 class="footer-brand">عطر الطبيعة</h3>
+        <p class="footer-text">صابون طبيعي مصنوع يدويًا بمكونات مختارة بعناية لعناية يومية أبسط وألطف.</p>
+      </div>
+      <div>
+        <h4>روابط سريعة</h4>
+        <a href="#top">الرئيسية</a>
+        <a href="#products">المنتجات</a>
+        <a href="#about">لماذا نحن</a>
+        <a href="#faq">الأسئلة الشائعة</a>
+      </div>
+      <div>
+        <h4>تواصل معنا</h4>
+        <a href="https://wa.me/201095314011" target="_blank" rel="noopener">واتساب: 201095314011</a>
+        <a href="mailto:hello@itralnatura.com">hello@itralnatura.com</a>
+        <a href="https://instagram.com/itralnatura" target="_blank" rel="noopener">@itralnatura</a>
+        <span>جمهورية مصر العربية</span>
+      </div>
+    </div>
+    <div class="container footer-bottom">© 2026 عطر الطبيعة — جميع الحقوق محفوظة</div>
+  </footer>
+
+  <button class="floating-wa" id="floatingWhatsApp" aria-label="تواصل عبر واتساب">
+    <span>واتساب</span>
+    <span class="wa-icon">💬</span>
+  </button>
+
+  <div class="overlay hidden" id="productModalOverlay">
+    <div class="modal product-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="close-btn" id="closeProductModal" aria-label="إغلاق">×</button>
+      <div class="modal-content" id="productModalContent"></div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="cartOverlay">
+    <aside class="cart-sidebar" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <div class="cart-header">
+        <button class="close-btn small" id="closeCart" aria-label="إغلاق">×</button>
+        <h2 id="cartTitle">سلة التسوق</h2>
+      </div>
+      <div class="cart-body">
+        <div id="cartItems"></div>
+      </div>
+      <div class="cart-footer" id="cartFooter"></div>
+    </aside>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
 </html>
