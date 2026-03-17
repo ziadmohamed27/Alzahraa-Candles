@@ -15,15 +15,12 @@
 <body>
   <header class="site-header" id="top">
     <div class="container nav">
-      <button class="icon-btn" id="menuBtn" aria-label="فتح القائمة">☰</button>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة"><span></span><span></span><span></span></button>
       <a class="brand" href="#top">
         <span class="brand-title">عطر الطبيعة</span>
         <span class="brand-sub">NATURAL SOAP</span>
       </a>
-      <button class="icon-btn cart-btn" id="cartToggle" aria-label="فتح السلة">
-        🛍️
-        <span class="cart-count" id="cartCount">0</span>
-      </button>
+      <button class="icon-btn cart-btn" id="cartToggle" aria-label="فتح السلة"><span class="cart-emoji">🛍️</span><span class="cart-count" id="cartCount">0</span></button>
     </div>
     <nav class="mobile-menu" id="mobileMenu">
       <a href="#products">المنتجات</a>
@@ -191,6 +188,7 @@
     </aside>
   </div>
 
+    <div class="toast" id="toast" aria-live="polite"></div>
   <script src="./script.js"></script>
 </body>
 </html>
