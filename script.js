@@ -147,7 +147,7 @@ async function saveOrderToSupabase() {
     customer_name: customerName,
     phone: customerPhone,
     city: customerCity,
-    notes: customerNotes,
+    notes: customerNotes || 'لا يوجد',
     items_json: state.cart,
     total,
     status: 'pending',
@@ -416,13 +416,14 @@ function checkout() {
     .join('\n\n');
 
   const msg =
-    `مرحبًا، أريد إتمام طلب المنتجات التالية:\n\n` +
+    `مرحبًا، أريد إتمام الطلب:\n\n` +
     `الاسم: ${customerName}\n` +
     `الموبايل: ${customerPhone}\n` +
     `المدينة: ${customerCity}\n` +
     `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
-    `${lines}\n\n` +
-    `المجموع: ${money(total)}\nالشحن: يتم تأكيده حسب المنطقة`;
+    `المنتجات:\n\n${lines}\n\n` +
+    `الإجمالي: ${money(total)}\n` +
+    `الشحن: يتم تأكيده حسب المنطقة`;
 
   window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
