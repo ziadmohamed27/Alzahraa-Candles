@@ -104,7 +104,7 @@ const faqs = [
   { q: 'هل يمكنني السؤال قبل الشراء؟', a: 'بالتأكيد، يمكنك التواصل معنا مباشرة عبر واتساب لنرشح لك النوع المناسب.' },
 ];
 
-let supabase = null;
+let supabaseClient = null;
 
 (function initSupabase() {
   const keyMissing = (
@@ -123,7 +123,7 @@ let supabase = null;
     return;
   }
 
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   console.info('[Supabase] تم التهيئة بنجاح');
 })();
 
@@ -173,13 +173,13 @@ function toArray(val) {
 }
 
 async function loadProducts() {
-  if (!supabase) {
+  if (!supabaseClient) {
     console.info('[Products] سيتم استخدام المنتجات الثابتة.');
     return FALLBACK_PRODUCTS;
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('products')
       .select('*')
       .order('id', { ascending: true });
@@ -218,7 +218,7 @@ async function loadProducts() {
 }
 
 async function saveOrderToSupabase() {
-  if (!supabase) return;
+  if (!supabaseClient) return;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const payload = {
@@ -230,7 +230,7 @@ async function saveOrderToSupabase() {
     total,
   };
 
-  const { error } = await supabase.from('orders').insert([payload]);
+  const { error } = await supabaseClient.from('orders').insert([payload]);
   if (error) console.error('[Orders] Insert error:', error.message, error.details);
 }
 
@@ -476,7 +476,7 @@ function checkout() {
 
   window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
-  if (supabase) {
+  if (supabaseClient) {
     saveOrderToSupabase().catch((err) => console.error('[Checkout] save failed:', err));
   }
 }
