@@ -1274,3 +1274,41 @@ button{font-family:inherit}
   transform:none!important;
   box-shadow:none!important;
 }
+.order-success-box{
+  margin-bottom:24px;
+  background:linear-gradient(180deg,#f4fff4,#ebfff0);
+  border:1px solid rgba(37,211,102,.28);
+  border-radius:24px;
+  padding:18px 20px;
+  box-shadow:0 12px 28px rgba(37,211,102,.08);
+}
+
+.order-success-box.show{
+  display:block !important;
+}
+
+.order-success-box h3{
+  font-family:"El Messiri",sans-serif;
+  font-size:1.7rem;
+  color:#127a39;
+  margin-bottom:8px;
+}
+
+.order-success-box p{
+  color:#2d4b36;
+  line-height:1.9;
+  margin-bottom:8px;
+}
+
+.order-success-number{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(18,122,57,.16);
+  font-weight:700;
+  color:#127a39;
+  margin-top:6px;
+}
