@@ -20,6 +20,7 @@ function showToast(message) {
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
 }
+
 function showOrderSuccess(orderNumber) {
   const box = $('#orderSuccessBox');
   if (!box) return;
@@ -27,7 +28,10 @@ function showOrderSuccess(orderNumber) {
   box.innerHTML = `
     <h3>تم إرسال طلبك بنجاح ✅</h3>
     <p>احتفظ برقم الطلب للمتابعة:</p>
-    <div class="order-success-number">${escHtml(orderNumber || 'تم الحفظ')}</div>
+    <div class="order-success-actions">
+      <div class="order-success-number">${escHtml(orderNumber || 'تم الحفظ')}</div>
+      <button type="button" class="btn btn-ghost btn-sm" id="copyOrderNumberBtn">نسخ الرقم</button>
+    </div>
     <p>سيتم التواصل معك لتأكيد الطلب والتوصيل.</p>
   `;
 
@@ -64,6 +68,43 @@ const state = {
   cart: readCart(),
 };
 
+const CUSTOMER_STORAGE_KEY = 'soap-customer-info';
+
+function saveCustomerInfo() {
+  const payload = {
+    name: $('#customerName')?.value?.trim() || '',
+    phone: $('#customerPhone')?.value?.trim() || '',
+    city: $('#customerCity')?.value?.trim() || '',
+    notes: $('#customerNotes')?.value?.trim() || '',
+  };
+  localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(payload));
+}
+
+function loadCustomerInfo() {
+  try {
+    const raw = localStorage.getItem(CUSTOMER_STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : null;
+    if (!data) return;
+
+    if ($('#customerName')) $('#customerName').value = data.name || '';
+    if ($('#customerPhone')) $('#customerPhone').value = data.phone || '';
+    if ($('#customerCity')) $('#customerCity').value = data.city || '';
+    if ($('#customerNotes')) $('#customerNotes').value = data.notes || '';
+  } catch {}
+}
+
+function clearCustomerInfo() {
+  localStorage.removeItem(CUSTOMER_STORAGE_KEY);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('تم نسخ رقم الطلب');
+  }).catch(() => {
+    showToast('تعذر نسخ رقم الطلب');
+  });
+}
+
 function updateCartCount() {
   const count = state.cart.reduce((s, i) => s + i.qty, 0);
   const el = $('#cartCount');
@@ -96,7 +137,8 @@ function renderCartItems() {
   if (!state.cart.length) {
     el.innerHTML = `
       <div class="empty cart-page-empty">
-        السلة فارغة حاليًا. ابدأ بإضافة بعض المنتجات أولًا.
+        <p>السلة فارغة حاليًا.</p>
+        <a href="./index.html#products" class="btn btn-ghost cart-empty-btn">ابدأ التسوق</a>
       </div>
     `;
     return;
@@ -170,19 +212,21 @@ function persistAndRender() {
 function clearCartAndForm() {
   state.cart = [];
   writeCart([]);
-  updateCartCount();
-  renderCartItems();
-  renderSummary();
+  clearCustomerInfo();
 
   const fields = ['#customerName', '#customerPhone', '#customerCity', '#customerNotes'];
   fields.forEach((selector) => {
     const el = $(selector);
     if (el) el.value = '';
   });
+
+  updateCartCount();
+  renderCartItems();
+  renderSummary();
 }
 
 async function saveOrderToSupabase() {
-  if (!supabaseClient) return;
+  if (!supabaseClient) return null;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
@@ -198,8 +242,15 @@ async function saveOrderToSupabase() {
     source: 'website',
   };
 
-  const { error } = await supabaseClient.from('orders').insert([payload]);
+  const { data, error } = await supabaseClient
+    .from('orders')
+    .insert([payload])
+    .select()
+    .single();
+
   if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
+
+  return data;
 }
 
 async function checkout() {
@@ -241,17 +292,13 @@ async function checkout() {
       `الإجمالي: ${money(total)}\n` +
       `الشحن: يتم تأكيده حسب المنطقة`;
 
-    await saveOrderToSupabase();
+    const savedOrder = await saveOrderToSupabase();
 
     window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
     clearCartAndForm();
-showOrderSuccess(savedOrder?.order_number || 'تم الحفظ');
-showToast('تم إرسال الطلب بنجاح');
-
-    setTimeout(() => {
-      window.location.href = './index.html#products';
-    }, 1800);
+    showOrderSuccess(savedOrder?.order_number || 'تم الحفظ');
+    showToast('تم إرسال الطلب بنجاح');
   } catch (err) {
     console.error('[Checkout] failed:', err);
     showToast('حدثت مشكلة أثناء حفظ الطلب');
@@ -260,6 +307,17 @@ showToast('تم إرسال الطلب بنجاح');
     renderSummary();
   }
 }
+
+document.addEventListener('input', (e) => {
+  if (
+    e.target.id === 'customerName' ||
+    e.target.id === 'customerPhone' ||
+    e.target.id === 'customerCity' ||
+    e.target.id === 'customerNotes'
+  ) {
+    saveCustomerInfo();
+  }
+});
 
 document.addEventListener('click', (e) => {
   const action = e.target.dataset.action;
@@ -291,6 +349,12 @@ document.addEventListener('click', (e) => {
     state.cart = [];
     persistAndRender();
     showToast('تم تفريغ السلة');
+    return;
+  }
+
+  if (e.target.id === 'copyOrderNumberBtn') {
+    const numberEl = document.querySelector('.order-success-number');
+    if (numberEl) copyText(numberEl.textContent.trim());
   }
 });
 
@@ -298,6 +362,7 @@ function init() {
   updateCartCount();
   renderCartItems();
   renderSummary();
+  loadCustomerInfo();
 }
 
 document.addEventListener('DOMContentLoaded', init);
