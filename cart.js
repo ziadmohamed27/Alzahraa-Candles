@@ -226,7 +226,7 @@ function clearCartAndForm() {
 }
 
 async function saveOrderToSupabase() {
-  if (!supabaseClient) return null;
+  if (!supabaseClient) return true;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
@@ -242,15 +242,13 @@ async function saveOrderToSupabase() {
     source: 'website',
   };
 
-  const { data, error } = await supabaseClient
+  const { error } = await supabaseClient
     .from('orders')
-    .insert([payload])
-    .select()
-    .single();
+    .insert([payload]);
 
   if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
 
-  return data;
+  return true;
 }
 
 async function checkout() {
@@ -292,13 +290,13 @@ async function checkout() {
       `الإجمالي: ${money(total)}\n` +
       `الشحن: يتم تأكيده حسب المنطقة`;
 
-    const savedOrder = await saveOrderToSupabase();
+    await saveOrderToSupabase();
 
-    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
-    clearCartAndForm();
-    showOrderSuccess(savedOrder?.order_number || 'تم الحفظ');
-    showToast('تم إرسال الطلب بنجاح');
+clearCartAndForm();
+showOrderSuccess('تم حفظ الطلب');
+showToast('تم إرسال الطلب بنجاح');
   } catch (err) {
     console.error('[Checkout] failed:', err);
     showToast('حدثت مشكلة أثناء حفظ الطلب');
