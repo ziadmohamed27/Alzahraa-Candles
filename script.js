@@ -142,11 +142,17 @@ async function saveOrderToSupabase() {
   if (!supabaseClient) return;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const customerName = $('#customerName')?.value?.trim() || 'طلب من الموقع';
+  const customerPhone = $('#customerPhone')?.value?.trim() || '';
+  const customerCity = $('#customerCity')?.value?.trim() || '';
+  const customerNotes = $('#customerNotes')?.value?.trim() || '';
+
   const payload = {
-    customer_name: 'طلب من الموقع',
-    phone: '',
-    city: '',
-    notes: '',
+    customer_name: customerName,
+    phone: customerPhone,
+    city: customerCity,
+    notes: customerNotes,
     items_json: state.cart,
     total,
     status: 'pending',
@@ -400,13 +406,28 @@ function checkout() {
     return;
   }
 
+  const customerName = $('#customerName')?.value?.trim() || '';
+  const customerPhone = $('#customerPhone')?.value?.trim() || '';
+  const customerCity = $('#customerCity')?.value?.trim() || '';
+  const customerNotes = $('#customerNotes')?.value?.trim() || '';
+
+  if (!customerName || !customerPhone || !customerCity) {
+    showToast('من فضلك املأ الاسم والموبايل والمدينة');
+    return;
+  }
+
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const lines = state.cart
     .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
     .join('\n\n');
 
   const msg =
-    `مرحبًا، أريد إتمام طلب المنتجات التالية:\n\n${lines}\n\n` +
+    `مرحبًا، أريد إتمام طلب المنتجات التالية:\n\n` +
+    `الاسم: ${customerName}\n` +
+    `الموبايل: ${customerPhone}\n` +
+    `المدينة: ${customerCity}\n` +
+    `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
+    `${lines}\n\n` +
     `المجموع: ${money(total)}\nالشحن: يتم تأكيده حسب المنطقة`;
 
   window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
