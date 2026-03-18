@@ -4,18 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>سلة التسوق | عطر الطبيعة</title>
-  <meta name="description" content="سلة التسوق الخاصة بمنتجات عطر الطبيعة">
+  <meta name="description" content="راجع منتجاتك وأكمل طلبك بسهولة من سلة التسوق في عطر الطبيعة.">
   <meta name="theme-color" content="#6b9228">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <header class="site-header" id="top">
     <div class="container nav">
-      <a class="icon-btn menu-btn back-btn" href="./index.html" aria-label="العودة للرئيسية">
+      <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
         <span></span><span></span><span></span>
       </a>
 
@@ -40,34 +42,42 @@
             <h1>راجع طلبك قبل الإرسال</h1>
             <p>عدّل الكميات، أضف بياناتك، ثم أرسل الطلب عبر واتساب وسيتم تسجيله تلقائيًا.</p>
           </div>
-          <a href="./index.html#products" class="btn btn-ghost btn-sm">العودة للمنتجات</a>
+
+          <a href="./index.html#products" class="btn btn-ghost">العودة للمنتجات</a>
         </div>
-<div id="orderSuccessBox" class="order-success-box hidden"></div>
+
+        <div id="orderSuccessBox" class="order-success-box hidden"></div>
+
         <div class="cart-page-layout">
           <section class="cart-page-items-wrap">
             <div class="cart-page-title-row">
               <h2>المنتجات المختارة</h2>
               <button class="btn btn-ghost btn-sm" id="clearCartBtn" type="button">تفريغ السلة</button>
             </div>
+
             <div id="cartPageItems" class="cart-page-items"></div>
           </section>
 
-          <aside>
+          <aside class="cart-page-summary">
             <div class="order-form order-form-page" id="orderForm">
               <h3>بيانات الطلب</h3>
+
               <div class="form-grid">
                 <div class="field">
                   <label for="customerName">الاسم</label>
-                  <input type="text" id="customerName" placeholder="اكتب اسمك">
+                  <input type="text" id="customerName" placeholder="اكتب اسمك" autocomplete="name">
                 </div>
+
                 <div class="field">
                   <label for="customerPhone">رقم الموبايل</label>
-                  <input type="tel" id="customerPhone" placeholder="01xxxxxxxxx" inputmode="tel">
+                  <input type="tel" id="customerPhone" placeholder="01xxxxxxxxx" inputmode="tel" autocomplete="tel">
                 </div>
+
                 <div class="field">
                   <label for="customerCity">المدينة / المحافظة</label>
-                  <input type="text" id="customerCity" placeholder="مثال: القاهرة">
+                  <input type="text" id="customerCity" placeholder="مثال: القاهرة" autocomplete="address-level2">
                 </div>
+
                 <div class="field field-full">
                   <label for="customerNotes">ملاحظات</label>
                   <textarea id="customerNotes" rows="4" placeholder="أي تفاصيل إضافية عن الطلب أو العنوان"></textarea>
