@@ -38,7 +38,7 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_...';
+const SUPABASE_ANON_KEY = 'PUT_YOUR_PUBLISHABLE_KEY_HERE';
 
 let supabase = null;
 
@@ -50,7 +50,9 @@ if (
 ) {
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
+
 function money(v){ return `${v.toFixed(2)} ج.م`; }
+
 function saveCart(){
   localStorage.setItem('soap-cart', JSON.stringify(state.cart));
   updateCartUI();
@@ -223,9 +225,50 @@ function updateCartUI(){
   `;
 }
 
-function checkout(){
+async function saveOrderToSupabase() {
+  if (!supabase) {
+    console.error('Supabase is not initialized.');
+    return false;
+  }
+
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const payload = {
+    customer_name: "طلب من الموقع",
+    phone: "",
+    city: "",
+    notes: "",
+    items_json: state.cart,
+    total: total
+  };
+
+  const { error } = await supabase
+    .from('orders')
+    .insert([payload]);
+
+  if (error) {
+    console.error('Supabase insert error:', error);
+    return false;
+  }
+
+  return true;
+}
+
+async function checkout(){
+  if (!state.cart.length) {
+    showToast('السلة فارغة');
+    return;
+  }
+
   const total = state.cart.reduce((s,i) => s + i.price * i.qty, 0);
   const lines = state.cart.map((i,n) => `${n+1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price*i.qty)}`).join('\n\n');
+
+  const saved = await saveOrderToSupabase();
+
+  if (!saved) {
+    showToast('حصلت مشكلة أثناء حفظ الطلب');
+  }
+
   const msg = `مرحبًا، أريد إتمام طلب المنتجات التالية:\n\n${lines}\n\nالمجموع: ${money(total)}\nالشحن: يتم تأكيده حسب المنطقة`;
   window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`,'_blank');
 }
