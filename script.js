@@ -101,15 +101,10 @@ async function loadProducts() {
     throw new Error('Supabase client is not initialized');
   }
 
-  console.log('[Products] fetching from Supabase...');
-
   const { data, error } = await supabaseClient
     .from('products')
     .select('*')
     .order('id', { ascending: true });
-
-  console.log('[Products] data:', data);
-  console.log('[Products] error:', error);
 
   if (error) {
     throw new Error(`[Products] Supabase fetch error: ${error.message}`);
@@ -354,7 +349,7 @@ function updateCartUI() {
   if (!itemsBox || !footer) return;
 
   if (!state.cart.length) {
-    itemsBox.innerHTML = '<div class="empty">السلة فارغة. أضيفي بعض المنتجات أولًا.</div>';
+    itemsBox.innerHTML = '<div class="empty">السلة فارغة. أضف بعض المنتجات أولًا.</div>';
     footer.innerHTML = '';
     return;
   }
@@ -367,12 +362,12 @@ function updateCartUI() {
         <p>${escHtml(item.weight)}</p>
         <p>${money(item.price)}</p>
         <div class="qty-row">
-          <button data-action="inc" data-id="${item.id}">+</button>
+          <button data-action="inc" data-id="${item.id}" type="button">+</button>
           <strong>${item.qty}</strong>
-          <button data-action="dec" data-id="${item.id}">-</button>
+          <button data-action="dec" data-id="${item.id}" type="button">-</button>
         </div>
       </div>
-      <button class="remove-btn" data-action="remove" data-id="${item.id}">🗑️</button>
+      <button class="remove-btn" data-action="remove" data-id="${item.id}" type="button">🗑️</button>
     </div>
   `).join('');
 
@@ -392,10 +387,9 @@ function updateCartUI() {
         <strong class="price">${money(total)}</strong>
       </div>
       <p class="helper">
-        سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب،
-        ثم نؤكد معك العنوان والشحن.
+        سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.
       </p>
-      <button class="btn btn-whatsapp" id="checkoutBtn">إرسال الطلب عبر واتساب</button>
+      <button class="btn btn-whatsapp" id="checkoutBtn" type="button">إرسال الطلب عبر واتساب</button>
     </div>
   `;
 }
@@ -466,7 +460,7 @@ function openProduct(id) {
         <h4>طريقة الاستخدام</h4>
         <p>${escHtml(p.usage)}</p>
         <div class="hero-actions">
-          <button class="btn btn-primary modal-add" data-id="${p.id}">أضف إلى السلة</button>
+          <button class="btn btn-primary modal-add" data-id="${p.id}" type="button">أضف إلى السلة</button>
           <a class="btn btn-whatsapp" target="_blank" rel="noopener" href="https://wa.me/201095314011">اسأل على واتساب</a>
         </div>
       </div>
