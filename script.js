@@ -40,7 +40,16 @@ const $$ = (s) => document.querySelectorAll(s);
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_...';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let supabase = null;
+
+if (
+  window.supabase &&
+  SUPABASE_URL &&
+  SUPABASE_ANON_KEY &&
+  SUPABASE_ANON_KEY !== 'PUT_YOUR_PUBLISHABLE_KEY_HERE'
+) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 function money(v){ return `${v.toFixed(2)} ج.م`; }
 function saveCart(){
   localStorage.setItem('soap-cart', JSON.stringify(state.cart));
