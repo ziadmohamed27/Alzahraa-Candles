@@ -124,6 +124,7 @@ let supabaseClient = null;
   }
 
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+   console.log('[Supabase] client initialized', supabaseClient);
   console.info('[Supabase] تم التهيئة بنجاح');
 })();
 
@@ -174,9 +175,11 @@ function toArray(val) {
 
 async function loadProducts() {
   if (!supabaseClient) {
-    console.info('[Products] سيتم استخدام المنتجات الثابتة.');
+    console.warn('[Products] supabaseClient is null');
     return FALLBACK_PRODUCTS;
   }
+
+  console.log('[Products] fetching from Supabase...');
 
   try {
     const { data, error } = await supabaseClient
@@ -184,15 +187,41 @@ async function loadProducts() {
       .select('*')
       .order('id', { ascending: true });
 
+    console.log('[Products] data:', data);
+    console.log('[Products] error:', error);
+
     if (error) {
-      console.error('[Products] خطأ في جلب المنتجات:', error.message, error.details);
+      console.error('[Products] Supabase fetch error:', error.message, error.details);
       return FALLBACK_PRODUCTS;
     }
 
     if (!data || !data.length) {
-      console.warn('[Products] لا توجد منتجات في Supabase، سيتم استخدام fallback.');
+      console.warn('[Products] no rows returned from Supabase');
       return FALLBACK_PRODUCTS;
     }
+
+    return data.map((row) => ({
+      id: row.id,
+      name: row.name ?? '',
+      price: Number(row.price) || 0,
+      weight: row.weight ?? '120 جرام',
+      badge: row.badge ?? '',
+      tag: row.tag ?? '',
+      bestFor: row.best_for ?? '',
+      category: row.category ?? 'all',
+      description: row.description ?? '',
+      longDescription: row.long_description ?? '',
+      highlights: Array.isArray(row.highlights) ? row.highlights : [],
+      benefits: Array.isArray(row.benefits) ? row.benefits : [],
+      usage: row.usage ?? '',
+      ingredients: Array.isArray(row.ingredients) ? row.ingredients : [],
+      image: row.image ?? '',
+    }));
+  } catch (err) {
+    console.error('[Products] unexpected error:', err);
+    return FALLBACK_PRODUCTS;
+  }
+}
 
     return data.map((row) => ({
       id: row.id,
