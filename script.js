@@ -3,7 +3,7 @@
    ================================================================= */
 
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = 'PUT_YOUR_ANON_KEY_HERE'; // استبدليه بالمفتاح الحقيقي إذا أردتِ Supabase
+const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v'; // استبدليه بالمفتاح الحقيقي إذا أردتِ Supabase
 
 const FALLBACK_PRODUCTS = [
   {
