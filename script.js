@@ -134,17 +134,13 @@ async function loadProducts() {
 }
 
 async function saveOrderToSupabase() {
-  if (!supabaseClient) return;
+  if (!supabaseClient) return null;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-
-  const customerName = $('#customerName')?.value?.trim() || 'طلب من الموقع';
-  const customerPhone = $('#customerPhone')?.value?.trim() || '';
-  const customerCity = $('#customerCity')?.value?.trim() || '';
-  const customerNotes = $('#customerNotes')?.value?.trim() || '';
+  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
 
   const payload = {
-    customer_name: customerName,
+    customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
     city: customerCity,
     notes: customerNotes || 'لا يوجد',
@@ -154,10 +150,16 @@ async function saveOrderToSupabase() {
     source: 'website',
   };
 
-  const { error } = await supabaseClient.from('orders').insert([payload]);
-  if (error) console.error('[Orders] Insert error:', error.message, error.details);
-}
+  const { data, error } = await supabaseClient
+    .from('orders')
+    .insert([payload])
+    .select()
+    .single();
 
+  if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
+
+  return data;
+}
 function showToast(message) {
   const toast = $('#toast');
   if (!toast) return;
