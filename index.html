@@ -7,19 +7,25 @@
   <meta name="description" content="صابون طبيعي مصنوع يدويًا بمكونات مختارة بعناية، مع طلب سريع عبر واتساب وتجربة بسيطة على الموبايل واللاب.">
   <meta name="theme-color" content="#6b9228">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <header class="site-header" id="top">
     <div class="container nav">
-      <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة"><span></span><span></span><span></span></button>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة">
+        <span></span><span></span><span></span>
+      </button>
+
       <a class="brand" href="#top">
         <span class="brand-title">عطر الطبيعة</span>
         <span class="brand-sub">NATURAL SOAP</span>
       </a>
+
       <button class="icon-btn cart-btn" id="cartToggle" aria-label="فتح السلة">
         <span class="cart-emoji">🛍️</span>
         <span class="cart-count" id="cartCount">0</span>
@@ -42,10 +48,12 @@
           <span class="pill">%100 طبيعي · مصنوع يدويًا بعناية</span>
           <h1>صابون طبيعي يدوي<br>لبشرة أنعم وعناية يومية</h1>
           <p>مجموعة مختارة من صابون زيت الزيتون والعسل والفحم والقهوة، مع طلب بسيط وسريع عبر واتساب.</p>
+
           <div class="hero-actions">
             <a href="#products" class="btn btn-primary">تسوّق الآن</a>
             <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">تواصل واتساب</a>
           </div>
+
           <div class="hero-features">
             <div>🌿 مكونات واضحة</div>
             <div>🫧 عناية يومية لطيفة</div>
@@ -59,12 +67,14 @@
               <source src="./videos/honey-video.mp4" type="video/mp4">
             </video>
           </div>
+
           <div class="media-column">
             <div class="media-card">
               <video autoplay muted loop playsinline poster="./images/coffee.jpg">
                 <source src="./videos/coffee-video.mp4" type="video/mp4">
               </video>
             </div>
+
             <div class="media-card">
               <video autoplay muted loop playsinline poster="./images/olive.jpg">
                 <source src="./videos/olive-video.mp4" type="video/mp4">
@@ -82,6 +92,7 @@
           <h2>اختاري الأنسب لبشرتك</h2>
           <p>كل منتج موضح بفائدته الأساسية ونوع البشرة المناسب له لتسهيل القرار بسرعة.</p>
         </div>
+
         <div class="filters" id="filters"></div>
         <div class="product-grid" id="productGrid"></div>
       </div>
@@ -94,7 +105,9 @@
           <h2>لماذا تختارين منتجاتنا؟</h2>
           <p>تجربة واضحة وبسيطة: مكونات أقرب للطبيعة، خيارات لطيفة، ومساعدة مباشرة قبل الطلب.</p>
         </div>
+
         <div class="feature-grid" id="featureGrid"></div>
+
         <div class="stats-grid">
           <div class="stat-card"><strong>4</strong><span>أنواع أساسية</span></div>
           <div class="stat-card"><strong>طبيعي</strong><span>عناية يومية بسيطة</span></div>
@@ -111,12 +124,14 @@
             <h2>كيف تطلب؟ ومتى يصلك المنتج؟</h2>
             <p>اختر المنتجات المناسبة، أضفها إلى السلة، ثم أرسل الطلب عبر واتساب ليتم تأكيد العنوان والتوصيل معك مباشرة.</p>
           </div>
+
           <div class="steps" id="steps"></div>
         </div>
 
         <div class="shipping-panel">
           <h3>معلومات مهمة قبل الطلب</h3>
           <div class="shipping-items" id="shippingItems"></div>
+
           <div class="shipping-help">
             <strong>هل تحتاج ترشيحًا سريعًا؟</strong>
             <p>اكتب لنا نوع بشرتك أو النتيجة التي تريدها، وسنرشح لك الخيار الأنسب عبر واتساب.</p>
@@ -132,6 +147,7 @@
           <h2>أسئلة تمنع التردد قبل الشراء</h2>
           <p>إجابات مختصرة تساعدك على اختيار المنتج المناسب ومعرفة طريقة الطلب والتوصيل.</p>
         </div>
+
         <div class="faq-list" id="faqList"></div>
       </div>
     </section>
@@ -144,7 +160,10 @@
           <h3>هل لديك استفسار؟ نحن هنا للمساعدة</h3>
           <p>تواصل معنا مباشرة عبر واتساب للحصول على ترشيح مناسب لبشرتك.</p>
         </div>
-        <a class="btn btn-whatsapp" href="https://wa.me/201095314011" target="_blank" rel="noopener">تواصل واتساب الآن</a>
+
+        <a class="btn btn-whatsapp" href="https://wa.me/201095314011" target="_blank" rel="noopener">
+          تواصل واتساب الآن
+        </a>
       </div>
     </div>
 
@@ -192,17 +211,18 @@
         <button class="close-btn small" id="closeCart" aria-label="إغلاق">×</button>
         <h2 id="cartTitle">سلة التسوق</h2>
       </div>
+
       <div class="cart-body">
         <div id="cartItems"></div>
       </div>
+
       <div class="cart-footer" id="cartFooter"></div>
     </aside>
   </div>
 
   <div class="toast" id="toast" aria-live="polite"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./script.js"></script>
-
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./script.js"></script>
 </body>
 </html>
