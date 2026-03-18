@@ -33,19 +33,28 @@ const faqs = [
   {q:"هل يمكنني السؤال قبل الشراء؟",a:"بالتأكيد، يمكنك التواصل معنا مباشرة عبر واتساب لنرشح لك النوع المناسب."}
 ];
 
-function loadCart(){
+function readCart(){
   try {
-    const raw = window.localStorage ? localStorage.getItem('soap-cart') : '[]';
-    const parsed = JSON.parse(raw || '[]');
+    const raw = window.localStorage ? localStorage.getItem('soap-cart') : null;
+    const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
-    console.warn('Cart restore failed, resetting cart.', error);
-    try { localStorage.removeItem('soap-cart'); } catch (_) {}
+    console.warn('Cart storage is unavailable, using memory only.', error);
     return [];
   }
 }
 
-const state = { filter: 'all', cart: loadCart() };
+function writeCart(cart){
+  try {
+    if (window.localStorage) {
+      localStorage.setItem('soap-cart', JSON.stringify(cart));
+    }
+  } catch (error) {
+    console.warn('Unable to save cart to localStorage.', error);
+  }
+}
+
+const state = { filter: 'all', cart: readCart() };
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
@@ -66,11 +75,7 @@ if (
 function money(v){ return `${v.toFixed(2)} ج.م`; }
 
 function saveCart(){
-  try {
-    localStorage.setItem('soap-cart', JSON.stringify(state.cart));
-  } catch (error) {
-    console.warn('Cart save failed.', error);
-  }
+  writeCart(state.cart);
   updateCartUI();
 }
 
@@ -406,15 +411,27 @@ document.addEventListener('click', e => {
   }
 });
 
-$('#floatingWhatsApp').addEventListener('click', () => window.open('https://wa.me/201095314011','_blank'));
-$('#menuBtn').addEventListener('click', () => $('#mobileMenu').classList.toggle('open'));
+const floatingWhatsAppBtn = $('#floatingWhatsApp');
+if (floatingWhatsAppBtn) {
+  floatingWhatsAppBtn.addEventListener('click', () => window.open('https://wa.me/201095314011','_blank'));
+}
+
+const menuBtn = $('#menuBtn');
+if (menuBtn) {
+  menuBtn.addEventListener('click', () => $('#mobileMenu').classList.toggle('open'));
+}
+
 $$('.mobile-menu a').forEach(a => a.addEventListener('click', () => $('#mobileMenu').classList.remove('open')));
 
-renderFilters();
-renderProducts();
-renderFeatures();
-renderSteps();
-renderShipping();
-renderFaq();
-updateCartUI();
-guardMedia();
+try {
+  renderFilters();
+  renderProducts();
+  renderFeatures();
+  renderSteps();
+  renderShipping();
+  renderFaq();
+  updateCartUI();
+  guardMedia();
+} catch (error) {
+  console.error('Page initialization failed:', error);
+}
