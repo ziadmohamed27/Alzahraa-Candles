@@ -149,6 +149,8 @@ async function saveOrderToSupabase() {
     notes: '',
     items_json: state.cart,
     total,
+    status: 'pending',
+    source: 'website',
   };
 
   const { error } = await supabaseClient.from('orders').insert([payload]);
