@@ -29,7 +29,7 @@ function showOrderSuccess(orderNumber) {
     <h3>تم إرسال طلبك بنجاح ✅</h3>
     <p>احتفظ برقم الطلب للمتابعة:</p>
     <div class="order-success-actions">
-      <div class="order-success-number">${escHtml(orderNumber || 'تم الحفظ')}</div>
+      <div class="order-success-number">${escHtml(orderNumber || 'تم حفظ الطلب')}</div>
       <button type="button" class="btn btn-ghost btn-sm" id="copyOrderNumberBtn">نسخ الرقم</button>
     </div>
     <p>سيتم التواصل معك لتأكيد الطلب والتوصيل.</p>
@@ -180,14 +180,52 @@ function renderSummary() {
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
 
+  const itemsSummary = state.cart.length
+    ? state.cart.map((item) => `
+      <div class="summary-product">
+        <div class="summary-product-head">
+          <strong>${escHtml(item.name)}</strong>
+        </div>
+        <div class="summary-product-row">
+          <span>سعر القطعة</span>
+          <span>${money(item.price)}</span>
+        </div>
+        <div class="summary-product-row">
+          <span>الكمية</span>
+          <span>${item.qty}</span>
+        </div>
+        <div class="summary-product-row summary-product-total">
+          <span>إجمالي المنتج</span>
+          <span>${money(item.price * item.qty)}</span>
+        </div>
+      </div>
+    `).join('')
+    : `<div class="empty">لا توجد منتجات في السلة.</div>`;
+
   el.innerHTML = `
     <h3>ملخص الطلب</h3>
 
+    <div class="summary-products-list">
+      ${itemsSummary}
+    </div>
+
     <div class="cart-summary">
-      <div class="cart-summary-row"><span>عدد القطع</span><strong>${totalItems}</strong></div>
-      <div class="cart-summary-row"><span>المجموع الفرعي</span><strong class="price">${money(total)}</strong></div>
-      <div class="cart-summary-row"><span>الشحن</span><strong>يتم تأكيده حسب المنطقة</strong></div>
-      <div class="cart-summary-row total-row"><span>الإجمالي</span><strong class="price">${money(total)}</strong></div>
+      <div class="cart-summary-row">
+        <span>عدد القطع</span>
+        <strong>${totalItems}</strong>
+      </div>
+      <div class="cart-summary-row">
+        <span>المجموع الفرعي</span>
+        <strong class="price">${money(total)}</strong>
+      </div>
+      <div class="cart-summary-row">
+        <span>الشحن</span>
+        <strong>يتم تأكيده حسب المنطقة</strong>
+      </div>
+      <div class="cart-summary-row total-row">
+        <span>الإجمالي النهائي</span>
+        <strong class="price">${money(total)}</strong>
+      </div>
     </div>
 
     <p class="helper">
@@ -292,11 +330,11 @@ async function checkout() {
 
     await saveOrderToSupabase();
 
-window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
-clearCartAndForm();
-showOrderSuccess('تم حفظ الطلب');
-showToast('تم إرسال الطلب بنجاح');
+    clearCartAndForm();
+    showOrderSuccess('تم حفظ الطلب');
+    showToast('تم إرسال الطلب بنجاح');
   } catch (err) {
     console.error('[Checkout] failed:', err);
     showToast('حدثت مشكلة أثناء حفظ الطلب');
