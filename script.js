@@ -137,7 +137,11 @@ async function saveOrderToSupabase() {
   if (!supabaseClient) return null;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
+
+  const customerName = $('#customerName')?.value?.trim() || '';
+  const customerPhone = $('#customerPhone')?.value?.trim() || '';
+  const customerCity = $('#customerCity')?.value?.trim() || '';
+  const customerNotes = $('#customerNotes')?.value?.trim() || '';
 
   const payload = {
     customer_name: customerName || 'طلب من الموقع',
@@ -160,6 +164,29 @@ async function saveOrderToSupabase() {
 
   return data;
 }
+
+function clearCartAndForm() {
+  state.cart = [];
+  writeCart([]);
+
+  const nameEl = $('#customerName');
+  const phoneEl = $('#customerPhone');
+  const cityEl = $('#customerCity');
+  const notesEl = $('#customerNotes');
+
+  if (nameEl) nameEl.value = '';
+  if (phoneEl) phoneEl.value = '';
+  if (cityEl) cityEl.value = '';
+  if (notesEl) notesEl.value = '';
+
+  updateCartUI();
+}
+
+function isValidEgyptPhone(phone) {
+  const cleaned = phone.replace(/\s+/g, '');
+  return /^01[0-2,5][0-9]{8}$/.test(cleaned);
+}
+
 function showToast(message) {
   const toast = $('#toast');
   if (!toast) return;
@@ -396,7 +423,7 @@ function updateCartUI() {
   `;
 }
 
-function checkout() {
+async function checkout() {
   if (!state.cart.length) {
     showToast('السلة فارغة');
     return;
@@ -412,25 +439,47 @@ function checkout() {
     return;
   }
 
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const lines = state.cart
-    .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
-    .join('\n\n');
+  if (!isValidEgyptPhone(customerPhone)) {
+    showToast('اكتب رقم موبايل مصري صحيح');
+    return;
+  }
 
-  const msg =
-    `مرحبًا، أريد إتمام الطلب:\n\n` +
-    `الاسم: ${customerName}\n` +
-    `الموبايل: ${customerPhone}\n` +
-    `المدينة: ${customerCity}\n` +
-    `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
-    `المنتجات:\n\n${lines}\n\n` +
-    `الإجمالي: ${money(total)}\n` +
-    `الشحن: يتم تأكيده حسب المنطقة`;
+  const checkoutBtn = $('#checkoutBtn');
+  if (checkoutBtn) {
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'جارٍ تجهيز الطلب...';
+  }
 
-  window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+  try {
+    const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const lines = state.cart
+      .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
+      .join('\n\n');
 
-  if (supabaseClient) {
-    saveOrderToSupabase().catch((err) => console.error('[Checkout] save failed:', err));
+    const msg =
+      `مرحبًا، أريد إتمام الطلب:\n\n` +
+      `الاسم: ${customerName}\n` +
+      `الموبايل: ${customerPhone}\n` +
+      `المدينة: ${customerCity}\n` +
+      `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
+      `المنتجات:\n\n${lines}\n\n` +
+      `الإجمالي: ${money(total)}\n` +
+      `الشحن: يتم تأكيده حسب المنطقة`;
+
+    const savedOrder = await saveOrderToSupabase();
+
+    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+
+    clearCartAndForm();
+    showToast(`تم تجهيز الطلب بنجاح - رقم الطلب: ${savedOrder?.order_number || 'تم الحفظ'}`);
+  } catch (err) {
+    console.error('[Checkout] save failed:', err);
+    showToast('حدثت مشكلة أثناء حفظ الطلب');
+  } finally {
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = 'إرسال الطلب عبر واتساب';
+    }
   }
 }
 
@@ -480,6 +529,7 @@ function closeProduct() {
   if (overlay) overlay.classList.add('hidden');
   document.body.style.overflow = '';
 }
+
 function guardMedia() {
   $$('video').forEach((video) => {
     video.addEventListener('error', () => {
@@ -527,6 +577,7 @@ document.addEventListener('click', (e) => {
     closeProduct();
     return;
   }
+
   if (e.target.id === 'checkoutBtn') {
     checkout();
     return;
