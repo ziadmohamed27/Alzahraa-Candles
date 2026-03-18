@@ -20,6 +20,21 @@ function showToast(message) {
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
 }
+function showOrderSuccess(orderNumber) {
+  const box = $('#orderSuccessBox');
+  if (!box) return;
+
+  box.innerHTML = `
+    <h3>تم إرسال طلبك بنجاح ✅</h3>
+    <p>احتفظ برقم الطلب للمتابعة:</p>
+    <div class="order-success-number">${escHtml(orderNumber || 'تم الحفظ')}</div>
+    <p>سيتم التواصل معك لتأكيد الطلب والتوصيل.</p>
+  `;
+
+  box.classList.remove('hidden');
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 function escHtml(str) {
   if (typeof str !== 'string') return String(str ?? '');
@@ -231,7 +246,8 @@ async function checkout() {
     window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
     clearCartAndForm();
-    showToast('تم تجهيز الطلب بنجاح');
+showOrderSuccess(savedOrder?.order_number || 'تم الحفظ');
+showToast('تم إرسال الطلب بنجاح');
 
     setTimeout(() => {
       window.location.href = './index.html#products';
