@@ -1,80 +1,10 @@
 /* =================================================================
-   عطر الطبيعة — script.js   (final fixed)
+   عطر الطبيعة — script.js
+   يعتمد على Supabase فقط للمنتجات
    ================================================================= */
 
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v'; // استبدليه بالمفتاح الحقيقي إذا أردتِ Supabase
-
-const FALLBACK_PRODUCTS = [
-  {
-    id: 1,
-    name: 'صابون زيت الزيتون',
-    price: 40,
-    weight: '120 جرام',
-    badge: 'للبشرة الجافة والحساسة',
-    tag: 'أفضل بداية للبشرة الحساسة',
-    bestFor: 'البشرة الجافة والحساسة',
-    category: 'dry',
-    description: 'اختيار لطيف للبشرة الجافة والحساسة يمنح تنظيفًا ناعمًا دون إحساس بالشد بعد الغسيل.',
-    longDescription: 'صابون طبيعي غني بزيت الزيتون البكر وفيتامين E، مناسب لمن تبحث عن تنظيف لطيف مع ترطيب يومي مريح للوجه والجسم.',
-    highlights: ['ترطيب يومي', 'لطيف على الحساسة', 'مناسب للبدء'],
-    benefits: ['يساعد على تقليل الإحساس بالجفاف بعد الغسيل', 'لطيف للاستخدام اليومي', 'مناسب لمن تريد روتينًا بسيطًا'],
-    usage: 'يستخدم يوميًا على البشرة المبللة ثم يشطف بالماء الفاتر.',
-    ingredients: ['زيت الزيتون البكر', 'زيت جوز الهند', 'ماء', 'زيت اللافندر'],
-    image: './images/olive.jpg',
-  },
-  {
-    id: 2,
-    name: 'صابون الفحم النشط',
-    price: 45,
-    weight: '120 جرام',
-    badge: 'للبشرة الدهنية والمختلطة',
-    tag: 'للمسام واللمعة',
-    bestFor: 'البشرة الدهنية والمختلطة',
-    category: 'oily',
-    description: 'يناسب البشرة الدهنية والمختلطة ويساعد على تنظيف المسام وتقليل الإحساس بالدهون الزائدة.',
-    longDescription: 'تركيبة بالفحم النباتي النشط مع زيت شجرة الشاي، مناسبة لمن ترغب في تنظيف أعمق وإحساس أوضح بالانتعاش بعد الغسيل.',
-    highlights: ['تنظيف أعمق', 'للدهنية', 'إحساس منتعش'],
-    benefits: ['يساعد على تنظيف الشوائب والزيوت السطحية', 'مناسب لمنزعجة من اللمعة', 'يدعم مظهرًا أنظف للمسام'],
-    usage: 'يستخدم مرة إلى مرتين يوميًا حسب احتياج البشرة.',
-    ingredients: ['فحم نباتي نشط', 'زيت شجرة الشاي', 'زيت جوز الهند', 'مستخلص الألوفيرا'],
-    image: './images/charcoal.jpg',
-  },
-  {
-    id: 3,
-    name: 'صابون العسل',
-    price: 42,
-    weight: '120 جرام',
-    badge: 'ترطيب ونعومة يومية',
-    tag: 'الأكثر طلبًا',
-    bestFor: 'نعومة وترطيب يومي',
-    category: 'dry',
-    description: 'مناسب لمن تريد نعومة ولمسة مرطبة يومية، خاصة إذا كانت البشرة تميل للجفاف أو البهتان.',
-    longDescription: 'يجمع بين العسل الطبيعي وزبدة الشيا ليمنح البشرة إحساسًا بالراحة والنعومة بعد الاستخدام اليومي.',
-    highlights: ['نعومة واضحة', 'ترطيب مريح', 'مناسب يوميًا'],
-    benefits: ['يساعد على إبقاء البشرة أكثر نعومة', 'مناسب للبشرة الباهتة أو المرهقة', 'خيار يومي دافئ ولطيف'],
-    usage: 'يستخدم يوميًا للوجه أو الجسم مع تدليك لطيف ثم شطف بالماء الفاتر.',
-    ingredients: ['عسل طبيعي', 'زبدة الشيا', 'زيت اللوز الحلو', 'زيت جوز الهند'],
-    image: './images/honey.jpg',
-  },
-  {
-    id: 4,
-    name: 'صابون القهوة',
-    price: 44,
-    weight: '130 جرام',
-    badge: 'تقشير لطيف وتجديد',
-    tag: 'للجسم والمناطق الخشنة',
-    bestFor: 'تقشير لطيف للجسم',
-    category: 'scrub',
-    description: 'مناسب لتقشير لطيف للجسم والمناطق الخشنة ويساعد على تحسين ملمس البشرة.',
-    longDescription: 'يحتوي على حبيبات قهوة مطحونة بشكل ناعم لتقشير لطيف يساعد على إزالة الخلايا السطحية الجافة وترك ملمس أنعم.',
-    highlights: ['تقشير لطيف', 'للجسم', 'ملمس أنعم'],
-    benefits: ['يساعد على إزالة الخلايا السطحية الجافة', 'مناسب للمناطق الخشنة', 'يمنح إحساسًا بالانتعاش بعد الاستحمام'],
-    usage: 'يستخدم 2 إلى 3 مرات أسبوعيًا على البشرة الرطبة.',
-    ingredients: ['قهوة عربية', 'زيت جوز الهند', 'زبدة الكاكاو', 'سكر قصب'],
-    image: './images/coffee.jpg',
-  },
-];
+const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
 
 const features = [
   { icon: '🌿', title: 'مكونات واضحة', desc: 'نختار مكونات أقرب للطبيعة لتكون التجربة أبسط وأوضح.' },
@@ -107,14 +37,8 @@ const faqs = [
 let supabaseClient = null;
 
 (function initSupabase() {
-  const keyMissing = (
-    !SUPABASE_ANON_KEY ||
-    SUPABASE_ANON_KEY === 'PUT_YOUR_ANON_KEY_HERE' ||
-    SUPABASE_ANON_KEY.startsWith('PUT_')
-  );
-
-  if (keyMissing) {
-    console.info('[Supabase] المفتاح غير مضاف، سيتم استخدام المنتجات الثابتة.');
+  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith('PUT_')) {
+    console.error('[Supabase] المفتاح غير صحيح أو غير مضاف.');
     return;
   }
 
@@ -124,8 +48,7 @@ let supabaseClient = null;
   }
 
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-   console.log('[Supabase] client initialized', supabaseClient);
-  console.info('[Supabase] تم التهيئة بنجاح');
+  console.log('[Supabase] client initialized', supabaseClient);
 })();
 
 function readCart() {
@@ -154,7 +77,7 @@ const state = {
   cart: readCart(),
 };
 
-let currentProducts = FALLBACK_PRODUCTS.slice();
+let currentProducts = [];
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
@@ -175,75 +98,44 @@ function toArray(val) {
 
 async function loadProducts() {
   if (!supabaseClient) {
-    console.warn('[Products] supabaseClient is null');
-    return FALLBACK_PRODUCTS;
+    throw new Error('Supabase client is not initialized');
   }
 
   console.log('[Products] fetching from Supabase...');
 
-  try {
-    const { data, error } = await supabaseClient
-      .from('products')
-      .select('*')
-      .order('id', { ascending: true });
+  const { data, error } = await supabaseClient
+    .from('products')
+    .select('*')
+    .order('id', { ascending: true });
 
-    console.log('[Products] data:', data);
-    console.log('[Products] error:', error);
+  console.log('[Products] data:', data);
+  console.log('[Products] error:', error);
 
-    if (error) {
-      console.error('[Products] Supabase fetch error:', error.message, error.details);
-      return FALLBACK_PRODUCTS;
-    }
-
-    if (!data || !data.length) {
-      console.warn('[Products] no rows returned from Supabase');
-      return FALLBACK_PRODUCTS;
-    }
-
-    return data.map((row) => ({
-      id: row.id,
-      name: row.name ?? '',
-      price: Number(row.price) || 0,
-      weight: row.weight ?? '120 جرام',
-      badge: row.badge ?? '',
-      tag: row.tag ?? '',
-      bestFor: row.best_for ?? '',
-      category: row.category ?? 'all',
-      description: row.description ?? '',
-      longDescription: row.long_description ?? '',
-      highlights: Array.isArray(row.highlights) ? row.highlights : [],
-      benefits: Array.isArray(row.benefits) ? row.benefits : [],
-      usage: row.usage ?? '',
-      ingredients: Array.isArray(row.ingredients) ? row.ingredients : [],
-      image: row.image ?? '',
-    }));
-  } catch (err) {
-    console.error('[Products] unexpected error:', err);
-    return FALLBACK_PRODUCTS;
+  if (error) {
+    throw new Error(`[Products] Supabase fetch error: ${error.message}`);
   }
-}
 
-    return data.map((row) => ({
-      id: row.id,
-      name: row.name ?? '',
-      price: Number(row.price) || 0,
-      weight: row.weight ?? '120 جرام',
-      badge: row.badge ?? '',
-      tag: row.tag ?? '',
-      bestFor: row.best_for ?? row.bestFor ?? '',
-      category: row.category ?? 'all',
-      description: row.description ?? '',
-      longDescription: row.long_description ?? row.longDescription ?? '',
-      highlights: toArray(row.highlights),
-      benefits: toArray(row.benefits),
-      usage: row.usage ?? '',
-      ingredients: toArray(row.ingredients),
-      image: row.image ?? './images/olive.jpg',
-    }));
-  } catch (err) {
-    console.error('[Products] خطأ غير متوقع:', err);
-    return FALLBACK_PRODUCTS;
+  if (!data || !data.length) {
+    throw new Error('[Products] No products returned from Supabase');
   }
+
+  return data.map((row) => ({
+    id: row.id,
+    name: row.name ?? '',
+    price: Number(row.price) || 0,
+    weight: row.weight ?? '120 جرام',
+    badge: row.badge ?? '',
+    tag: row.tag ?? '',
+    bestFor: row.best_for ?? row.bestFor ?? '',
+    category: row.category ?? 'all',
+    description: row.description ?? '',
+    longDescription: row.long_description ?? row.longDescription ?? '',
+    highlights: toArray(row.highlights),
+    benefits: toArray(row.benefits),
+    usage: row.usage ?? '',
+    ingredients: toArray(row.ingredients),
+    image: row.image ?? '',
+  }));
 }
 
 async function saveOrderToSupabase() {
@@ -305,6 +197,18 @@ function showProductsLoading() {
       <span>جارٍ تحميل المنتجات...</span>
     </div>
     <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  `;
+}
+
+function showProductsError(message = 'تعذر تحميل المنتجات حاليًا.') {
+  const el = $('#productGrid');
+  if (!el) return;
+
+  el.innerHTML = `
+    <div style="grid-column:1/-1;text-align:center;padding:48px 16px;color:#b42318">
+      <div style="font-size:2.5rem;margin-bottom:14px">⚠️</div>
+      <p>${escHtml(message)}</p>
+    </div>
   `;
 }
 
@@ -675,15 +579,10 @@ async function init() {
     showProductsLoading();
 
     currentProducts = await loadProducts();
-    if (!Array.isArray(currentProducts)) {
-      currentProducts = FALLBACK_PRODUCTS.slice();
-    }
-
     renderProducts();
   } catch (err) {
     console.error('[Init] Unexpected error:', err);
-    currentProducts = FALLBACK_PRODUCTS.slice();
-    renderProducts();
+    showProductsError('تعذر تحميل المنتجات من قاعدة البيانات حاليًا.');
   }
 }
 
