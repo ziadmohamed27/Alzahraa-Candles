@@ -33,19 +33,7 @@ const faqs = [
   {q:"هل يمكنني السؤال قبل الشراء؟",a:"بالتأكيد، يمكنك التواصل معنا مباشرة عبر واتساب لنرشح لك النوع المناسب."}
 ];
 
-function loadCart(){
-  try {
-    const raw = window.localStorage ? localStorage.getItem('soap-cart') : '[]';
-    const parsed = JSON.parse(raw || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    console.warn('Cart restore failed, resetting cart.', error);
-    try { localStorage.removeItem('soap-cart'); } catch (_) {}
-    return [];
-  }
-}
-
-const state = { filter: 'all', cart: loadCart() };
+const state = { filter: 'all', cart: JSON.parse(localStorage.getItem('soap-cart') || '[]') };
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
@@ -66,11 +54,7 @@ if (
 function money(v){ return `${v.toFixed(2)} ج.م`; }
 
 function saveCart(){
-  try {
-    localStorage.setItem('soap-cart', JSON.stringify(state.cart));
-  } catch (error) {
-    console.warn('Cart save failed.', error);
-  }
+  localStorage.setItem('soap-cart', JSON.stringify(state.cart));
   updateCartUI();
 }
 
