@@ -5,6 +5,7 @@ const $ = (s) => document.querySelector(s);
 const money = (v) => `${Number(v).toFixed(2)} ج.م`;
 
 let supabaseClient = null;
+let isSubmittingOrder = false;
 
 (function initSupabase() {
   if (!window.supabase || !SUPABASE_ANON_KEY) return;
@@ -17,7 +18,7 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.add('show');
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+  showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
 function escHtml(str) {
@@ -52,6 +53,25 @@ function updateCartCount() {
   const count = state.cart.reduce((s, i) => s + i.qty, 0);
   const el = $('#cartCount');
   if (el) el.textContent = count;
+}
+
+function validatePhone(phone) {
+  const normalized = phone.replace(/\s+/g, '');
+  return /^01[0-2,5][0-9]{8}$/.test(normalized);
+}
+
+function getOrderFormData() {
+  const customerName = $('#customerName')?.value?.trim() || '';
+  const customerPhone = $('#customerPhone')?.value?.trim() || '';
+  const customerCity = $('#customerCity')?.value?.trim() || '';
+  const customerNotes = $('#customerNotes')?.value?.trim() || '';
+
+  return {
+    customerName,
+    customerPhone,
+    customerCity,
+    customerNotes,
+  };
 }
 
 function renderCartItems() {
@@ -117,9 +137,11 @@ function renderSummary() {
       سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.
     </p>
 
-    <button class="btn btn-whatsapp cart-page-submit" id="checkoutBtn" type="button">
-      إرسال الطلب عبر واتساب
+    <button class="btn btn-whatsapp cart-page-submit" id="checkoutBtn" type="button" ${!state.cart.length ? 'disabled' : ''}>
+      ${isSubmittingOrder ? 'جارٍ تجهيز الطلب...' : 'إرسال الطلب عبر واتساب'}
     </button>
+
+    <a href="./index.html#products" class="btn btn-ghost cart-page-back-btn">إكمال التسوق</a>
   `;
 }
 
@@ -130,18 +152,28 @@ function persistAndRender() {
   renderSummary();
 }
 
+function clearCartAndForm() {
+  state.cart = [];
+  writeCart([]);
+  updateCartCount();
+  renderCartItems();
+  renderSummary();
+
+  const fields = ['#customerName', '#customerPhone', '#customerCity', '#customerNotes'];
+  fields.forEach((selector) => {
+    const el = $(selector);
+    if (el) el.value = '';
+  });
+}
+
 async function saveOrderToSupabase() {
   if (!supabaseClient) return;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-
-  const customerName = $('#customerName')?.value?.trim() || 'طلب من الموقع';
-  const customerPhone = $('#customerPhone')?.value?.trim() || '';
-  const customerCity = $('#customerCity')?.value?.trim() || '';
-  const customerNotes = $('#customerNotes')?.value?.trim() || '';
+  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
 
   const payload = {
-    customer_name: customerName,
+    customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
     city: customerCity,
     notes: customerNotes || 'لا يوجد',
@@ -152,44 +184,64 @@ async function saveOrderToSupabase() {
   };
 
   const { error } = await supabaseClient.from('orders').insert([payload]);
-  if (error) console.error('[Orders] Insert error:', error.message, error.details);
+  if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
 }
 
-function checkout() {
+async function checkout() {
   if (!state.cart.length) {
     showToast('السلة فارغة');
     return;
   }
 
-  const customerName = $('#customerName')?.value?.trim() || '';
-  const customerPhone = $('#customerPhone')?.value?.trim() || '';
-  const customerCity = $('#customerCity')?.value?.trim() || '';
-  const customerNotes = $('#customerNotes')?.value?.trim() || '';
+  if (isSubmittingOrder) return;
+
+  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
 
   if (!customerName || !customerPhone || !customerCity) {
     showToast('من فضلك املأ الاسم والموبايل والمدينة');
     return;
   }
 
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const lines = state.cart
-    .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
-    .join('\n\n');
+  if (!validatePhone(customerPhone)) {
+    showToast('اكتب رقم موبايل مصري صحيح');
+    return;
+  }
 
-  const msg =
-    `مرحبًا، أريد إتمام الطلب:\n\n` +
-    `الاسم: ${customerName}\n` +
-    `الموبايل: ${customerPhone}\n` +
-    `المدينة: ${customerCity}\n` +
-    `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
-    `المنتجات:\n\n${lines}\n\n` +
-    `الإجمالي: ${money(total)}\n` +
-    `الشحن: يتم تأكيده حسب المنطقة`;
+  isSubmittingOrder = true;
+  renderSummary();
 
-  window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+  try {
+    const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const lines = state.cart
+      .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
+      .join('\n\n');
 
-  if (supabaseClient) {
-    saveOrderToSupabase().catch((err) => console.error('[Checkout] save failed:', err));
+    const msg =
+      `مرحبًا، أريد إتمام الطلب:\n\n` +
+      `الاسم: ${customerName}\n` +
+      `الموبايل: ${customerPhone}\n` +
+      `المدينة: ${customerCity}\n` +
+      `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
+      `المنتجات:\n\n${lines}\n\n` +
+      `الإجمالي: ${money(total)}\n` +
+      `الشحن: يتم تأكيده حسب المنطقة`;
+
+    await saveOrderToSupabase();
+
+    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+
+    clearCartAndForm();
+    showToast('تم تجهيز الطلب بنجاح');
+
+    setTimeout(() => {
+      window.location.href = './index.html#products';
+    }, 1800);
+  } catch (err) {
+    console.error('[Checkout] failed:', err);
+    showToast('حدثت مشكلة أثناء حفظ الطلب');
+  } finally {
+    isSubmittingOrder = false;
+    renderSummary();
   }
 }
 
