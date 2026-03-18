@@ -476,26 +476,8 @@ function openProduct(id) {
 function closeProduct() {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.add('hidden');
-  if (!$('#cartOverlay')?.classList.contains('hidden')) return;
   document.body.style.overflow = '';
 }
-
-function openCart() {
-  const overlay = $('#cartOverlay');
-  const fab = $('#floatingWhatsApp');
-  if (overlay) overlay.classList.remove('hidden');
-  if (fab) fab.classList.add('hidden-mobile');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeCart() {
-  const overlay = $('#cartOverlay');
-  const fab = $('#floatingWhatsApp');
-  if (overlay) overlay.classList.add('hidden');
-  if (fab) fab.classList.remove('hidden-mobile');
-  document.body.style.overflow = '';
-}
-
 function guardMedia() {
   $$('video').forEach((video) => {
     video.addEventListener('error', () => {
@@ -543,17 +525,6 @@ document.addEventListener('click', (e) => {
     closeProduct();
     return;
   }
-
-  if (e.target.closest('#cartToggle')) {
-    openCart();
-    return;
-  }
-
-  if (e.target.id === 'closeCart' || e.target.id === 'cartOverlay') {
-    closeCart();
-    return;
-  }
-
   if (e.target.id === 'checkoutBtn') {
     checkout();
     return;
