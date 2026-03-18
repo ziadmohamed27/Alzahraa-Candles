@@ -1268,3 +1268,9 @@ button{font-family:inherit}
   .cart-page-item-image img{width:100%;height:220px}
   .cart-page-item-bottom{align-items:flex-start;flex-direction:column}
 }
+#checkoutBtn:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+  transform:none!important;
+  box-shadow:none!important;
+}
