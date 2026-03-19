@@ -1,420 +1,100 @@
-const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سلة التسوق | الزّهراء</title>
+  <meta name="description" content="راجع منتجاتك وأكمل طلبك بسهولة من سلة التسوق في الزّهراء.">
+  <meta name="theme-color" content="#6b9228">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 
-const $ = (s) => document.querySelector(s);
-const money = (v) => `${Number(v).toFixed(2)} ج.م`;
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-let supabaseClient = null;
-let isSubmittingOrder = false;
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="container nav">
+      <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
+        <span></span><span></span><span></span>
+      </a>
 
-(function initSupabase() {
-  if (!window.supabase || !SUPABASE_ANON_KEY) return;
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-})();
+      <a class="brand" href="./index.html">
+        <span class="brand-title">الزّهراء</span>
+        <span class="brand-sub">NATURAL SOAP</span>
+      </a>
 
-function showToast(message) {
-  const toast = $('#toast');
-  if (!toast) return;
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
-}
-
-function showOrderSuccess(orderNumber) {
-  const box = $('#orderSuccessBox');
-  if (!box) return;
-
-  box.innerHTML = `
-    <h3>تم إرسال طلبك بنجاح ✅</h3>
-    <p>احتفظ برقم الطلب للمتابعة:</p>
-    <div class="order-success-actions">
-      <div class="order-success-number">${escHtml(orderNumber || 'تم حفظ الطلب')}</div>
-      <button type="button" class="btn btn-ghost btn-sm" id="copyOrderNumberBtn">نسخ الرقم</button>
+      <a class="icon-btn cart-btn" href="./cart.html" aria-label="فتح السلة">
+        <span class="cart-emoji">🛍️</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
     </div>
-    <p>سيتم التواصل معك لتأكيد الطلب والتوصيل.</p>
-  `;
+  </header>
 
-  box.classList.remove('hidden');
-  box.classList.add('show');
-  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function escHtml(str) {
-  if (typeof str !== 'string') return String(str ?? '');
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function readCart() {
-  try {
-    const raw = localStorage.getItem('soap-cart');
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeCart(cart) {
-  localStorage.setItem('soap-cart', JSON.stringify(cart));
-}
-
-const state = {
-  cart: readCart(),
-};
-
-const CUSTOMER_STORAGE_KEY = 'soap-customer-info';
-
-function saveCustomerInfo() {
-  const payload = {
-    name: $('#customerName')?.value?.trim() || '',
-    phone: $('#customerPhone')?.value?.trim() || '',
-    city: $('#customerCity')?.value?.trim() || '',
-    notes: $('#customerNotes')?.value?.trim() || '',
-  };
-  localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(payload));
-}
-
-function loadCustomerInfo() {
-  try {
-    const raw = localStorage.getItem(CUSTOMER_STORAGE_KEY);
-    const data = raw ? JSON.parse(raw) : null;
-    if (!data) return;
-
-    if ($('#customerName')) $('#customerName').value = data.name || '';
-    if ($('#customerPhone')) $('#customerPhone').value = data.phone || '';
-    if ($('#customerCity')) $('#customerCity').value = data.city || '';
-    if ($('#customerNotes')) $('#customerNotes').value = data.notes || '';
-  } catch {}
-}
-
-function clearCustomerInfo() {
-  localStorage.removeItem(CUSTOMER_STORAGE_KEY);
-}
-
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('تم نسخ رقم الطلب');
-  }).catch(() => {
-    showToast('تعذر نسخ رقم الطلب');
-  });
-}
-
-function generateOrderNumber() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  const h = String(now.getHours()).padStart(2, '0');
-  const min = String(now.getMinutes()).padStart(2, '0');
-  const rand = Math.floor(1000 + Math.random() * 9000);
-
-  return `AZ-${y}${m}${d}-${h}${min}-${rand}`;
-}
-
-function updateCartCount() {
-  const count = state.cart.reduce((s, i) => s + i.qty, 0);
-  const el = $('#cartCount');
-  if (el) el.textContent = count;
-}
-
-function validatePhone(phone) {
-  const normalized = phone.replace(/\s+/g, '');
-  return /^01[0-2,5][0-9]{8}$/.test(normalized);
-}
-
-function getOrderFormData() {
-  const customerName = $('#customerName')?.value?.trim() || '';
-  const customerPhone = $('#customerPhone')?.value?.trim() || '';
-  const customerCity = $('#customerCity')?.value?.trim() || '';
-  const customerNotes = $('#customerNotes')?.value?.trim() || '';
-
-  return {
-    customerName,
-    customerPhone,
-    customerCity,
-    customerNotes,
-  };
-}
-
-function renderCartItems() {
-  const el = $('#cartPageItems');
-  if (!el) return;
-
-  if (!state.cart.length) {
-    el.innerHTML = `
-      <div class="empty cart-page-empty">
-        <p>السلة فارغة حاليًا.</p>
-        <a href="./index.html#products" class="btn btn-ghost cart-empty-btn">ابدأ التسوق</a>
-      </div>
-    `;
-    return;
-  }
-
-  el.innerHTML = state.cart.map((item) => `
-    <article class="cart-page-item">
-      <div class="cart-page-item-image">
-        <img src="${item.image}" alt="${escHtml(item.name)}" onerror="this.style.background='#eee';this.removeAttribute('src')">
-      </div>
-
-      <div class="cart-page-item-content">
-        <div class="cart-page-item-top">
+  <main class="cart-page">
+    <section class="section">
+      <div class="container">
+        <div class="cart-page-head">
           <div>
-            <h3>${escHtml(item.name)}</h3>
-            <p>${escHtml(item.weight || '')}</p>
+            <span class="pill small">سلة التسوق</span>
+            <h1>راجع طلبك قبل الإرسال</h1>
+            <p>عدّل الكميات، أضف بياناتك، ثم أرسل الطلب عبر واتساب وسيتم تسجيله تلقائيًا.</p>
           </div>
-          <button class="remove-btn" data-action="remove" data-id="${item.id}" type="button">🗑️</button>
+
+          <a href="./index.html#products" class="btn btn-ghost">العودة للمنتجات</a>
         </div>
 
-        <div class="cart-page-item-bottom">
-          <div class="cart-page-item-price">${money(item.price)}</div>
+        <div id="orderSuccessBox" class="order-success-box hidden"></div>
 
-          <div class="qty-row qty-row-lg">
-            <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <strong>${item.qty}</strong>
-            <button data-action="dec" data-id="${item.id}" type="button">-</button>
-          </div>
+        <div class="cart-page-layout">
+          <section class="cart-page-items-wrap">
+            <div class="cart-page-title-row">
+              <h2>المنتجات المختارة</h2>
+              <button class="btn btn-ghost btn-sm" id="clearCartBtn" type="button">تفريغ السلة</button>
+            </div>
+
+            <div id="cartPageItems" class="cart-page-items"></div>
+          </section>
+
+          <aside class="cart-page-summary">
+            <div class="order-form order-form-page" id="orderForm">
+              <h3>بيانات الطلب</h3>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label for="customerName">الاسم</label>
+                  <input type="text" id="customerName" placeholder="اكتب اسمك" autocomplete="name">
+                </div>
+
+                <div class="field">
+                  <label for="customerPhone">رقم الموبايل</label>
+                  <input type="tel" id="customerPhone" placeholder="01xxxxxxxxx" inputmode="tel" autocomplete="tel">
+                </div>
+
+                <div class="field">
+                  <label for="customerCity">المدينة / المحافظة</label>
+                  <input type="text" id="customerCity" placeholder="مثال: القاهرة" autocomplete="address-level2">
+                </div>
+
+                <div class="field field-full">
+                  <label for="customerNotes">ملاحظات</label>
+                  <textarea id="customerNotes" rows="4" placeholder="أي تفاصيل إضافية عن الطلب أو العنوان"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="cart-page-summary-card" id="cartPageSummary"></div>
+          </aside>
         </div>
       </div>
-    </article>
-  `).join('');
-}
+    </section>
+  </main>
 
-function renderSummary() {
-  const el = $('#cartPageSummary');
-  if (!el) return;
+  <div class="toast" id="toast" aria-live="polite"></div>
 
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
-
-  const itemsSummary = state.cart.length
-    ? state.cart.map((item) => `
-      <div class="summary-product">
-        <div class="summary-product-head">
-          <strong>${escHtml(item.name)}</strong>
-        </div>
-        <div class="summary-product-row">
-          <span>سعر القطعة</span>
-          <span>${money(item.price)}</span>
-        </div>
-        <div class="summary-product-row">
-          <span>الكمية</span>
-          <span>${item.qty}</span>
-        </div>
-        <div class="summary-product-row summary-product-total">
-          <span>إجمالي المنتج</span>
-          <span>${money(item.price * item.qty)}</span>
-        </div>
-      </div>
-    `).join('')
-    : `<div class="empty">لا توجد منتجات في السلة.</div>`;
-
-  el.innerHTML = `
-    <h3>ملخص الطلب</h3>
-
-    <div class="summary-products-list">
-      ${itemsSummary}
-    </div>
-
-    <div class="cart-summary">
-      <div class="cart-summary-row">
-        <span>عدد القطع</span>
-        <strong>${totalItems}</strong>
-      </div>
-      <div class="cart-summary-row">
-        <span>المجموع الفرعي</span>
-        <strong class="price">${money(total)}</strong>
-      </div>
-      <div class="cart-summary-row">
-        <span>الشحن</span>
-        <strong>يتم تأكيده حسب المنطقة</strong>
-      </div>
-      <div class="cart-summary-row total-row">
-        <span>الإجمالي النهائي</span>
-        <strong class="price">${money(total)}</strong>
-      </div>
-    </div>
-
-    <p class="helper">
-      سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.
-    </p>
-
-    <button class="btn btn-whatsapp cart-page-submit" id="checkoutBtn" type="button" ${!state.cart.length ? 'disabled' : ''}>
-      ${isSubmittingOrder ? 'جارٍ تجهيز الطلب...' : 'إرسال الطلب عبر واتساب'}
-    </button>
-
-    <a href="./index.html#products" class="btn btn-ghost cart-page-back-btn">إكمال التسوق</a>
-  `;
-}
-
-function persistAndRender() {
-  writeCart(state.cart);
-  updateCartCount();
-  renderCartItems();
-  renderSummary();
-}
-
-function clearCartAndForm() {
-  state.cart = [];
-  writeCart([]);
-  clearCustomerInfo();
-
-  const fields = ['#customerName', '#customerPhone', '#customerCity', '#customerNotes'];
-  fields.forEach((selector) => {
-    const el = $(selector);
-    if (el) el.value = '';
-  });
-
-  updateCartCount();
-  renderCartItems();
-  renderSummary();
-}
-
-async function saveOrderToSupabase(orderNumber) {
-  if (!supabaseClient) return true;
-
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
-
-  const payload = {
-    order_number: orderNumber,
-    customer_name: customerName || 'طلب من الموقع',
-    phone: customerPhone,
-    city: customerCity,
-    notes: customerNotes || 'لا يوجد',
-    items_json: state.cart,
-    total,
-    status: 'pending',
-    source: 'website',
-  };
-
-  const { error } = await supabaseClient
-    .from('orders')
-    .insert([payload]);
-
-  if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
-
-  return true;
-}
-
-async function checkout() {
-  if (!state.cart.length) {
-    showToast('السلة فارغة');
-    return;
-  }
-
-  if (isSubmittingOrder) return;
-
-  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
-
-  if (!customerName || !customerPhone || !customerCity) {
-    showToast('من فضلك املأ الاسم والموبايل والمدينة');
-    return;
-  }
-
-  if (!validatePhone(customerPhone)) {
-    showToast('اكتب رقم موبايل مصري صحيح');
-    return;
-  }
-
-  isSubmittingOrder = true;
-  renderSummary();
-
-  try {
-    const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const lines = state.cart
-      .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
-      .join('\n\n');
-
-    const orderNumber = generateOrderNumber();
-
-    const msg =
-      `مرحبًا، أريد إتمام الطلب:\n\n` +
-      `رقم الطلب: ${orderNumber}\n` +
-      `الاسم: ${customerName}\n` +
-      `الموبايل: ${customerPhone}\n` +
-      `المدينة: ${customerCity}\n` +
-      `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
-      `المنتجات:\n\n${lines}\n\n` +
-      `الإجمالي: ${money(total)}\n` +
-      `الشحن: يتم تأكيده حسب المنطقة`;
-
-    await saveOrderToSupabase(orderNumber);
-
-    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
-
-    clearCartAndForm();
-    showOrderSuccess(orderNumber);
-    showToast('تم إرسال الطلب بنجاح');
-  } catch (err) {
-    console.error('[Checkout] failed:', err);
-    showToast('حدثت مشكلة أثناء حفظ الطلب');
-  } finally {
-    isSubmittingOrder = false;
-    renderSummary();
-  }
-}
-
-document.addEventListener('input', (e) => {
-  if (
-    e.target.id === 'customerName' ||
-    e.target.id === 'customerPhone' ||
-    e.target.id === 'customerCity' ||
-    e.target.id === 'customerNotes'
-  ) {
-    saveCustomerInfo();
-  }
-});
-
-document.addEventListener('click', (e) => {
-  const action = e.target.dataset.action;
-
-  if (action) {
-    const id = Number(e.target.dataset.id);
-    const item = state.cart.find((i) => Number(i.id) === id);
-    if (!item) return;
-
-    if (action === 'inc') {
-      item.qty += 1;
-    } else if (action === 'dec') {
-      if (item.qty > 1) item.qty -= 1;
-      else state.cart = state.cart.filter((i) => Number(i.id) !== id);
-    } else if (action === 'remove') {
-      state.cart = state.cart.filter((i) => Number(i.id) !== id);
-    }
-
-    persistAndRender();
-    return;
-  }
-
-  if (e.target.id === 'checkoutBtn') {
-    checkout();
-    return;
-  }
-
-  if (e.target.id === 'clearCartBtn') {
-    state.cart = [];
-    persistAndRender();
-    showToast('تم تفريغ السلة');
-    return;
-  }
-
-  if (e.target.id === 'copyOrderNumberBtn') {
-    const numberEl = document.querySelector('.order-success-number');
-    if (numberEl) copyText(numberEl.textContent.trim());
-  }
-});
-
-function init() {
-  updateCartCount();
-  renderCartItems();
-  renderSummary();
-  loadCustomerInfo();
-}
-
-document.addEventListener('DOMContentLoaded', init);
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./cart.js"></script>
+</body>
+</html>
