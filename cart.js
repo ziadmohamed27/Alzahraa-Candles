@@ -105,6 +105,18 @@ function copyText(text) {
   });
 }
 
+function generateOrderNumber() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const h = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const rand = Math.floor(1000 + Math.random() * 9000);
+
+  return `AZ-${y}${m}${d}-${h}${min}-${rand}`;
+}
+
 function updateCartCount() {
   const count = state.cart.reduce((s, i) => s + i.qty, 0);
   const el = $('#cartCount');
@@ -263,13 +275,14 @@ function clearCartAndForm() {
   renderSummary();
 }
 
-async function saveOrderToSupabase() {
+async function saveOrderToSupabase(orderNumber) {
   if (!supabaseClient) return true;
 
   const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
   const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
 
   const payload = {
+    order_number: orderNumber,
     customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
     city: customerCity,
@@ -318,8 +331,11 @@ async function checkout() {
       .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
       .join('\n\n');
 
+    const orderNumber = generateOrderNumber();
+
     const msg =
       `مرحبًا، أريد إتمام الطلب:\n\n` +
+      `رقم الطلب: ${orderNumber}\n` +
       `الاسم: ${customerName}\n` +
       `الموبايل: ${customerPhone}\n` +
       `المدينة: ${customerCity}\n` +
@@ -328,12 +344,12 @@ async function checkout() {
       `الإجمالي: ${money(total)}\n` +
       `الشحن: يتم تأكيده حسب المنطقة`;
 
-    await saveOrderToSupabase();
+    await saveOrderToSupabase(orderNumber);
 
     window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
 
     clearCartAndForm();
-    showOrderSuccess('تم حفظ الطلب');
+    showOrderSuccess(orderNumber);
     showToast('تم إرسال الطلب بنجاح');
   } catch (err) {
     console.error('[Checkout] failed:', err);
