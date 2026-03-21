@@ -2,10 +2,20 @@ const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
 
 const $ = (s) => document.querySelector(s);
-const money = (v) => `${Number(v).toFixed(2)} ج.م`;
+
+function toSafeNumber(value, fallback = 0) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : fallback;
+}
+
+function money(v) {
+  return `${toSafeNumber(v, 0).toFixed(2)} ج.م`;
+}
 
 let supabaseClient = null;
 let isSubmittingOrder = false;
+let orderSubmittedSuccessfully = false;
+let lastSubmittedOrderNumber = '';
 
 (function initSupabase() {
   if (!window.supabase || !SUPABASE_ANON_KEY) return;
@@ -19,6 +29,16 @@ function showToast(message) {
   toast.classList.add('show');
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function escHtml(str) {
+  if (typeof str !== 'string') return String(str ?? '');
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function showOrderSuccess(orderNumber) {
@@ -40,21 +60,46 @@ function showOrderSuccess(orderNumber) {
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function escHtml(str) {
-  if (typeof str !== 'string') return String(str ?? '');
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+function hideOrderSuccess() {
+  const box = $('#orderSuccessBox');
+  if (!box) return;
+  box.classList.add('hidden');
+  box.classList.remove('show');
+  box.innerHTML = '';
+}
+
+function sanitizeCartItem(item) {
+  if (!item || typeof item !== 'object') return null;
+
+  const id = toSafeNumber(item.id, NaN);
+  const price = toSafeNumber(item.price, NaN);
+  const qty = Math.max(1, Math.floor(toSafeNumber(item.qty, 1)));
+  const name = typeof item.name === 'string' ? item.name.trim() : '';
+  const image = typeof item.image === 'string' ? item.image.trim() : '';
+  const weight = typeof item.weight === 'string' ? item.weight.trim() : '';
+
+  if (!Number.isFinite(id) || !Number.isFinite(price) || !name) return null;
+
+  return {
+    ...item,
+    id,
+    name,
+    image,
+    weight,
+    price,
+    qty,
+  };
 }
 
 function readCart() {
   try {
     const raw = localStorage.getItem('soap-cart');
     const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map(sanitizeCartItem)
+      .filter(Boolean);
   } catch {
     return [];
   }
@@ -97,12 +142,44 @@ function clearCustomerInfo() {
   localStorage.removeItem(CUSTOMER_STORAGE_KEY);
 }
 
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('تم نسخ رقم الطلب');
-  }).catch(() => {
-    showToast('تعذر نسخ رقم الطلب');
-  });
+function fallbackCopyText(text) {
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+async function copyText(text) {
+  const value = String(text || '').trim();
+  if (!value) {
+    showToast('لا يوجد رقم لنسخه');
+    return;
+  }
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(value);
+      showToast('تم نسخ رقم الطلب');
+      return;
+    }
+
+    const ok = fallbackCopyText(value);
+    showToast(ok ? 'تم نسخ رقم الطلب' : 'تعذر نسخ رقم الطلب');
+  } catch {
+    const ok = fallbackCopyText(value);
+    showToast(ok ? 'تم نسخ رقم الطلب' : 'تعذر نسخ رقم الطلب');
+  }
 }
 
 function generateOrderNumber() {
@@ -118,7 +195,7 @@ function generateOrderNumber() {
 }
 
 function updateCartCount() {
-  const count = state.cart.reduce((s, i) => s + i.qty, 0);
+  const count = state.cart.reduce((s, i) => s + toSafeNumber(i.qty, 0), 0);
   const el = $('#cartCount');
   if (el) el.textContent = count;
 }
@@ -142,6 +219,16 @@ function getOrderFormData() {
   };
 }
 
+function calculateCartTotal() {
+  return state.cart.reduce((s, i) => s + (toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0)), 0);
+}
+
+function resetSuccessState() {
+  orderSubmittedSuccessfully = false;
+  lastSubmittedOrderNumber = '';
+  hideOrderSuccess();
+}
+
 function renderCartItems() {
   const el = $('#cartPageItems');
   if (!el) return;
@@ -149,8 +236,10 @@ function renderCartItems() {
   if (!state.cart.length) {
     el.innerHTML = `
       <div class="empty cart-page-empty">
-        <p>السلة فارغة حاليًا.</p>
-        <a href="./index.html#products" class="btn btn-ghost cart-empty-btn">ابدأ التسوق</a>
+        <p>${orderSubmittedSuccessfully ? 'تم إرسال طلبك، والسلة فارغة الآن.' : 'السلة فارغة حاليًا.'}</p>
+        <a href="./index.html#products" class="btn btn-ghost cart-empty-btn">
+          ${orderSubmittedSuccessfully ? 'العودة للمنتجات' : 'ابدأ التسوق'}
+        </a>
       </div>
     `;
     return;
@@ -159,7 +248,7 @@ function renderCartItems() {
   el.innerHTML = state.cart.map((item) => `
     <article class="cart-page-item">
       <div class="cart-page-item-image">
-        <img src="${item.image}" alt="${escHtml(item.name)}" onerror="this.style.background='#eee';this.removeAttribute('src')">
+        <img src="${escHtml(item.image || '')}" alt="${escHtml(item.name)}" onerror="this.style.background='#eee';this.removeAttribute('src')">
       </div>
 
       <div class="cart-page-item-content">
@@ -189,8 +278,8 @@ function renderSummary() {
   const el = $('#cartPageSummary');
   if (!el) return;
 
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
+  const total = calculateCartTotal();
+  const totalItems = state.cart.reduce((s, i) => s + toSafeNumber(i.qty, 0), 0);
 
   const itemsSummary = state.cart.length
     ? state.cart.map((item) => `
@@ -212,7 +301,14 @@ function renderSummary() {
         </div>
       </div>
     `).join('')
-    : `<div class="empty">لا توجد منتجات في السلة.</div>`;
+    : `<div class="empty">${orderSubmittedSuccessfully ? 'تم إرسال الطلب بنجاح.' : 'لا توجد منتجات في السلة.'}</div>`;
+
+  const checkoutBtnDisabled = !state.cart.length || isSubmittingOrder || orderSubmittedSuccessfully;
+  const checkoutBtnText = orderSubmittedSuccessfully
+    ? 'تم إرسال الطلب'
+    : isSubmittingOrder
+      ? 'جارٍ تجهيز الطلب...'
+      : 'إرسال الطلب عبر واتساب';
 
   el.innerHTML = `
     <h3>ملخص الطلب</h3>
@@ -244,8 +340,13 @@ function renderSummary() {
       سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.
     </p>
 
-    <button class="btn btn-whatsapp cart-page-submit" id="checkoutBtn" type="button" ${!state.cart.length ? 'disabled' : ''}>
-      ${isSubmittingOrder ? 'جارٍ تجهيز الطلب...' : 'إرسال الطلب عبر واتساب'}
+    <button
+      class="btn btn-whatsapp cart-page-submit"
+      id="checkoutBtn"
+      type="button"
+      ${checkoutBtnDisabled ? 'disabled' : ''}
+    >
+      ${checkoutBtnText}
     </button>
 
     <a href="./index.html#products" class="btn btn-ghost cart-page-back-btn">إكمال التسوق</a>
@@ -253,6 +354,10 @@ function renderSummary() {
 }
 
 function persistAndRender() {
+  if (state.cart.length) {
+    resetSuccessState();
+  }
+
   writeCart(state.cart);
   updateCartCount();
   renderCartItems();
@@ -275,13 +380,11 @@ function clearCartAndForm() {
   renderSummary();
 }
 
-async function saveOrderToSupabase(orderNumber) {
-  if (!supabaseClient) return true;
-
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+function buildOrderPayload(orderNumber) {
+  const total = calculateCartTotal();
   const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
 
-  const payload = {
+  return {
     order_number: orderNumber,
     customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
@@ -292,14 +395,94 @@ async function saveOrderToSupabase(orderNumber) {
     status: 'pending',
     source: 'website',
   };
+}
+
+function isDuplicateOrderNumberError(error) {
+  const text = `${error?.code || ''} ${error?.message || ''} ${error?.details || ''}`.toLowerCase();
+  return error?.code === '23505' || (text.includes('duplicate') && text.includes('order_number'));
+}
+
+function getFriendlyOrderError(error) {
+  if (!error) return 'حدثت مشكلة غير متوقعة أثناء حفظ الطلب';
+
+  if (isDuplicateOrderNumberError(error)) {
+    return 'حدث تعارض نادر في رقم الطلب، وتمت إعادة المحاولة تلقائيًا';
+  }
+
+  const text = `${error?.message || ''} ${error?.details || ''}`.toLowerCase();
+
+  if (text.includes('network') || text.includes('fetch') || text.includes('failed to fetch')) {
+    return 'تعذر الاتصال بالخدمة الآن. تأكد من الإنترنت ثم حاول مرة أخرى';
+  }
+
+  if (text.includes('permission') || text.includes('policy') || text.includes('row-level security')) {
+    return 'تعذر حفظ الطلب بسبب إعدادات الصلاحيات في قاعدة البيانات';
+  }
+
+  return 'حدثت مشكلة أثناء حفظ الطلب، حاول مرة أخرى بعد قليل';
+}
+
+async function insertOrderOnce(orderNumber) {
+  if (!supabaseClient) {
+    return { ok: true, orderNumber };
+  }
+
+  const payload = buildOrderPayload(orderNumber);
 
   const { error } = await supabaseClient
     .from('orders')
     .insert([payload]);
 
-  if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
+  if (error) {
+    throw error;
+  }
 
-  return true;
+  return { ok: true, orderNumber };
+}
+
+async function saveOrderWithUniqueNumber(maxRetries = 3) {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+    const orderNumber = generateOrderNumber();
+
+    try {
+      return await insertOrderOnce(orderNumber);
+    } catch (error) {
+      lastError = error;
+
+      if (isDuplicateOrderNumberError(error) && attempt < maxRetries) {
+        console.warn(`[Checkout] duplicate order_number on attempt ${attempt}, retrying...`);
+        continue;
+      }
+
+      throw lastError;
+    }
+  }
+
+  throw lastError || new Error('تعذر حفظ الطلب');
+}
+
+function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes) {
+  const total = calculateCartTotal();
+
+  const lines = state.cart
+    .map((i, n) =>
+      `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`
+    )
+    .join('\n\n');
+
+  return (
+    `مرحبًا، أريد إتمام الطلب:\n\n` +
+    `رقم الطلب: ${orderNumber}\n` +
+    `الاسم: ${customerName}\n` +
+    `الموبايل: ${customerPhone}\n` +
+    `المدينة: ${customerCity}\n` +
+    `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
+    `المنتجات:\n\n${lines}\n\n` +
+    `الإجمالي: ${money(total)}\n` +
+    `الشحن: يتم تأكيده حسب المنطقة`
+  );
 }
 
 async function checkout() {
@@ -308,7 +491,7 @@ async function checkout() {
     return;
   }
 
-  if (isSubmittingOrder) return;
+  if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
   const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
 
@@ -326,34 +509,20 @@ async function checkout() {
   renderSummary();
 
   try {
-    const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const lines = state.cart
-      .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
-      .join('\n\n');
-
-    const orderNumber = generateOrderNumber();
-
-    const msg =
-      `مرحبًا، أريد إتمام الطلب:\n\n` +
-      `رقم الطلب: ${orderNumber}\n` +
-      `الاسم: ${customerName}\n` +
-      `الموبايل: ${customerPhone}\n` +
-      `المدينة: ${customerCity}\n` +
-      `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
-      `المنتجات:\n\n${lines}\n\n` +
-      `الإجمالي: ${money(total)}\n` +
-      `الشحن: يتم تأكيده حسب المنطقة`;
-
-    await saveOrderToSupabase(orderNumber);
+    const { orderNumber } = await saveOrderWithUniqueNumber(3);
+    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes);
 
     window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+
+    orderSubmittedSuccessfully = true;
+    lastSubmittedOrderNumber = orderNumber;
 
     clearCartAndForm();
     showOrderSuccess(orderNumber);
     showToast('تم إرسال الطلب بنجاح');
   } catch (err) {
     console.error('[Checkout] failed:', err);
-    showToast('حدثت مشكلة أثناء حفظ الطلب');
+    showToast(getFriendlyOrderError(err));
   } finally {
     isSubmittingOrder = false;
     renderSummary();
@@ -399,6 +568,7 @@ document.addEventListener('click', (e) => {
 
   if (e.target.id === 'clearCartBtn') {
     state.cart = [];
+    resetSuccessState();
     persistAndRender();
     showToast('تم تفريغ السلة');
     return;
@@ -406,15 +576,21 @@ document.addEventListener('click', (e) => {
 
   if (e.target.id === 'copyOrderNumberBtn') {
     const numberEl = document.querySelector('.order-success-number');
-    if (numberEl) copyText(numberEl.textContent.trim());
+    if (numberEl) {
+      copyText(numberEl.textContent.trim());
+      return;
+    }
+
+    if (lastSubmittedOrderNumber) {
+      copyText(lastSubmittedOrderNumber);
+    }
   }
 });
 
 function init() {
   updateCartCount();
+  loadCustomerInfo();
   renderCartItems();
   renderSummary();
-  loadCustomerInfo();
 }
-
 document.addEventListener('DOMContentLoaded', init);
