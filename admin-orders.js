@@ -388,34 +388,64 @@ async function copyText(text) {
   }
 }
 
-function exportCurrentViewToCsv() {
-  const rows = [...document.querySelectorAll('.admin-order-card')].map(card => {
-    const id = card.dataset.orderId;
-    return allOrders.find(o => String(o.id) === String(id));
-  }).filter(Boolean);
+function csvText(value, forceText = false) {
+  const raw = String(value ?? '');
+  const escaped = raw.replace(/"/g, '""');
 
-  const header = ['رقم الطلب','الاسم','الهاتف','المدينة','الحالة','الإجمالي','عدد القطع','التاريخ'];
-  const lines = [header.join(',')];
+  if (forceText) {
+    return `"=""${escaped}"""`;
+  }
+
+  return `"${escaped}"`;
+}
+
+function exportCurrentViewToCsv() {
+  const rows = [...document.querySelectorAll('.admin-order-card')]
+    .map(card => {
+      const id = card.dataset.orderId;
+      return allOrders.find(o => String(o.id) === String(id));
+    })
+    .filter(Boolean);
+
+  const header = [
+    'رقم الطلب',
+    'الاسم',
+    'الهاتف',
+    'المدينة',
+    'الحالة',
+    'الإجمالي',
+    'عدد القطع',
+    'التاريخ'
+  ];
+
+  const lines = [header.map(h => csvText(h)).join(',')];
+
   rows.forEach(order => {
     const cols = [
-      order.order_number,
-      order.customer_name,
-      order.phone,
-      order.city,
-      getStatusMeta(order.status).label,
-      Number(order.total || 0).toFixed(2),
-      getOrderItemsCount(order),
-      formatDate(order.created_at),
-    ].map(v => `"${String(v ?? '').replaceAll('"','""')}"`);
+      csvText(order.order_number, true),
+      csvText(order.customer_name),
+      csvText(order.phone, true),
+      csvText(order.city),
+      csvText(getStatusMeta(order.status).label),
+      csvText(Number(order.total || 0).toFixed(2)),
+      csvText(getOrderItemsCount(order)),
+      csvText(formatDate(order.created_at)),
+    ];
+
     lines.push(cols.join(','));
   });
 
-  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const csvContent = '\uFEFF' + lines.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
+
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'orders-export.csv';
+  link.download = `orders-export-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+
   URL.revokeObjectURL(url);
 }
 
