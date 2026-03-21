@@ -16,6 +16,9 @@ let supabaseClient = null;
 let isSubmittingOrder = false;
 let orderSubmittedSuccessfully = false;
 let lastSubmittedOrderNumber = '';
+const URGENT_RATE = 0.05;
+const URGENT_MIN_FEE = 10;
+const WHATSAPP_NUMBER = '201095314011';
 
 (function initSupabase() {
   if (!window.supabase || !SUPABASE_ANON_KEY) return;
@@ -60,7 +63,30 @@ function showOrderSuccess(orderNumber) {
   box.classList.add('show');
   document.body.classList.add('order-submitted');
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  launchSoapBubbles();
 }
+
+function launchSoapBubbles() {
+  const container = document.createElement('div');
+  container.className = 'soap-bubbles-layer';
+
+  for (let i = 0; i < 20; i += 1) {
+    const bubble = document.createElement('span');
+    bubble.className = 'soap-bubble';
+    const size = 18 + Math.random() * 54;
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.left = `${Math.random() * 100}%`;
+    bubble.style.animationDelay = `${Math.random() * 0.4}s`;
+    bubble.style.animationDuration = `${3.6 + Math.random() * 2.2}s`;
+    bubble.style.setProperty('--drift', `${-40 + Math.random() * 80}px`);
+    container.appendChild(bubble);
+  }
+
+  document.body.appendChild(container);
+  setTimeout(() => container.remove(), 6500);
+}
+
 
 function hideOrderSuccess() {
   const box = $('#orderSuccessBox');
@@ -124,6 +150,7 @@ function saveCustomerInfo() {
     phone: $('#customerPhone')?.value?.trim() || '',
     city: $('#customerCity')?.value?.trim() || '',
     notes: $('#customerNotes')?.value?.trim() || '',
+    urgent: !!$('#isUrgentOrder')?.checked,
   };
   localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(payload));
 }
@@ -138,6 +165,7 @@ function loadCustomerInfo() {
     if ($('#customerPhone')) $('#customerPhone').value = data.phone || '';
     if ($('#customerCity')) $('#customerCity').value = data.city || '';
     if ($('#customerNotes')) $('#customerNotes').value = data.notes || '';
+    if ($('#isUrgentOrder')) $('#isUrgentOrder').checked = !!data.urgent;
   } catch {}
 }
 
@@ -208,17 +236,41 @@ function validatePhone(phone) {
   return /^01[0-2,5][0-9]{8}$/.test(normalized);
 }
 
+
+function isUrgentOrderSelected() {
+  return !!$('#isUrgentOrder')?.checked;
+}
+
+function calculateUrgentFee(baseTotal = calculateCartTotal()) {
+  if (!isUrgentOrderSelected()) return 0;
+  const percentFee = toSafeNumber(baseTotal, 0) * URGENT_RATE;
+  return Math.max(URGENT_MIN_FEE, percentFee);
+}
+
+function calculateGrandTotal() {
+  const baseTotal = calculateCartTotal();
+  return baseTotal + calculateUrgentFee(baseTotal);
+}
+
+function normalizeQtyValue(value) {
+  const parsed = Math.floor(toSafeNumber(value, NaN));
+  if (!Number.isFinite(parsed) || parsed < 1) return 1;
+  return parsed;
+}
+
 function getOrderFormData() {
   const customerName = $('#customerName')?.value?.trim() || '';
   const customerPhone = $('#customerPhone')?.value?.trim() || '';
   const customerCity = $('#customerCity')?.value?.trim() || '';
   const customerNotes = $('#customerNotes')?.value?.trim() || '';
+  const isUrgent = isUrgentOrderSelected();
 
   return {
     customerName,
     customerPhone,
     customerCity,
     customerNotes,
+    isUrgent,
   };
 }
 
@@ -268,7 +320,7 @@ function renderCartItems() {
 
           <div class="qty-row qty-row-lg">
             <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <strong>${item.qty}</strong>
+            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="number" min="1" step="1" value="${item.qty}" inputmode="numeric" aria-label="كمية ${escHtml(item.name)}">
             <button data-action="dec" data-id="${item.id}" type="button">-</button>
           </div>
         </div>
@@ -281,8 +333,11 @@ function renderSummary() {
   const el = $('#cartPageSummary');
   if (!el) return;
 
-  const total = calculateCartTotal();
+  const subtotal = calculateCartTotal();
+  const urgentFee = calculateUrgentFee(subtotal);
+  const grandTotal = subtotal + urgentFee;
   const totalItems = state.cart.reduce((s, i) => s + toSafeNumber(i.qty, 0), 0);
+  const isUrgent = isUrgentOrderSelected();
 
   const itemsSummary = state.cart.length
     ? state.cart.map((item) => `
@@ -327,21 +382,27 @@ function renderSummary() {
       </div>
       <div class="cart-summary-row">
         <span>المجموع الفرعي</span>
-        <strong class="price">${money(total)}</strong>
+        <strong class="price">${money(subtotal)}</strong>
       </div>
-      <div class="cart-summary-row">
+      ${isUrgent ? `
+      <div class="cart-summary-row urgent-row">
+        <span>رسوم الطلب المستعجل</span>
+        <strong class="price">${money(urgentFee)}</strong>
+      </div>` : ''}
+      <div class="cart-summary-row shipping-row">
         <span>الشحن</span>
-        <strong>يتم تأكيده حسب المنطقة</strong>
+        <strong>(+ مصاريف الشحن)</strong>
       </div>
       <div class="cart-summary-row total-row">
-        <span>الإجمالي النهائي</span>
-        <strong class="price">${money(total)}</strong>
+        <span>الإجمالي الحالي قبل الشحن</span>
+        <strong class="price">${money(grandTotal)}</strong>
       </div>
     </div>
 
-    <p class="helper">
-      سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.
-    </p>
+    <div class="cart-extra-notes">
+      <p class="helper shipping-helper">سيتم إضافة قيمة الشحن لاحقًا حسب المنطقة.</p>
+      ${isUrgent ? `<p class="helper urgent-helper">تم اختيار طلب مستعجل، وستتم إضافة ${money(urgentFee)} على إجمالي الطلب الحالي.</p>` : ''}
+    </div>
 
     <button
       class="btn btn-whatsapp cart-page-submit"
@@ -378,21 +439,29 @@ function clearCartAndForm() {
     if (el) el.value = '';
   });
 
+  if ($('#isUrgentOrder')) $('#isUrgentOrder').checked = false;
+
   updateCartCount();
   renderCartItems();
   renderSummary();
 }
 
 function buildOrderPayload(orderNumber) {
-  const total = calculateCartTotal();
-  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
+  const subtotal = calculateCartTotal();
+  const urgentFee = calculateUrgentFee(subtotal);
+  const total = subtotal + urgentFee;
+  const { customerName, customerPhone, customerCity, customerNotes, isUrgent } = getOrderFormData();
+
+  const notesParts = [];
+  if (customerNotes) notesParts.push(customerNotes);
+  if (isUrgent) notesParts.push(`طلب مستعجل (+${money(urgentFee)})`);
 
   return {
     order_number: orderNumber,
     customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
     city: customerCity,
-    notes: customerNotes || 'لا يوجد',
+    notes: notesParts.join(' | ') || 'لا يوجد',
     items_json: state.cart,
     total,
     status: 'pending',
@@ -466,12 +535,14 @@ async function saveOrderWithUniqueNumber(maxRetries = 3) {
   throw lastError || new Error('تعذر حفظ الطلب');
 }
 
-function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes) {
-  const total = calculateCartTotal();
+function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes, isUrgent) {
+  const subtotal = calculateCartTotal();
+  const urgentFee = calculateUrgentFee(subtotal);
+  const grandTotal = subtotal + urgentFee;
 
   const lines = state.cart
     .map((i, n) =>
-      `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`
+      `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nسعر القطعة: ${money(toSafeNumber(i.price, 0))}\nإجمالي المنتج: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`
     )
     .join('\n\n');
 
@@ -481,10 +552,13 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
     `الاسم: ${customerName}\n` +
     `الموبايل: ${customerPhone}\n` +
     `المدينة: ${customerCity}\n` +
-    `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
+    `ملاحظات: ${customerNotes || 'لا يوجد'}\n` +
+    `حالة الطلب: ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}\n\n` +
     `المنتجات:\n\n${lines}\n\n` +
-    `الإجمالي: ${money(total)}\n` +
-    `الشحن: يتم تأكيده حسب المنطقة`
+    `المجموع الفرعي: ${money(subtotal)}\n` +
+    `${isUrgent ? `رسوم الطلب المستعجل: ${money(urgentFee)}\n` : ''}` +
+    `الإجمالي الحالي قبل الشحن: ${money(grandTotal)}\n` +
+    `الشحن: (+ مصاريف الشحن) ويتم تأكيده حسب المنطقة`
   );
 }
 
@@ -496,7 +570,7 @@ async function checkout() {
 
   if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
-  const { customerName, customerPhone, customerCity, customerNotes } = getOrderFormData();
+  const { customerName, customerPhone, customerCity, customerNotes, isUrgent } = getOrderFormData();
 
   if (!customerName || !customerPhone || !customerCity) {
     showToast('من فضلك املأ الاسم والموبايل والمدينة');
@@ -513,9 +587,9 @@ async function checkout() {
 
   try {
     const { orderNumber } = await saveOrderWithUniqueNumber(3);
-    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes);
+    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes, isUrgent);
 
-    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 
     orderSubmittedSuccessfully = true;
     lastSubmittedOrderNumber = orderNumber;
@@ -537,9 +611,28 @@ document.addEventListener('input', (e) => {
     e.target.id === 'customerName' ||
     e.target.id === 'customerPhone' ||
     e.target.id === 'customerCity' ||
-    e.target.id === 'customerNotes'
+    e.target.id === 'customerNotes' ||
+    e.target.id === 'isUrgentOrder'
   ) {
     saveCustomerInfo();
+  }
+});
+
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'isUrgentOrder') {
+    saveCustomerInfo();
+    renderSummary();
+    return;
+  }
+
+  if (e.target.dataset.action === 'set-qty') {
+    const id = Number(e.target.dataset.id);
+    const item = state.cart.find((i) => Number(i.id) === id);
+    if (!item) return;
+    item.qty = normalizeQtyValue(e.target.value);
+    e.target.value = item.qty;
+    persistAndRender();
+    return;
   }
 });
 

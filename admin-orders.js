@@ -8,6 +8,7 @@ const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 const ordersStats = document.getElementById('ordersStats');
 const ordersCountLabel = document.getElementById('ordersCountLabel');
+const ordersFilteredTotalLabel = document.getElementById('ordersFilteredTotalLabel');
 const logoutBtn = document.getElementById('logoutBtn');
 const refreshBtn = document.getElementById('refreshBtn');
 const dateFromInput = document.getElementById('dateFrom');
@@ -20,6 +21,7 @@ const adminLastUpdated = document.getElementById('adminLastUpdated');
 let allOrders = [];
 let detailsCache = new Map();
 let activeStatFilter = 'all';
+let currentFilteredOrders = [];
 
 const STATUS_MAP = {
   pending: { label: 'قيد المراجعة', className: 'is-pending' },
@@ -181,7 +183,10 @@ function renderStats(baseOrders) {
 }
 
 function renderOrders(orders) {
+  currentFilteredOrders = orders;
+  const filteredTotal = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
   if (ordersCountLabel) ordersCountLabel.textContent = `عدد النتائج: ${orders.length} من أصل ${allOrders.length}`;
+  if (ordersFilteredTotalLabel) ordersFilteredTotalLabel.textContent = `إجمالي النتائج: ${money(filteredTotal)}`;
 
   if (!orders.length) {
     ordersList.innerHTML = '<div class="admin-empty">لا توجد طلبات مطابقة.</div>';
@@ -400,12 +405,7 @@ function csvText(value, forceText = false) {
 }
 
 function exportCurrentViewToCsv() {
-  const rows = [...document.querySelectorAll('.admin-order-card')]
-    .map(card => {
-      const id = card.dataset.orderId;
-      return allOrders.find(o => String(o.id) === String(id));
-    })
-    .filter(Boolean);
+  const rows = currentFilteredOrders.length ? currentFilteredOrders : allOrders;
 
   const header = [
     'رقم الطلب',
