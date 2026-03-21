@@ -1,4 +1,4 @@
-# الزّهراء — Natural Soap Store
+# عطر الطبيعة — Natural Soap Store
 
 > Bilingual README · English first · العربية أدناه
 
@@ -8,7 +8,7 @@
 
 ## Project Title
 
-**الزّهراء** (Al-Zhraa) — Natural Handmade Soap Store
+**عطر الطبيعة** (Itr Al-Tabea) — Natural Handmade Soap Store
 
 ---
 
@@ -296,7 +296,7 @@ The project is configured for Netlify via `netlify.toml`:
 
 ## Credits
 
-- **Brand:** الزّهراء (Al-Zhraa)
+- **Brand:** عطر الطبيعة (Itr Al-Tabea)
 - **Contact:** [hello@itralnatura.com](mailto:hello@itralnatura.com) · WhatsApp: +20 109 531 4011 · [@itralnatura](https://instagram.com/itralnatura)
 - **Fonts:** [El Messiri](https://fonts.google.com/specimen/El+Messiri) and [Tajawal](https://fonts.google.com/specimen/Tajawal) via Google Fonts
 - **Backend:** [Supabase](https://supabase.com) (open-source Firebase alternative)
@@ -309,7 +309,7 @@ The project is configured for Netlify via `netlify.toml`:
 
 ## عنوان المشروع
 
-**الزّهراء** — متجر صابون طبيعي مصنوع يدويًا
+**عطر الطبيعة** — متجر صابون طبيعي مصنوع يدويًا
 
 ---
 
@@ -595,7 +595,7 @@ npx serve .
 
 ## الحقوق / صاحب المشروع
 
-- **العلامة التجارية:** الزّهراء (Al-Zhraa)
+- **العلامة التجارية:** عطر الطبيعة (Itr Al-Tabea)
 - **التواصل:** [hello@itralnatura.com](mailto:hello@itralnatura.com) · واتساب: +20 109 531 4011 · [@itralnatura](https://instagram.com/itralnatura)
 - **الخطوط:** [El Messiri](https://fonts.google.com/specimen/El+Messiri) و[Tajawal](https://fonts.google.com/specimen/Tajawal) عبر Google Fonts
 - **الخلفية:** [Supabase](https://supabase.com) (بديل مفتوح المصدر لـ Firebase)
