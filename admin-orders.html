@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة الطلبات | الزّهراء</title>
+  <meta name="description" content="لوحة داخلية لإدارة طلبات الزّهراء ومتابعة حالتها.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#6b9228">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="admin-page">
+    <header class="admin-header">
+      <div>
+        <span class="pill small">لوحة الإدارة</span>
+        <h1>إدارة الطلبات</h1>
+      </div>
+      <div class="admin-order-actions">
+        <button id="refreshBtn" class="btn btn-ghost" type="button">تحديث</button>
+        <button id="logoutBtn" class="btn" type="button">تسجيل الخروج</button>
+      </div>
+    </header>
+
+    <section class="admin-tools">
+      <input type="text" id="searchInput" placeholder="ابحث برقم الطلب أو الاسم أو الهاتف">
+      <select id="statusFilter">
+        <option value="">كل الحالات</option>
+        <option value="pending">pending</option>
+        <option value="confirmed">confirmed</option>
+        <option value="processing">processing</option>
+        <option value="delivered">delivered</option>
+        <option value="cancelled">cancelled</option>
+      </select>
+    </section>
+
+    <section id="ordersStats" class="admin-stats"></section>
+
+    <section class="admin-section-head">
+      <h2>الطلبات</h2>
+      <p id="ordersMeta" class="helper"></p>
+    </section>
+
+    <section id="ordersList" class="admin-orders-list"></section>
+  </main>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./admin-orders.js"></script>
+</body>
+</html>
