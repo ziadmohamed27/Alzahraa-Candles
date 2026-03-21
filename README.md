@@ -75,8 +75,6 @@ No npm, no bundler, no React, no Vue, no TypeScript, no build pipeline.
 ├── style.css           # All styles for both pages (shared single file)
 ├── favicon.svg         # SVG favicon
 ├── netlify.toml        # Netlify deployment configuration
-├── script.js.bak       # Old backup file (not loaded, not used by the site)
-├── images/
 │   ├── olive.jpg       # Static product image — used as video poster fallback
 │   ├── honey.jpg
 │   ├── charcoal.jpg
@@ -290,14 +288,13 @@ The project is configured for Netlify via `netlify.toml`:
 - Implement stock / quantity tracking in the `products` table
 - Add `og:image` meta tags per product for richer WhatsApp and social media link previews
 - Add a product search input field
-- Remove `script.js.bak` from the repository
 
 ---
 
 ## Credits
 
 - **Brand:** الزّهراء (Al-Zhraa)
-- **Contact:** [hello@itralnatura.com](mailto:hello@itralnatura.com) · WhatsApp: +20 109 531 4011 · [@itralnatura](https://instagram.com/itralnatura)
+- **Contact:** WhatsApp: +20 109 531 4011
 - **Fonts:** [El Messiri](https://fonts.google.com/specimen/El+Messiri) and [Tajawal](https://fonts.google.com/specimen/Tajawal) via Google Fonts
 - **Backend:** [Supabase](https://supabase.com) (open-source Firebase alternative)
 - **Hosting:** [Netlify](https://netlify.com)
@@ -376,8 +373,6 @@ The project is configured for Netlify via `netlify.toml`:
 ├── style.css           # جميع الأنماط للصفحتين (ملف مشترك واحد)
 ├── favicon.svg         # أيقونة الموقع بصيغة SVG
 ├── netlify.toml        # إعدادات نشر Netlify
-├── script.js.bak       # ملف نسخة احتياطية قديم (غير محمّل ولا يُستخدم)
-├── images/
 │   ├── olive.jpg       # صورة ثابتة — تُستخدم كصورة احتياطية للفيديو
 │   ├── honey.jpg
 │   ├── charcoal.jpg
@@ -589,14 +584,13 @@ npx serve .
 - تنفيذ تتبع المخزون والكميات في جدول `products`
 - إضافة وسوم `og:image` لكل منتج لمعاينات أغنى عند المشاركة على واتساب ووسائل التواصل الاجتماعي
 - إضافة حقل بحث عن المنتجات
-- حذف ملف `script.js.bak` من المستودع
 
 ---
 
 ## الحقوق / صاحب المشروع
 
 - **العلامة التجارية:** الزّهراء (Al-Zhraa)
-- **التواصل:** [hello@itralnatura.com](mailto:hello@itralnatura.com) · واتساب: +20 109 531 4011 · [@itralnatura](https://instagram.com/itralnatura)
+- **التواصل:** واتساب: +20 109 531 4011
 - **الخطوط:** [El Messiri](https://fonts.google.com/specimen/El+Messiri) و[Tajawal](https://fonts.google.com/specimen/Tajawal) عبر Google Fonts
 - **الخلفية:** [Supabase](https://supabase.com) (بديل مفتوح المصدر لـ Firebase)
 - **الاستضافة:** [Netlify](https://netlify.com)
