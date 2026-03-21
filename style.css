@@ -1488,3 +1488,18 @@ body.order-submitted .cart-page-empty{
     text-align:center;
   }
 }
+
+
+/* Final cleanup for post-order success view */
+body.order-submitted .cart-page-layout{
+  display:none;
+}
+
+body.order-submitted #orderSuccessBox{
+  max-width:760px;
+  margin-inline:auto;
+}
+
+body.order-submitted .cart-page-head{
+  align-items:flex-start;
+}
