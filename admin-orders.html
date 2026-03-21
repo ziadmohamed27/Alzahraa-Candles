@@ -1,54 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>إدارة الطلبات | الزّهراء</title>
-  <meta name="description" content="لوحة داخلية لإدارة طلبات الزّهراء ومتابعة حالتها.">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#6b9228">
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <meta name="robots" content="noindex,nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <main class="admin-page">
-    <header class="admin-header">
+  <main class="admin-shell container">
+    <section class="admin-topbar">
       <div>
         <span class="pill small">لوحة الإدارة</span>
         <h1>إدارة الطلبات</h1>
+        <p>متابعة الطلبات الجديدة وتحديث الحالة بشكل سريع ومنظّم.</p>
       </div>
-      <div class="admin-order-actions">
-        <button id="refreshBtn" class="btn btn-ghost" type="button">تحديث</button>
-        <button id="logoutBtn" class="btn" type="button">تسجيل الخروج</button>
-      </div>
-    </header>
 
-    <section class="admin-tools">
-      <input type="text" id="searchInput" placeholder="ابحث برقم الطلب أو الاسم أو الهاتف">
-      <select id="statusFilter">
-        <option value="">كل الحالات</option>
-        <option value="pending">pending</option>
-        <option value="confirmed">confirmed</option>
-        <option value="processing">processing</option>
-        <option value="delivered">delivered</option>
-        <option value="cancelled">cancelled</option>
-      </select>
+      <div class="admin-topbar-actions">
+        <button id="refreshBtn" type="button" class="btn btn-ghost">تحديث</button>
+        <button id="logoutBtn" type="button" class="btn btn-ghost">تسجيل الخروج</button>
+      </div>
     </section>
 
-    <section id="ordersStats" class="admin-stats"></section>
+    <section class="admin-tools-card">
+      <div class="admin-tools-grid">
+        <label class="admin-search-wrap">
+          <span>البحث</span>
+          <input type="text" id="searchInput" placeholder="ابحث برقم الطلب أو الاسم أو الهاتف" />
+        </label>
 
-    <section class="admin-section-head">
+        <label class="admin-filter-wrap">
+          <span>الحالة</span>
+          <select id="statusFilter">
+            <option value="">كل الحالات</option>
+            <option value="pending">قيد المراجعة</option>
+            <option value="confirmed">تم التأكيد</option>
+            <option value="processing">قيد التجهيز</option>
+            <option value="delivered">تم التسليم</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section id="ordersStats" class="admin-stats-grid"></section>
+
+    <section class="admin-list-head">
       <h2>الطلبات</h2>
-      <p id="ordersMeta" class="helper"></p>
+      <div id="ordersCountLabel" class="admin-list-count">عدد النتائج: 0</div>
     </section>
 
     <section id="ordersList" class="admin-orders-list"></section>
   </main>
-
-  <div class="toast" id="toast" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./admin-orders.js"></script>

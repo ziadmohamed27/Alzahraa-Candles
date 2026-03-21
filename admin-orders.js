@@ -6,20 +6,29 @@ const ordersList = document.getElementById('ordersList');
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 const ordersStats = document.getElementById('ordersStats');
+const ordersCountLabel = document.getElementById('ordersCountLabel');
 const logoutBtn = document.getElementById('logoutBtn');
 const refreshBtn = document.getElementById('refreshBtn');
-const ordersMeta = document.getElementById('ordersMeta');
-const toast = document.getElementById('toast');
 
 let allOrders = [];
 let detailsCache = new Map();
 
-function showToast(message) {
-  if (!toast) return;
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
+const STATUS_MAP = {
+  pending: { label: 'قيد المراجعة', className: 'is-pending' },
+  confirmed: { label: 'تم التأكيد', className: 'is-confirmed' },
+  processing: { label: 'قيد التجهيز', className: 'is-processing' },
+  delivered: { label: 'تم التسليم', className: 'is-delivered' },
+  cancelled: { label: 'ملغي', className: 'is-cancelled' },
+};
+
+async function requireAuth() {
+  const { data } = await supabaseClient.auth.getUser();
+  if (!data.user) window.location.href = './admin-login.html';
+}
+
+function money(v) {
+  const n = Number(v || 0);
+  return `${n.toFixed(2)} ج.م`;
 }
 
 function escapeHtml(value) {
@@ -31,121 +40,133 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function money(v) {
-  const n = Number(v || 0);
-  return `${n.toFixed(2)} ج.م`;
-}
-
 function formatDate(value) {
   if (!value) return '-';
-  return new Date(value).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' });
+  return new Date(value).toLocaleString('ar-EG', {
+    year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: '2-digit'
+  });
 }
 
-function statusBadge(status) {
-  const safe = String(status || 'pending');
-  return `<span class="admin-status-badge ${safe}">${escapeHtml(safe)}</span>`;
+function getStatusMeta(status) {
+  return STATUS_MAP[status] || { label: status || '-', className: '' };
 }
 
-async function requireAuth() {
-  const { data } = await supabaseClient.auth.getUser();
-  if (!data.user) {
-    window.location.href = './admin-login.html';
+function toWhatsAppLink(phone) {
+  const normalized = String(phone || '').replace(/\D/g, '');
+  if (!normalized) return '#';
+  const e164 = normalized.startsWith('20') ? normalized : normalized.startsWith('0') ? `2${normalized}` : normalized;
+  return `https://wa.me/${e164}`;
+}
+
+async function loadOrders() {
+  ordersList.innerHTML = '<div class="admin-empty">جارٍ تحميل الطلبات...</div>';
+
+  let data = null;
+  let error = null;
+
+  ({ data, error } = await supabaseClient
+    .from('orders_dashboard')
+    .select('*')
+    .order('created_at', { ascending: false }));
+
+  if (error) {
+    ({ data, error } = await supabaseClient
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false }));
   }
-}
 
-function renderStats(orders) {
-  const counts = { pending:0, confirmed:0, processing:0, delivered:0, cancelled:0 };
-  orders.forEach(o => counts[o.status] = (counts[o.status] || 0) + 1);
-  const totalSales = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
-
-  ordersStats.innerHTML = `
-    <div class="admin-stat-card"><span>إجمالي الطلبات</span><strong>${orders.length}</strong></div>
-    <div class="admin-stat-card"><span>Pending</span><strong>${counts.pending}</strong></div>
-    <div class="admin-stat-card"><span>Confirmed</span><strong>${counts.confirmed}</strong></div>
-    <div class="admin-stat-card"><span>Processing</span><strong>${counts.processing}</strong></div>
-    <div class="admin-stat-card"><span>Delivered</span><strong>${counts.delivered}</strong></div>
-    <div class="admin-stat-card"><span>Cancelled</span><strong>${counts.cancelled}</strong></div>
-    <div class="admin-stat-card"><span>إجمالي المبيعات</span><strong>${money(totalSales)}</strong></div>
-  `;
-}
-
-function renderOrderItems(items) {
-  if (!Array.isArray(items) || !items.length) return '<p>لا توجد منتجات.</p>';
-  return items.map(item => `
-    <div class="admin-item-row">
-      <strong>${escapeHtml(item.name || '-')}</strong>
-      <span>الكمية: ${escapeHtml(item.qty || 0)}</span>
-      <span>سعر القطعة: ${money(item.price || 0)}</span>
-      <span>الإجمالي: ${money((Number(item.price)||0) * (Number(item.qty)||0))}</span>
-    </div>
-  `).join('');
-}
-
-function renderDetails(order) {
-  return `
-    <div class="admin-order-body">
-      <div class="admin-order-items">${renderOrderItems(order.items_json)}</div>
-      <div class="admin-order-extra">
-        <p><strong>ملاحظات:</strong> ${escapeHtml(order.notes || 'لا يوجد')}</p>
-        <p><strong>المصدر:</strong> ${escapeHtml(order.source || '-')}</p>
-      </div>
-    </div>
-  `;
-}
-
-function renderOrders(orders) {
-  if (!orders.length) {
-    ordersList.innerHTML = '<div class="admin-empty">لا توجد طلبات مطابقة.</div>';
-    ordersMeta.textContent = '';
+  if (error) {
+    ordersList.innerHTML = '<div class="admin-empty is-error">فشل تحميل الطلبات.</div>';
     return;
   }
 
-  ordersMeta.textContent = `عدد النتائج: ${orders.length}`;
+  allOrders = data || [];
+  applyFilters();
+}
 
-  ordersList.innerHTML = orders.map(order => `
-    <article class="admin-order-card" data-id="${order.id}">
-      <div class="admin-order-top">
-        <div class="admin-order-main">
-          <h3>${escapeHtml(order.order_number || '-')}</h3>
-          <p><strong>الاسم:</strong> ${escapeHtml(order.customer_name || '-')}</p>
-          <p><strong>الهاتف:</strong> ${escapeHtml(order.phone || '-')}</p>
-          <p><strong>المدينة:</strong> ${escapeHtml(order.city || '-')}</p>
-          ${statusBadge(order.status)}
-        </div>
+function renderStats(orders) {
+  const totalSales = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+  const items = [
+    { key: 'all', title: 'إجمالي الطلبات', value: orders.length },
+    { key: 'pending', title: 'قيد المراجعة', value: orders.filter(o => o.status === 'pending').length },
+    { key: 'confirmed', title: 'تم التأكيد', value: orders.filter(o => o.status === 'confirmed').length },
+    { key: 'processing', title: 'قيد التجهيز', value: orders.filter(o => o.status === 'processing').length },
+    { key: 'delivered', title: 'تم التسليم', value: orders.filter(o => o.status === 'delivered').length },
+    { key: 'cancelled', title: 'ملغي', value: orders.filter(o => o.status === 'cancelled').length },
+    { key: 'sales', title: 'إجمالي المبيعات', value: money(totalSales) },
+  ];
 
-        <div class="admin-order-side">
-          <p><strong>الإجمالي:</strong> ${money(order.total)}</p>
-          <p><strong>التاريخ:</strong> ${formatDate(order.created_at)}</p>
-          <select data-id="${order.id}" class="statusSelect">
-            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>pending</option>
-            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>confirmed</option>
-            <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>processing</option>
-            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>delivered</option>
-            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>cancelled</option>
-          </select>
-          <div class="admin-order-actions">
-            <button class="btn btn-ghost btn-sm copyOrderBtn" type="button" data-order-number="${escapeHtml(order.order_number || '')}">نسخ الرقم</button>
-            <a class="btn btn-ghost btn-sm" target="_blank" href="https://wa.me/2${encodeURIComponent(String(order.phone || '').replace(/\s+/g,''))}">واتساب</a>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn btn-ghost btn-sm admin-order-details-btn" type="button" data-view-details="${order.id}">عرض التفاصيل</button>
-      <div class="admin-details-slot" id="details-${order.id}"></div>
+  ordersStats.innerHTML = items.map(item => `
+    <article class="admin-stat-card ${item.key === 'sales' ? 'is-sales' : ''}">
+      <span>${item.title}</span>
+      <strong>${item.value}</strong>
     </article>
   `).join('');
 }
 
+function renderOrders(orders) {
+  ordersCountLabel.textContent = `عدد النتائج: ${orders.length}`;
+
+  if (!orders.length) {
+    ordersList.innerHTML = '<div class="admin-empty">لا توجد طلبات مطابقة.</div>';
+    return;
+  }
+
+  ordersList.innerHTML = orders.map(order => {
+    const status = getStatusMeta(order.status);
+    return `
+      <article class="admin-order-card" data-order-id="${order.id}">
+        <div class="admin-order-grid">
+          <div class="admin-order-col admin-order-summary">
+            <div class="admin-order-price">الإجمالي: <strong>${money(order.total)}</strong></div>
+            <div class="admin-order-date">التاريخ: ${formatDate(order.created_at)}</div>
+
+            <label class="admin-status-control">
+              <span>تحديث الحالة</span>
+              <select data-id="${order.id}" class="statusSelect">
+                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>قيد المراجعة</option>
+                <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>تم التأكيد</option>
+                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>قيد التجهيز</option>
+                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تم التسليم</option>
+                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option>
+              </select>
+            </label>
+
+            <div class="admin-order-actions">
+              <button type="button" class="btn btn-ghost copyOrderBtn" data-number="${escapeHtml(order.order_number || '')}">نسخ الرقم</button>
+              <a class="btn btn-ghost" href="${toWhatsAppLink(order.phone)}" target="_blank" rel="noopener">واتساب</a>
+            </div>
+          </div>
+
+          <div class="admin-order-col admin-order-main">
+            <h3>${escapeHtml(order.order_number || '-')}</h3>
+            <p><strong>الاسم:</strong> ${escapeHtml(order.customer_name || '-')}</p>
+            <p><strong>الهاتف:</strong> ${escapeHtml(order.phone || '-')}</p>
+            <p><strong>المدينة:</strong> ${escapeHtml(order.city || '-')}</p>
+          </div>
+
+          <div class="admin-order-col admin-order-side">
+            <span class="admin-status-badge ${status.className}">${status.label}</span>
+            <button type="button" class="btn btn-ghost admin-details-btn" data-id="${order.id}">عرض التفاصيل</button>
+          </div>
+        </div>
+
+        <div class="admin-order-details hidden" id="details-${order.id}"></div>
+      </article>
+    `;
+  }).join('');
+}
+
 function applyFilters() {
-  const q = (searchInput?.value || '').trim().toLowerCase();
-  const status = statusFilter?.value || '';
+  const q = String(searchInput.value || '').trim().toLowerCase();
+  const status = statusFilter.value;
 
   const filtered = allOrders.filter(order => {
     const matchesSearch =
       String(order.order_number || '').toLowerCase().includes(q) ||
       String(order.customer_name || '').toLowerCase().includes(q) ||
       String(order.phone || '').toLowerCase().includes(q);
-
     const matchesStatus = !status || order.status === status;
     return matchesSearch && matchesStatus;
   });
@@ -154,115 +175,93 @@ function applyFilters() {
   renderOrders(filtered);
 }
 
-async function loadOrders() {
-  ordersList.innerHTML = '<div class="admin-loading">جارٍ تحميل الطلبات...</div>';
-  ordersMeta.textContent = '';
+function renderDetailsHtml(order) {
+  const items = Array.isArray(order.items_json) ? order.items_json : [];
+  const itemsHtml = items.length ? items.map(item => `
+    <div class="admin-detail-item">
+      <strong>${escapeHtml(item.name || '-')}</strong>
+      <span>الكمية: ${escapeHtml(item.qty || 0)}</span>
+      <span>السعر: ${money(item.price || 0)}</span>
+    </div>
+  `).join('') : '<div class="admin-empty small">لا توجد تفاصيل منتجات.</div>';
 
-  let data = null;
-  let error = null;
+  return `
+    <div class="admin-details-grid">
+      <div>
+        <h4>المنتجات</h4>
+        <div class="admin-detail-items">${itemsHtml}</div>
+      </div>
+      <div>
+        <h4>تفاصيل إضافية</h4>
+        <p><strong>الملاحظات:</strong> ${escapeHtml(order.notes || 'لا يوجد')}</p>
+        <p><strong>المصدر:</strong> ${escapeHtml(order.source || '-')}</p>
+      </div>
+    </div>
+  `;
+}
 
-  const viewRes = await supabaseClient
-    .from('orders_dashboard')
-    .select('*')
-    .order('created_at', { ascending: false });
+async function toggleDetails(id) {
+  const box = document.getElementById(`details-${id}`);
+  if (!box) return;
 
-  data = viewRes.data;
-  error = viewRes.error;
-
-  if (error) {
-    const fallbackRes = await supabaseClient
-      .from('orders')
-      .select('id,order_number,customer_name,phone,city,total,status,source,created_at')
-      .order('created_at', { ascending: false });
-
-    data = fallbackRes.data;
-    error = fallbackRes.error;
-  }
-
-  if (error) {
-    ordersList.innerHTML = '<div class="admin-empty">فشل تحميل الطلبات.</div>';
-    console.error(error);
+  if (!box.classList.contains('hidden')) {
+    box.classList.add('hidden');
+    box.innerHTML = '';
     return;
   }
 
-  allOrders = Array.isArray(data) ? data : [];
-  applyFilters();
-}
+  box.classList.remove('hidden');
+  box.innerHTML = '<div class="admin-empty small">جارٍ تحميل التفاصيل...</div>';
 
-async function fetchOrderDetails(id) {
-  if (detailsCache.has(id)) return detailsCache.get(id);
+  if (detailsCache.has(id)) {
+    box.innerHTML = renderDetailsHtml(detailsCache.get(id));
+    return;
+  }
 
   const { data, error } = await supabaseClient
     .from('orders')
-    .select('id,items_json,notes,source')
+    .select('*')
     .eq('id', id)
     .single();
 
-  if (error) throw error;
+  if (error || !data) {
+    box.innerHTML = '<div class="admin-empty small is-error">تعذر تحميل تفاصيل الطلب.</div>';
+    return;
+  }
+
   detailsCache.set(id, data);
-  return data;
+  box.innerHTML = renderDetailsHtml(data);
 }
 
 async function copyText(text) {
-  const value = String(text || '').trim();
-  if (!value) return showToast('لا يوجد رقم لنسخه');
-
   try {
-    await navigator.clipboard.writeText(value);
-    showToast('تم نسخ رقم الطلب');
+    await navigator.clipboard.writeText(String(text || ''));
   } catch {
-    const ta = document.createElement('textarea');
-    ta.value = value;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast(ok ? 'تم نسخ رقم الطلب' : 'تعذر نسخ الرقم');
+    const el = document.createElement('textarea');
+    el.value = String(text || '');
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
   }
 }
 
 document.addEventListener('click', async (e) => {
-  const copyBtn = e.target.closest('.copyOrderBtn');
-  if (copyBtn) {
-    copyText(copyBtn.dataset.orderNumber || '');
+  if (e.target.classList.contains('admin-details-btn')) {
+    await toggleDetails(e.target.dataset.id);
     return;
   }
 
-  const detailsBtn = e.target.closest('[data-view-details]');
-  if (!detailsBtn) return;
-
-  const id = detailsBtn.dataset.viewDetails;
-  const slot = document.getElementById(`details-${id}`);
-  if (!slot) return;
-
-  if (slot.innerHTML.trim()) {
-    slot.innerHTML = '';
-    detailsBtn.textContent = 'عرض التفاصيل';
+  if (e.target.classList.contains('copyOrderBtn')) {
+    await copyText(e.target.dataset.number || '');
+    e.target.textContent = 'تم النسخ';
+    setTimeout(() => { e.target.textContent = 'نسخ الرقم'; }, 1400);
     return;
-  }
-
-  detailsBtn.disabled = true;
-  detailsBtn.textContent = 'جارٍ التحميل...';
-  slot.innerHTML = '<div class="admin-loading">جارٍ تحميل التفاصيل...</div>';
-
-  try {
-    const details = await fetchOrderDetails(id);
-    slot.innerHTML = renderDetails(details);
-    detailsBtn.textContent = 'إخفاء التفاصيل';
-  } catch (err) {
-    console.error(err);
-    slot.innerHTML = '<div class="admin-empty">تعذر تحميل التفاصيل.</div>';
-    detailsBtn.textContent = 'عرض التفاصيل';
-  } finally {
-    detailsBtn.disabled = false;
   }
 });
 
 document.addEventListener('change', async (e) => {
   if (!e.target.classList.contains('statusSelect')) return;
-
   const id = e.target.dataset.id;
   const status = e.target.value;
 
@@ -272,22 +271,24 @@ document.addEventListener('change', async (e) => {
     .eq('id', id);
 
   if (error) {
-    showToast('فشل تحديث الحالة');
-    console.error(error);
+    alert('فشل تحديث الحالة');
     return;
   }
 
-  const order = allOrders.find(o => String(o.id) === String(id));
-  if (order) order.status = status;
-
+  const found = allOrders.find(o => String(o.id) === String(id));
+  if (found) found.status = status;
+  if (detailsCache.has(id)) {
+    const cached = detailsCache.get(id);
+    cached.status = status;
+    detailsCache.set(id, cached);
+  }
   applyFilters();
-  showToast('تم تحديث الحالة');
 });
 
-searchInput?.addEventListener('input', applyFilters);
-statusFilter?.addEventListener('change', applyFilters);
-refreshBtn?.addEventListener('click', loadOrders);
-logoutBtn?.addEventListener('click', async () => {
+searchInput.addEventListener('input', applyFilters);
+statusFilter.addEventListener('change', applyFilters);
+refreshBtn.addEventListener('click', loadOrders);
+logoutBtn.addEventListener('click', async () => {
   await supabaseClient.auth.signOut();
   window.location.href = './admin-login.html';
 });

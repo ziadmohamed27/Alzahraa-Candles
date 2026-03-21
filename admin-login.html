@@ -1,38 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دخول الإدارة | الزّهراء</title>
-  <meta name="description" content="تسجيل دخول الإدارة لمتابعة طلبات الزّهراء وتحديث حالتها.">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#6b9228">
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل دخول الإدارة | الزّهراء</title>
+  <meta name="robots" content="noindex,nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="admin-login-page">
-    <div class="admin-login-card">
-      <div class="center">
+    <section class="admin-login-card">
+      <div class="admin-login-head">
+        <span class="pill small">لوحة الإدارة</span>
         <h1>تسجيل دخول الإدارة</h1>
-        <p class="helper">لوحة داخلية لمتابعة طلبات <strong>الزّهراء</strong>.</p>
+        <p>لوحة داخلية لمتابعة طلبات الزّهراء وتحديث حالتها.</p>
       </div>
 
-      <input type="email" id="adminEmail" placeholder="البريد الإلكتروني" autocomplete="username">
-      <input type="password" id="adminPassword" placeholder="كلمة المرور" autocomplete="current-password">
-      <button id="adminLoginBtn" class="btn" type="button">دخول</button>
-      <p id="adminLoginMsg" class="admin-login-msg"></p>
-      <a href="./index.html" class="btn btn-ghost center">العودة للموقع</a>
-    </div>
+      <label class="admin-field">
+        <span>البريد الإلكتروني</span>
+        <input type="email" id="adminEmail" placeholder="name@example.com" autocomplete="email" />
+      </label>
+
+      <label class="admin-field">
+        <span>كلمة المرور</span>
+        <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password" />
+      </label>
+
+      <button id="adminLoginBtn" type="button" class="admin-primary-btn">دخول</button>
+      <p id="adminLoginMsg" class="admin-login-msg" aria-live="polite"></p>
+
+      <a href="./index.html" class="btn btn-ghost admin-back-btn">العودة للموقع</a>
+    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
+
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const emailInput = document.getElementById('adminEmail');
@@ -40,40 +48,42 @@
     const loginBtn = document.getElementById('adminLoginBtn');
     const msg = document.getElementById('adminLoginMsg');
 
-    (async function checkSession() {
-      const { data } = await supabaseClient.auth.getSession();
-      if (data.session) {
-        window.location.href = './admin-orders.html';
-      }
-    })();
+    function setMessage(text, type = '') {
+      msg.textContent = text;
+      msg.className = `admin-login-msg ${type}`.trim();
+    }
 
     async function handleLogin() {
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
 
       if (!email || !password) {
-        msg.textContent = 'اكتب البريد وكلمة المرور';
+        setMessage('اكتب البريد الإلكتروني وكلمة المرور.', 'is-error');
         return;
       }
 
       loginBtn.disabled = true;
       loginBtn.textContent = 'جارٍ تسجيل الدخول...';
-      msg.textContent = '';
+      setMessage('');
 
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
       if (error) {
-        msg.textContent = 'فشل تسجيل الدخول. تأكد من البيانات أو من تأكيد البريد.';
+        setMessage('فشل تسجيل الدخول. تأكد من الإيميل والباسورد.', 'is-error');
         loginBtn.disabled = false;
         loginBtn.textContent = 'دخول';
         return;
       }
 
+      setMessage('تم تسجيل الدخول بنجاح.', 'is-success');
       window.location.href = './admin-orders.html';
     }
 
     loginBtn.addEventListener('click', handleLogin);
     passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleLogin();
+    });
+    emailInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleLogin();
     });
   </script>
