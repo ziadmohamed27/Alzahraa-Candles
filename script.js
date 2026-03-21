@@ -1,10 +1,11 @@
 /* =================================================================
    الزّهراء — script.js
-   يعتمد على Supabase فقط للمنتجات
+   يعتمد على Supabase للمنتجات + يدعم صور المنتجات من Supabase Storage
    ================================================================= */
 
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
+const PRODUCT_IMAGES_BUCKET = 'products';
 
 const features = [
   { icon: '🌿', title: 'مكونات واضحة', desc: 'نختار مكونات أقرب للطبيعة لتكون التجربة أبسط وأوضح.' },
@@ -96,6 +97,31 @@ function toArray(val) {
   return [];
 }
 
+function getProductImageUrl(imagePath) {
+  const value = String(imagePath || '').trim();
+  if (!value) return '';
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  if (!supabaseClient) {
+    return value;
+  }
+
+  const cleanPath = value.replace(/^\/+/, '');
+  const bucketPrefix = `${PRODUCT_IMAGES_BUCKET}/`;
+  const normalizedPath = cleanPath.startsWith(bucketPrefix)
+    ? cleanPath.slice(bucketPrefix.length)
+    : cleanPath;
+
+  const { data } = supabaseClient.storage
+    .from(PRODUCT_IMAGES_BUCKET)
+    .getPublicUrl(normalizedPath);
+
+  return data?.publicUrl || '';
+}
+
 async function loadProducts() {
   if (!supabaseClient) {
     throw new Error('Supabase client is not initialized');
@@ -129,7 +155,8 @@ async function loadProducts() {
     benefits: toArray(row.benefits),
     usage: row.usage ?? '',
     ingredients: toArray(row.ingredients),
-    image: row.image ?? '',
+    image_path: row.image ?? '',
+    image: getProductImageUrl(row.image ?? ''),
   }));
 }
 
