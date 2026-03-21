@@ -16,7 +16,13 @@
       <div class="admin-login-head">
         <span class="pill small">لوحة الإدارة</span>
         <h1>تسجيل دخول الإدارة</h1>
-        <p>لوحة داخلية لمتابعة طلبات الزّهراء وتحديث حالتها.</p>
+        <p>لوحة داخلية لمتابعة الطلبات الجديدة، تحديث الحالة، وتصدير البيانات بشكل أسرع.</p>
+      </div>
+
+      <div class="admin-login-benefits">
+        <span>متابعة الطلبات الجديدة</span>
+        <span>تغيير الحالة بسرعة</span>
+        <span>تصدير CSV</span>
       </div>
 
       <label class="admin-field">
@@ -53,6 +59,13 @@
       msg.className = `admin-login-msg ${type}`.trim();
     }
 
+    async function redirectIfAuthenticated() {
+      const { data } = await supabaseClient.auth.getUser();
+      if (data.user) {
+        window.location.href = './admin-orders.html';
+      }
+    }
+
     async function handleLogin() {
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
@@ -86,6 +99,8 @@
     emailInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleLogin();
     });
+
+    redirectIfAuthenticated();
   </script>
 </body>
 </html>

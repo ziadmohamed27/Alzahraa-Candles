@@ -16,18 +16,19 @@
       <div>
         <span class="pill small">لوحة الإدارة</span>
         <h1>إدارة الطلبات</h1>
-        <p>متابعة الطلبات الجديدة وتحديث الحالة بشكل سريع ومنظّم.</p>
+        <p>نسخة متابعة أقوى: فلترة بالتاريخ، فرز سريع، تصدير CSV، وإشارات أوضح للطلبات الجديدة والمتأخرة.</p>
       </div>
 
       <div class="admin-topbar-actions">
         <button id="refreshBtn" type="button" class="btn btn-ghost">تحديث</button>
+        <button id="exportCsvBtn" type="button" class="btn btn-ghost">تصدير CSV</button>
         <button id="logoutBtn" type="button" class="btn btn-ghost">تسجيل الخروج</button>
       </div>
     </section>
 
     <section class="admin-tools-card">
-      <div class="admin-tools-grid">
-        <label class="admin-search-wrap">
+      <div class="admin-tools-grid admin-tools-grid-advanced">
+        <label class="admin-search-wrap admin-span-2">
           <span>البحث</span>
           <input type="text" id="searchInput" placeholder="ابحث برقم الطلب أو الاسم أو الهاتف" />
         </label>
@@ -43,13 +44,42 @@
             <option value="cancelled">ملغي</option>
           </select>
         </label>
+
+        <label class="admin-filter-wrap">
+          <span>من تاريخ</span>
+          <input type="date" id="dateFrom" />
+        </label>
+
+        <label class="admin-filter-wrap">
+          <span>إلى تاريخ</span>
+          <input type="date" id="dateTo" />
+        </label>
+
+        <label class="admin-filter-wrap">
+          <span>الترتيب</span>
+          <select id="sortSelect">
+            <option value="newest">الأحدث أولاً</option>
+            <option value="oldest">الأقدم أولاً</option>
+            <option value="highest_total">الأعلى قيمة</option>
+            <option value="lowest_total">الأقل قيمة</option>
+            <option value="pending_first">المعلّقة أولاً</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="admin-tools-actions-row">
+        <button id="clearFiltersBtn" type="button" class="btn btn-ghost">مسح الفلاتر</button>
+        <div id="adminLastUpdated" class="admin-last-updated">آخر تحديث: —</div>
       </div>
     </section>
 
     <section id="ordersStats" class="admin-stats-grid"></section>
 
     <section class="admin-list-head">
-      <h2>الطلبات</h2>
+      <div>
+        <h2>الطلبات</h2>
+        <p class="admin-list-sub">تابع الحالات، راجع التفاصيل، وصدّر النتائج الحالية عند الحاجة.</p>
+      </div>
       <div id="ordersCountLabel" class="admin-list-count">عدد النتائج: 0</div>
     </section>
 

@@ -6,12 +6,59 @@
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
 const PRODUCT_IMAGES_BUCKET = 'products';
+const WHATSAPP_NUMBER = '201095314011';
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 const features = [
   { icon: '🌿', title: 'مكونات واضحة', desc: 'نختار مكونات أقرب للطبيعة لتكون التجربة أبسط وأوضح.' },
   { icon: '🤲', title: 'صناعة يدوية', desc: 'كل قطعة تُقدّم بإحساس عناية واهتمام بالتفاصيل.' },
   { icon: '🫧', title: 'عناية يومية لطيفة', desc: 'خيارات مناسبة للتنظيف اليومي بدون إحساس قاسٍ على البشرة.' },
   { icon: '💬', title: 'مساعدة قبل الطلب', desc: 'يمكنك سؤالنا مباشرة لاختيار النوع الأقرب لاحتياج بشرتك.' },
+];
+
+const trustSignals = [
+  { icon: '⚡', title: 'طلب سريع', desc: 'اختيار المنتج ثم إرسال الطلب يتم خلال دقائق من نفس السلة.' },
+  { icon: '🧾', title: 'وصف واضح', desc: 'كل نوع موضح بفوائده واستخدامه حتى تقل الحيرة قبل الشراء.' },
+  { icon: '🤝', title: 'مساعدة مباشرة', desc: 'لو كنت محتارًا يمكنك سؤالنا على واتساب قبل إتمام الطلب.' },
+  { icon: '🚚', title: 'تأكيد قبل التوصيل', desc: 'نراجع معك الطلب والعنوان والخطوات قبل الشحن.' },
+];
+
+const confidenceCards = [
+  { icon: '✅', title: 'بدون إنشاء حساب', desc: 'تجربة الشراء تبدأ مباشرة من المتجر وتنتهي بتأكيد سريع عبر واتساب.' },
+  { icon: '📦', title: 'رقم طلب واضح', desc: 'بعد الإرسال تحصل على رقم طلب واضح يساعدك في المتابعة والرجوع للطلب.' },
+  { icon: '💬', title: 'ترشيح قبل الشراء', desc: 'يمكنك سؤالنا عن أنسب نوع لبشرتك قبل إضافة أي منتج للسلة.' },
+  { icon: '🕒', title: 'خطوات واضحة', desc: 'الاختيار ثم السلة ثم التأكيد — بدون تعقيد أو خطوات مخفية.' },
+];
+
+const selectionProfiles = [
+  {
+    title: 'لو بشرتك تحتاج بداية ألطف',
+    desc: 'ابدأ بخيار يومي هادئ يناسب الاستخدام المتكرر ويشعرك براحة أكثر من البداية.',
+    keywords: ['زيت الزيتون', 'olive'],
+    fallbackFilter: 'dry',
+    label: 'اختيار لطيف'
+  },
+  {
+    title: 'لو تبحث عن نعومة ولمسة مريحة',
+    desc: 'خيار مناسب لمن يريد إحساسًا أكثر راحة وترطيبًا في الروتين اليومي.',
+    keywords: ['عسل', 'honey'],
+    fallbackFilter: 'dry',
+    label: 'ترطيب يومي'
+  },
+  {
+    title: 'لو تحتاج تنظيفًا أعمق',
+    desc: 'خيار عملي أكثر للبشرة الدهنية أو المختلطة ولمن يفضّل إحساس تنظيف أوضح.',
+    keywords: ['فحم', 'charcoal'],
+    fallbackFilter: 'oily',
+    label: 'تنظيف أعمق'
+  },
+  {
+    title: 'لو تريد انتعاشًا أو تقشيرًا أخف',
+    desc: 'ترشيح مناسب لمن يحب إحساسًا أكثر حيوية مع روتين عناية بسيط.',
+    keywords: ['قهوة', 'coffee'],
+    fallbackFilter: 'scrub',
+    label: 'انتعاش وتقشير'
+  },
 ];
 
 const steps = [
@@ -28,11 +75,12 @@ const shippingInfo = [
 ];
 
 const faqs = [
-  { q: 'أي منتج أبدأ به لو كانت بشرتي حساسة؟', a: 'غالبًا صابون زيت الزيتون هو البداية الألطف للبشرة الجافة أو الحساسة.' },
-  { q: 'ما الأنسب للبشرة الدهنية أو المختلطة؟', a: 'صابون الفحم النشط مناسب أكثر لمن تبحث عن تنظيف أعمق وتقليل الإحساس بالدهون الزائدة.' },
-  { q: 'كيف يتم الطلب؟', a: 'اختاري المنتجات، أضيفيها إلى السلة، ثم اضغطي إرسال الطلب عبر واتساب ليصلنا ملخص الطلب مباشرة.' },
+  { q: 'كيف أعرف المنتج الأنسب لبشرتي؟', a: 'كل منتج موضح بفائدته الأساسية، ويمكنك أيضًا التواصل معنا عبر واتساب لو كنت محتارًا بين أكثر من خيار.' },
+  { q: 'هل أحتاج إلى إنشاء حساب قبل الطلب؟', a: 'لا، لا تحتاج إلى إنشاء حساب. اختَر المنتجات وأضفها للسلة ثم أرسل الطلب عبر واتساب.' },
+  { q: 'ما الأنسب للبشرة الدهنية أو المختلطة؟', a: 'غالبًا صابون الفحم النشط هو الخيار الأنسب لمن يبحث عن تنظيف أعمق وتقليل الإحساس بالدهون الزائدة.' },
+  { q: 'وأي منتج أبدأ به لو كانت بشرتي حساسة أو جافة؟', a: 'غالبًا صابون زيت الزيتون هو البداية الألطف للاستخدام اليومي للبشرة الجافة أو الحساسة.' },
   { q: 'هل الشحن متاح داخل مصر؟', a: 'نعم، الشحن متاح لمعظم المحافظات داخل مصر ويتم تأكيد التفاصيل معك حسب المنطقة.' },
-  { q: 'هل يمكنني السؤال قبل الشراء؟', a: 'بالتأكيد، يمكنك التواصل معنا مباشرة عبر واتساب لنرشح لك النوع المناسب.' },
+  { q: 'هل يمكنني السؤال قبل الشراء؟', a: 'بالتأكيد، يمكنك التواصل معنا مباشرة عبر واتساب لنرشح لك النوع الأقرب لاحتياجك.' },
 ];
 
 let supabaseClient = null;
@@ -368,6 +416,90 @@ function renderShipping() {
   `).join('');
 }
 
+function renderTrustStrip() {
+  const el = $('#trustStrip');
+  if (!el) return;
+
+  el.innerHTML = trustSignals.map((item) => `
+    <article class="trust-card">
+      <div class="trust-icon">${item.icon}</div>
+      <div>
+        <h3>${escHtml(item.title)}</h3>
+        <p>${escHtml(item.desc)}</p>
+      </div>
+    </article>
+  `).join('');
+}
+
+function renderConfidenceGrid() {
+  const el = $('#confidenceGrid');
+  if (!el) return;
+
+  el.innerHTML = confidenceCards.map((item) => `
+    <article class="confidence-card">
+      <div class="confidence-icon">${item.icon}</div>
+      <h3>${escHtml(item.title)}</h3>
+      <p>${escHtml(item.desc)}</p>
+    </article>
+  `).join('');
+}
+
+function findProductByKeywords(keywords = []) {
+  if (!Array.isArray(keywords) || !currentProducts.length) return null;
+  return currentProducts.find((product) => {
+    const haystack = [
+      product.name,
+      product.badge,
+      product.tag,
+      product.description,
+      product.longDescription,
+      product.bestFor,
+      ...(product.highlights || []),
+      ...(product.benefits || []),
+    ].join(' ').toLowerCase();
+
+    return keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()));
+  }) || null;
+}
+
+function focusProducts(filter = 'all') {
+  state.filter = filter;
+  renderFilters();
+  renderProducts();
+  document.getElementById('products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderSelectionGuide() {
+  const el = $('#selectionGrid');
+  if (!el) return;
+
+  el.innerHTML = selectionProfiles.map((profile) => {
+    const match = findProductByKeywords(profile.keywords);
+    const badge = match
+      ? `<div class="selection-match"><span>المنتج المقترح</span><strong>${escHtml(match.name)}</strong><span>${money(match.price)}</span></div>`
+      : `<div class="selection-match"><span>تصنيف مقترح</span><strong>${escHtml(profile.label)}</strong><span>استعرض الخيارات المشابهة</span></div>`;
+
+    const primaryAction = match
+      ? `<button type="button" class="btn btn-primary guide-product-btn" data-id="${match.id}">عرض المنتج المقترح</button>`
+      : `<button type="button" class="btn btn-primary guide-filter-btn" data-filter="${profile.fallbackFilter}">استعرض الخيارات</button>`;
+
+    return `
+      <article class="selection-card">
+        <span class="selection-kicker">${escHtml(profile.label)}</span>
+        <h3>${escHtml(profile.title)}</h3>
+        <p>${escHtml(profile.desc)}</p>
+        ${badge}
+        <div class="selection-actions">
+          ${primaryAction}
+          <button type="button" class="btn btn-ghost guide-filter-btn" data-filter="${profile.fallbackFilter}">
+            منتجات مشابهة
+          </button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
 function renderFaq() {
   const el = $('#faqList');
   if (!el) return;
@@ -495,7 +627,7 @@ async function checkout() {
 
     const savedOrder = await saveOrderToSupabase();
 
-    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`${WHATSAPP_LINK}?text=${encodeURIComponent(msg)}`, '_blank');
 
     clearCartAndForm();
     showToast(`تم تجهيز الطلب بنجاح - رقم الطلب: ${savedOrder?.order_number || 'تم الحفظ'}`);
@@ -524,7 +656,11 @@ function openProduct(id) {
         <span class="tag badge">${escHtml(p.badge)}</span>
         <h3 id="modalTitle">${escHtml(p.name)}</h3>
         <div class="price">${money(p.price)}</div>
-        <p>${escHtml(p.longDescription)}</p>
+        <div class="modal-meta-bar">
+          <span>الوزن: ${escHtml(p.weight || '—')}</span>
+          <span>أنسب استخدام: ${escHtml(p.bestFor || 'عناية يومية')}</span>
+        </div>
+        <p>${escHtml(p.longDescription || p.description)}</p>
         <div class="quick-points">
           ${(p.highlights || []).map((h) => `<span>${escHtml(h)}</span>`).join('')}
         </div>
@@ -538,9 +674,13 @@ function openProduct(id) {
         </ul>
         <h4>طريقة الاستخدام</h4>
         <p>${escHtml(p.usage)}</p>
+        <div class="modal-help-strip">
+          <span>💬 يمكنك السؤال على واتساب قبل الطلب</span>
+          <span>🛍️ أضف للسلة ثم أكمل الطلب من صفحة السلة</span>
+        </div>
         <div class="hero-actions">
           <button class="btn btn-primary modal-add" data-id="${p.id}" type="button">أضف إلى السلة</button>
-          <a class="btn btn-whatsapp" target="_blank" rel="noopener" href="https://wa.me/201095314011">اسأل على واتساب</a>
+          <a class="btn btn-whatsapp" target="_blank" rel="noopener" href="${WHATSAPP_LINK}">اسأل على واتساب</a>
         </div>
       </div>
     </div>
@@ -594,6 +734,18 @@ document.addEventListener('click', (e) => {
     return;
   }
 
+  const guideProductBtn = e.target.closest('.guide-product-btn');
+  if (guideProductBtn) {
+    openProduct(Number(guideProductBtn.dataset.id));
+    return;
+  }
+
+  const guideFilterBtn = e.target.closest('.guide-filter-btn');
+  if (guideFilterBtn) {
+    focusProducts(guideFilterBtn.dataset.filter || 'all');
+    return;
+  }
+
   const viewBtn = e.target.closest('.view-product');
   if (viewBtn) {
     openProduct(Number(viewBtn.dataset.id));
@@ -642,6 +794,8 @@ async function init() {
     renderSteps();
     renderShipping();
     renderFaq();
+    renderTrustStrip();
+    renderConfidenceGrid();
     updateCartUI();
     guardMedia();
 
@@ -649,6 +803,7 @@ async function init() {
 
     currentProducts = await loadProducts();
     renderProducts();
+    renderSelectionGuide();
   } catch (err) {
     console.error('[Init] Unexpected error:', err);
     showProductsError('تعذر تحميل المنتجات من قاعدة البيانات حاليًا.');
@@ -661,7 +816,7 @@ window.addEventListener('load', () => {
   const floatingWaBtn = $('#floatingWhatsApp');
   if (floatingWaBtn) {
     floatingWaBtn.addEventListener('click', () => {
-      window.open('https://wa.me/201095314011', '_blank');
+      window.open(WHATSAPP_LINK, '_blank');
     });
   }
 

@@ -29,7 +29,7 @@
 
   <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<body class="storefront-body">
   <header class="site-header" id="top">
     <div class="container nav">
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة">
@@ -37,7 +37,7 @@
       </button>
 
       <a class="brand" href="#top">
-       <span class="brand-title">الزّهراء</span>
+        <span class="brand-title">الزّهراء</span>
         <span class="brand-sub">AL-ZHRAA NATURAL SOAP</span>
       </a>
 
@@ -49,8 +49,10 @@
 
     <nav class="mobile-menu" id="mobileMenu">
       <a href="#products">المنتجات</a>
+      <a href="#guide">اختيار سريع</a>
       <a href="#about">لماذا نحن</a>
       <a href="#shipping">الطلب والتوصيل</a>
+      <a href="#confidence">قبل الطلب</a>
       <a href="#faq">الأسئلة الشائعة</a>
       <a href="#footer">تواصل معنا</a>
     </nav>
@@ -61,18 +63,20 @@
       <div class="container hero-grid">
         <div class="hero-copy">
           <span class="pill">%100 طبيعي · مصنوع يدويًا بعناية</span>
-          <h1>صابون طبيعي يدوي<br>لبشرة أنعم وعناية يومية</h1>
-          <p>مجموعة مختارة من صابون زيت الزيتون والعسل والفحم والقهوة، مع طلب بسيط وسريع عبر واتساب.</p>
+          <h1>اختاري الصابون المناسب لبشرتك<br>بطريقة أوضح وأسرع</h1>
+          <p>مجموعة مختارة من صابون زيت الزيتون والعسل والفحم والقهوة، مع وصف واضح لكل نوع، وطلب بسيط يبدأ برسالة واتساب بدون خطوات معقدة.</p>
 
           <div class="hero-actions">
-            <a href="#products" class="btn btn-primary">تسوّق الآن</a>
-            <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">تواصل واتساب</a>
+            <a href="#products" class="btn btn-primary">ابدئي الاختيار الآن</a>
+            <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">اسألي على واتساب</a>
           </div>
+
+          <div class="hero-note">لا تحتاجين إلى إنشاء حساب — اختاري منتجاتك، أضيفيها للسلة، وسنؤكد الطلب معك مباشرة عبر واتساب.</div>
 
           <div class="hero-features">
             <div>🌿 مكونات واضحة</div>
-            <div>🫧 عناية يومية لطيفة</div>
-            <div>💬 مساعدة قبل الطلب</div>
+            <div>🫧 ترشيحات حسب نوع البشرة</div>
+            <div>💬 تأكيد مباشر وسريع</div>
           </div>
         </div>
 
@@ -100,6 +104,12 @@
       </div>
     </section>
 
+    <section class="section section-tight" id="trust">
+      <div class="container">
+        <div class="trust-strip" id="trustStrip"></div>
+      </div>
+    </section>
+
     <section class="section" id="products">
       <div class="container">
         <div class="section-head center">
@@ -110,6 +120,29 @@
 
         <div class="filters" id="filters"></div>
         <div class="product-grid" id="productGrid"></div>
+      </div>
+    </section>
+
+    <section class="section alt" id="guide">
+      <div class="container">
+        <div class="section-head center">
+          <span class="pill small">اختيار أسرع</span>
+          <h2>لو محتار، ابدأ من هذه الترشيحات</h2>
+          <p>جهزنا لك مسارات سريعة حسب احتياج البشرة والنتيجة التي تبحث عنها، مع زر مباشر لفتح المنتج أو استعراض الخيارات المشابهة.</p>
+        </div>
+
+        <div class="selection-grid" id="selectionGrid"></div>
+
+        <div class="consult-banner">
+          <div>
+            <strong>ما زلت غير متأكد؟</strong>
+            <p>أرسل لنا نوع بشرتك أو النتيجة التي تريدها، وسنرشح لك الخيار الأقرب قبل إتمام الطلب.</p>
+          </div>
+
+          <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">
+            اطلب ترشيحًا عبر واتساب
+          </a>
+        </div>
       </div>
     </section>
 
@@ -155,6 +188,18 @@
       </div>
     </section>
 
+    <section class="section" id="confidence">
+      <div class="container">
+        <div class="section-head center">
+          <span class="pill small">قبل ما تطلب</span>
+          <h2>تجربة طلب أوضح وأكثر ثقة</h2>
+          <p>هذه هي النقاط التي تجعل قرار الشراء أسرع وأسهل من غير تردد.</p>
+        </div>
+
+        <div class="confidence-grid" id="confidenceGrid"></div>
+      </div>
+    </section>
+
     <section class="section" id="faq">
       <div class="container faq-wrap">
         <div class="section-head center">
@@ -166,6 +211,23 @@
         <div class="faq-list" id="faqList"></div>
       </div>
     </section>
+
+    <section class="section alt cta-banner-section">
+      <div class="container">
+        <div class="final-cta-card">
+          <div>
+            <span class="pill small">جاهز للطلب؟</span>
+            <h2>ابدأ الآن وسنؤكد طلبك خطوة بخطوة</h2>
+            <p>أضف المنتجات إلى السلة، وأرسل الطلب عبر واتساب، وسنراجع معك التفاصيل قبل التوصيل.</p>
+          </div>
+
+          <div class="final-cta-actions">
+            <a href="#products" class="btn btn-primary">اختيار المنتجات</a>
+            <a href="./cart.html" class="btn btn-ghost">مراجعة السلة</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer" id="footer">
@@ -173,7 +235,7 @@
       <div class="container footer-cta-inner">
         <div>
           <h3>هل لديك استفسار؟ نحن هنا للمساعدة</h3>
-          <p>تواصل معنا مباشرة عبر واتساب للحصول على ترشيح مناسب لبشرتك.</p>
+          <p>تواصل معنا مباشرة عبر واتساب للحصول على ترشيح مناسب لبشرتك أو متابعة سريعة لطلبك.</p>
         </div>
 
         <a class="btn btn-whatsapp" href="https://wa.me/201095314011" target="_blank" rel="noopener">
@@ -192,6 +254,7 @@
         <h4>روابط سريعة</h4>
         <a href="#top">الرئيسية</a>
         <a href="#products">المنتجات</a>
+        <a href="#guide">اختيار سريع</a>
         <a href="#about">لماذا نحن</a>
         <a href="#faq">الأسئلة الشائعة</a>
       </div>
@@ -206,6 +269,11 @@
 
     <div class="container footer-bottom">© 2026 الزّهراء — جميع الحقوق محفوظة</div>
   </footer>
+
+  <div class="mobile-sticky-cta">
+    <a href="#products" class="btn btn-primary">تسوق الآن</a>
+    <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">واتساب</a>
+  </div>
 
   <button class="floating-wa" id="floatingWhatsApp" aria-label="تواصل عبر واتساب">
     <span>واتساب</span>
