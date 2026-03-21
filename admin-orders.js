@@ -1,3 +1,4 @@
+
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -9,9 +10,16 @@ const ordersStats = document.getElementById('ordersStats');
 const ordersCountLabel = document.getElementById('ordersCountLabel');
 const logoutBtn = document.getElementById('logoutBtn');
 const refreshBtn = document.getElementById('refreshBtn');
+const dateFromInput = document.getElementById('dateFrom');
+const dateToInput = document.getElementById('dateTo');
+const sortSelect = document.getElementById('sortSelect');
+const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+const exportCsvBtn = document.getElementById('exportCsvBtn');
+const adminLastUpdated = document.getElementById('adminLastUpdated');
 
 let allOrders = [];
 let detailsCache = new Map();
+let activeStatFilter = 'all';
 
 const STATUS_MAP = {
   pending: { label: 'قيد المراجعة', className: 'is-pending' },
@@ -45,7 +53,6 @@ function getOrderItemsCount(order) {
 
   const items = Array.isArray(order?.items_json) ? order.items_json : [];
   if (!items.length) return 0;
-
   return items.reduce((sum, item) => sum + Math.max(0, toSafeInt(item?.qty, 0)), 0);
 }
 
@@ -65,6 +72,13 @@ function formatDate(value) {
   });
 }
 
+function formatShortDate(value) {
+  if (!value) return '-';
+  return new Date(value).toLocaleDateString('ar-EG', {
+    year: 'numeric', month: '2-digit', day: '2-digit'
+  });
+}
+
 function getStatusMeta(status) {
   return STATUS_MAP[status] || { label: status || '-', className: '' };
 }
@@ -74,6 +88,26 @@ function toWhatsAppLink(phone) {
   if (!normalized) return '#';
   const e164 = normalized.startsWith('20') ? normalized : normalized.startsWith('0') ? `2${normalized}` : normalized;
   return `https://wa.me/${e164}`;
+}
+
+function isToday(value) {
+  if (!value) return false;
+  const d = new Date(value);
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+}
+
+function isOverdue(order) {
+  const openStatuses = ['pending', 'confirmed', 'processing'];
+  if (!openStatuses.includes(order?.status)) return false;
+  const createdAt = new Date(order?.created_at || Date.now()).getTime();
+  return (Date.now() - createdAt) >= 48 * 60 * 60 * 1000;
+}
+
+function updateLastUpdated() {
+  if (adminLastUpdated) {
+    adminLastUpdated.textContent = `آخر تحديث: ${formatDate(new Date().toISOString())}`;
+  }
 }
 
 async function loadOrders() {
@@ -100,31 +134,54 @@ async function loadOrders() {
   }
 
   allOrders = data || [];
+  updateLastUpdated();
   applyFilters();
 }
 
-function renderStats(orders) {
+function buildStats(orders) {
   const totalSales = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
-  const items = [
-    { key: 'all', title: 'إجمالي الطلبات', value: orders.length },
-    { key: 'pending', title: 'قيد المراجعة', value: orders.filter(o => o.status === 'pending').length },
-    { key: 'confirmed', title: 'تم التأكيد', value: orders.filter(o => o.status === 'confirmed').length },
-    { key: 'processing', title: 'قيد التجهيز', value: orders.filter(o => o.status === 'processing').length },
-    { key: 'delivered', title: 'تم التسليم', value: orders.filter(o => o.status === 'delivered').length },
-    { key: 'cancelled', title: 'ملغي', value: orders.filter(o => o.status === 'cancelled').length },
-    { key: 'sales', title: 'إجمالي المبيعات', value: money(totalSales) },
-  ];
+  const todayOrders = orders.filter(o => isToday(o.created_at));
+  const todaySales = todayOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+  const overdueOrders = orders.filter(isOverdue);
 
-  ordersStats.innerHTML = items.map(item => `
-    <article class="admin-stat-card ${item.key === 'sales' ? 'is-sales' : ''}">
-      <span>${item.title}</span>
-      <strong>${item.value}</strong>
-    </article>
-  `).join('');
+  return [
+    { key: 'all', title: 'إجمالي الطلبات', value: orders.length, filterMode: 'all' },
+    { key: 'sales', title: 'إجمالي المبيعات', value: money(totalSales), filterMode: 'all', extraClass: 'is-sales' },
+    { key: 'today', title: 'طلبات اليوم', value: todayOrders.length, filterMode: 'today', extraClass: 'is-today' },
+    { key: 'today_sales', title: 'مبيعات اليوم', value: money(todaySales), filterMode: 'today', extraClass: 'is-today-sales' },
+    { key: 'pending', title: 'قيد المراجعة', value: orders.filter(o => o.status === 'pending').length, filterMode: 'status', status: 'pending' },
+    { key: 'confirmed', title: 'تم التأكيد', value: orders.filter(o => o.status === 'confirmed').length, filterMode: 'status', status: 'confirmed' },
+    { key: 'processing', title: 'قيد التجهيز', value: orders.filter(o => o.status === 'processing').length, filterMode: 'status', status: 'processing' },
+    { key: 'delivered', title: 'تم التسليم', value: orders.filter(o => o.status === 'delivered').length, filterMode: 'status', status: 'delivered' },
+    { key: 'overdue', title: 'طلبات تحتاج متابعة', value: overdueOrders.length, filterMode: 'overdue', extraClass: 'is-urgent' },
+  ];
+}
+
+function renderStats(baseOrders) {
+  const items = buildStats(baseOrders);
+
+  ordersStats.innerHTML = items.map(item => {
+    const isActive = (item.filterMode === 'status' && statusFilter?.value === item.status) ||
+      (item.filterMode === 'today' && activeStatFilter === 'today') ||
+      (item.filterMode === 'overdue' && activeStatFilter === 'overdue') ||
+      (item.filterMode === 'all' && activeStatFilter === 'all' && !statusFilter?.value);
+
+    const classes = ['admin-stat-card'];
+    if (item.extraClass) classes.push(item.extraClass);
+    classes.push('is-clickable');
+    if (isActive) classes.push('is-active');
+
+    return `
+      <button type="button" class="${classes.join(' ')}" data-stat-key="${item.key}" data-filter-mode="${item.filterMode}" ${item.status ? `data-status="${item.status}"` : ''}>
+        <span>${item.title}</span>
+        <strong>${item.value}</strong>
+      </button>
+    `;
+  }).join('');
 }
 
 function renderOrders(orders) {
-  ordersCountLabel.textContent = `عدد النتائج: ${orders.length}`;
+  if (ordersCountLabel) ordersCountLabel.textContent = `عدد النتائج: ${orders.length} من أصل ${allOrders.length}`;
 
   if (!orders.length) {
     ordersList.innerHTML = '<div class="admin-empty">لا توجد طلبات مطابقة.</div>';
@@ -133,12 +190,16 @@ function renderOrders(orders) {
 
   ordersList.innerHTML = orders.map(order => {
     const status = getStatusMeta(order.status);
+    const itemsCount = getOrderItemsCount(order);
+    const isOrderNew = isToday(order.created_at);
+    const overdue = isOverdue(order);
+
     return `
-      <article class="admin-order-card" data-order-id="${order.id}">
+      <article class="admin-order-card ${overdue ? 'is-overdue-card' : ''}" data-order-id="${order.id}">
         <div class="admin-order-grid">
           <div class="admin-order-col admin-order-summary">
             <div class="admin-order-price">الإجمالي: <strong>${money(order.total)}</strong></div>
-            <div class="admin-order-date">التاريخ: ${formatDate(order.created_at)}</div>
+            <div class="admin-order-date">التاريخ الكامل: ${formatDate(order.created_at)}</div>
 
             <label class="admin-status-control">
               <span>تحديث الحالة</span>
@@ -153,21 +214,33 @@ function renderOrders(orders) {
 
             <div class="admin-order-actions">
               <button type="button" class="btn btn-ghost copyOrderBtn" data-number="${escapeHtml(order.order_number || '')}">نسخ الرقم</button>
+              <button type="button" class="btn btn-ghost copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}">نسخ الهاتف</button>
               <a class="btn btn-ghost" href="${toWhatsAppLink(order.phone)}" target="_blank" rel="noopener">واتساب</a>
+              <button type="button" class="btn btn-ghost admin-details-btn" data-id="${order.id}">عرض التفاصيل</button>
             </div>
           </div>
 
           <div class="admin-order-col admin-order-main">
-            <h3>${escapeHtml(order.order_number || '-')}</h3>
-            <p><strong>الاسم:</strong> ${escapeHtml(order.customer_name || '-')}</p>
-            <p><strong>الهاتف:</strong> ${escapeHtml(order.phone || '-')}</p>
-            <p><strong>المدينة:</strong> ${escapeHtml(order.city || '-')}</p>
-            <p><strong>عدد القطع:</strong> ${getOrderItemsCount(order)}</p>
-          </div>
+            <div class="admin-order-title-row">
+              <h3>${escapeHtml(order.order_number || '-')}</h3>
+              <div class="admin-order-badges">
+                ${isOrderNew ? '<span class="admin-meta-chip is-new">جديد</span>' : ''}
+                ${overdue ? '<span class="admin-meta-chip is-overdue">تحتاج متابعة</span>' : ''}
+                <span class="admin-status-badge ${status.className}">${status.label}</span>
+              </div>
+            </div>
 
-          <div class="admin-order-col admin-order-side">
-            <span class="admin-status-badge ${status.className}">${status.label}</span>
-            <button type="button" class="btn btn-ghost admin-details-btn" data-id="${order.id}">عرض التفاصيل</button>
+            <div class="admin-order-identity">
+              <p><strong>الاسم:</strong> ${escapeHtml(order.customer_name || '-')}</p>
+              <p><strong>الهاتف:</strong> ${escapeHtml(order.phone || '-')}</p>
+              <p><strong>المدينة:</strong> ${escapeHtml(order.city || '-')}</p>
+            </div>
+
+            <div class="admin-order-highlights">
+              <span class="admin-meta-chip">عدد القطع ${itemsCount}</span>
+              <span class="admin-meta-chip">العمر ${isToday(order.created_at) ? 'منذ أقل من يوم' : 'أكثر من يوم'}</span>
+              <span class="admin-meta-chip">التاريخ ${formatShortDate(order.created_at)}</span>
+            </div>
           </div>
         </div>
 
@@ -177,20 +250,61 @@ function renderOrders(orders) {
   }).join('');
 }
 
-function applyFilters() {
-  const q = String(searchInput.value || '').trim().toLowerCase();
-  const status = statusFilter.value;
+function withinDateRange(order) {
+  const created = new Date(order.created_at);
+  const from = dateFromInput?.value ? new Date(`${dateFromInput.value}T00:00:00`) : null;
+  const to = dateToInput?.value ? new Date(`${dateToInput.value}T23:59:59`) : null;
+  if (from && created < from) return false;
+  if (to && created > to) return false;
+  return true;
+}
 
-  const filtered = allOrders.filter(order => {
+function sortOrders(orders) {
+  const mode = sortSelect?.value || 'newest';
+  const arr = [...orders];
+  arr.sort((a, b) => {
+    const aTime = new Date(a.created_at || 0).getTime();
+    const bTime = new Date(b.created_at || 0).getTime();
+    const aTotal = Number(a.total || 0);
+    const bTotal = Number(b.total || 0);
+
+    if (mode === 'oldest') return aTime - bTime;
+    if (mode === 'highest_total') return bTotal - aTotal;
+    if (mode === 'lowest_total') return aTotal - bTotal;
+    if (mode === 'pending_first') {
+      const aPending = a.status === 'pending' ? 0 : 1;
+      const bPending = b.status === 'pending' ? 0 : 1;
+      if (aPending !== bPending) return aPending - bPending;
+      return bTime - aTime;
+    }
+    return bTime - aTime;
+  });
+  return arr;
+}
+
+function applyFilters() {
+  const q = String(searchInput?.value || '').trim().toLowerCase();
+  const status = statusFilter?.value || '';
+
+  let filtered = allOrders.filter(order => {
     const matchesSearch =
       String(order.order_number || '').toLowerCase().includes(q) ||
       String(order.customer_name || '').toLowerCase().includes(q) ||
       String(order.phone || '').toLowerCase().includes(q);
+
     const matchesStatus = !status || order.status === status;
-    return matchesSearch && matchesStatus;
+    const matchesDate = withinDateRange(order);
+
+    let matchesStat = true;
+    if (activeStatFilter === 'today') matchesStat = isToday(order.created_at);
+    else if (activeStatFilter === 'overdue') matchesStat = isOverdue(order);
+
+    return matchesSearch && matchesStatus && matchesDate && matchesStat;
   });
 
-  renderStats(filtered);
+  filtered = sortOrders(filtered);
+
+  renderStats(allOrders);
   renderOrders(filtered);
 }
 
@@ -216,10 +330,13 @@ function renderDetailsHtml(order) {
         <p><strong>عدد القطع:</strong> ${itemsCount}</p>
         <div class="admin-detail-items">${itemsHtml}</div>
       </div>
-      <div>
-        <h4>تفاصيل إضافية</h4>
-        <p><strong>الملاحظات:</strong> ${escapeHtml(order.notes || 'لا يوجد')}</p>
-        <p><strong>المصدر:</strong> ${escapeHtml(order.source || '-')}</p>
+      <div class="admin-details-side">
+        <div class="admin-info-box">
+          <h4>تفاصيل إضافية</h4>
+          <p><strong>الملاحظات:</strong> ${escapeHtml(order.notes || 'لا يوجد')}</p>
+          <p><strong>المصدر:</strong> ${escapeHtml(order.source || '-')}</p>
+          <p><strong>الحالة الحالية:</strong> ${escapeHtml(getStatusMeta(order.status).label)}</p>
+        </div>
       </div>
     </div>
   `;
@@ -271,7 +388,59 @@ async function copyText(text) {
   }
 }
 
+function exportCurrentViewToCsv() {
+  const rows = [...document.querySelectorAll('.admin-order-card')].map(card => {
+    const id = card.dataset.orderId;
+    return allOrders.find(o => String(o.id) === String(id));
+  }).filter(Boolean);
+
+  const header = ['رقم الطلب','الاسم','الهاتف','المدينة','الحالة','الإجمالي','عدد القطع','التاريخ'];
+  const lines = [header.join(',')];
+  rows.forEach(order => {
+    const cols = [
+      order.order_number,
+      order.customer_name,
+      order.phone,
+      order.city,
+      getStatusMeta(order.status).label,
+      Number(order.total || 0).toFixed(2),
+      getOrderItemsCount(order),
+      formatDate(order.created_at),
+    ].map(v => `"${String(v ?? '').replaceAll('"','""')}"`);
+    lines.push(cols.join(','));
+  });
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'orders-export.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 document.addEventListener('click', async (e) => {
+  const statCard = e.target.closest('.admin-stat-card');
+  if (statCard) {
+    const mode = statCard.dataset.filterMode;
+    const status = statCard.dataset.status || '';
+    if (mode === 'status') {
+      if (statusFilter) statusFilter.value = status;
+      activeStatFilter = 'all';
+    } else if (mode === 'today') {
+      activeStatFilter = 'today';
+      if (statusFilter) statusFilter.value = '';
+    } else if (mode === 'overdue') {
+      activeStatFilter = 'overdue';
+      if (statusFilter) statusFilter.value = '';
+    } else {
+      activeStatFilter = 'all';
+      if (statusFilter && ['all', 'sales'].includes(statCard.dataset.statKey)) statusFilter.value = '';
+    }
+    applyFilters();
+    return;
+  }
+
   if (e.target.classList.contains('admin-details-btn')) {
     await toggleDetails(e.target.dataset.id);
     return;
@@ -281,6 +450,13 @@ document.addEventListener('click', async (e) => {
     await copyText(e.target.dataset.number || '');
     e.target.textContent = 'تم النسخ';
     setTimeout(() => { e.target.textContent = 'نسخ الرقم'; }, 1400);
+    return;
+  }
+
+  if (e.target.classList.contains('copyPhoneBtn')) {
+    await copyText(e.target.dataset.phone || '');
+    e.target.textContent = 'تم النسخ';
+    setTimeout(() => { e.target.textContent = 'نسخ الهاتف'; }, 1400);
     return;
   }
 });
@@ -310,10 +486,26 @@ document.addEventListener('change', async (e) => {
   applyFilters();
 });
 
-searchInput.addEventListener('input', applyFilters);
-statusFilter.addEventListener('change', applyFilters);
-refreshBtn.addEventListener('click', loadOrders);
-logoutBtn.addEventListener('click', async () => {
+searchInput?.addEventListener('input', applyFilters);
+statusFilter?.addEventListener('change', () => {
+  activeStatFilter = 'all';
+  applyFilters();
+});
+dateFromInput?.addEventListener('change', applyFilters);
+dateToInput?.addEventListener('change', applyFilters);
+sortSelect?.addEventListener('change', applyFilters);
+refreshBtn?.addEventListener('click', loadOrders);
+clearFiltersBtn?.addEventListener('click', () => {
+  if (searchInput) searchInput.value = '';
+  if (statusFilter) statusFilter.value = '';
+  if (dateFromInput) dateFromInput.value = '';
+  if (dateToInput) dateToInput.value = '';
+  if (sortSelect) sortSelect.value = 'newest';
+  activeStatFilter = 'all';
+  applyFilters();
+});
+exportCsvBtn?.addEventListener('click', exportCurrentViewToCsv);
+logoutBtn?.addEventListener('click', async () => {
   await supabaseClient.auth.signOut();
   window.location.href = './admin-login.html';
 });
