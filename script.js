@@ -1,6 +1,6 @@
 /* =================================================================
    الزّهراء — script.js
-   يعتمد على Supabase فقط للمنتجات
+   يعتمد على Supabase فقط لعرض المنتجات وإدارة عداد السلة في الصفحة الرئيسية
    ================================================================= */
 
 const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
@@ -35,6 +35,19 @@ const faqs = [
 ];
 
 let supabaseClient = null;
+let currentProducts = [];
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+function toSafeNumber(value, fallback = 0) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : fallback;
+}
+
+function money(v) {
+  return `${toSafeNumber(v, 0).toFixed(2)} ج.م`;
+}
 
 (function initSupabase() {
   if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith('PUT_')) {
@@ -48,14 +61,37 @@ let supabaseClient = null;
   }
 
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  console.log('[Supabase] client initialized', supabaseClient);
+  console.log('[Supabase] client initialized');
 })();
+
+function sanitizeCartItem(item) {
+  if (!item || typeof item !== 'object') return null;
+
+  const id = toSafeNumber(item.id, NaN);
+  const price = toSafeNumber(item.price, NaN);
+  const qty = Math.max(1, Math.floor(toSafeNumber(item.qty, 1)));
+  const name = typeof item.name === 'string' ? item.name.trim() : '';
+  const image = typeof item.image === 'string' ? item.image.trim() : '';
+  const weight = typeof item.weight === 'string' ? item.weight.trim() : '';
+
+  if (!Number.isFinite(id) || !Number.isFinite(price) || !name) return null;
+
+  return {
+    ...item,
+    id,
+    price,
+    qty,
+    name,
+    image,
+    weight,
+  };
+}
 
 function readCart() {
   try {
     const raw = window.localStorage ? localStorage.getItem('soap-cart') : null;
     const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed.map(sanitizeCartItem).filter(Boolean) : [];
   } catch (err) {
     console.warn('[Cart] localStorage غير متاح.', err);
     return [];
@@ -77,11 +113,11 @@ const state = {
   cart: readCart(),
 };
 
-let currentProducts = [];
-
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => document.querySelectorAll(s);
-const money = (v) => `${Number(v).toFixed(2)} ج.م`;
+function updateCartBadge() {
+  const totalCount = state.cart.reduce((sum, item) => sum + toSafeNumber(item.qty, 0), 0);
+  const countEl = $('#cartCount');
+  if (countEl) countEl.textContent = totalCount;
+}
 
 function toArray(val) {
   if (Array.isArray(val)) return val;
@@ -117,7 +153,7 @@ async function loadProducts() {
   return data.map((row) => ({
     id: row.id,
     name: row.name ?? '',
-    price: Number(row.price) || 0,
+    price: toSafeNumber(row.price, 0),
     weight: row.weight ?? '120 جرام',
     badge: row.badge ?? '',
     tag: row.tag ?? '',
@@ -133,60 +169,6 @@ async function loadProducts() {
   }));
 }
 
-async function saveOrderToSupabase() {
-  if (!supabaseClient) return null;
-
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-
-  const customerName = $('#customerName')?.value?.trim() || '';
-  const customerPhone = $('#customerPhone')?.value?.trim() || '';
-  const customerCity = $('#customerCity')?.value?.trim() || '';
-  const customerNotes = $('#customerNotes')?.value?.trim() || '';
-
-  const payload = {
-    customer_name: customerName || 'طلب من الموقع',
-    phone: customerPhone,
-    city: customerCity,
-    notes: customerNotes || 'لا يوجد',
-    items_json: state.cart,
-    total,
-    status: 'pending',
-    source: 'website',
-  };
-
-  const { data, error } = await supabaseClient
-    .from('orders')
-    .insert([payload])
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message || 'تعذر حفظ الطلب');
-
-  return data;
-}
-
-function clearCartAndForm() {
-  state.cart = [];
-  writeCart([]);
-
-  const nameEl = $('#customerName');
-  const phoneEl = $('#customerPhone');
-  const cityEl = $('#customerCity');
-  const notesEl = $('#customerNotes');
-
-  if (nameEl) nameEl.value = '';
-  if (phoneEl) phoneEl.value = '';
-  if (cityEl) cityEl.value = '';
-  if (notesEl) notesEl.value = '';
-
-  updateCartUI();
-}
-
-function isValidEgyptPhone(phone) {
-  const cleaned = phone.replace(/\s+/g, '');
-  return /^01[0-2,5][0-9]{8}$/.test(cleaned);
-}
-
 function showToast(message) {
   const toast = $('#toast');
   if (!toast) return;
@@ -194,11 +176,6 @@ function showToast(message) {
   toast.classList.add('show');
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
-}
-
-function saveCart() {
-  writeCart(state.cart);
-  updateCartUI();
 }
 
 function renderFilters() {
@@ -354,133 +331,19 @@ function renderFaq() {
 }
 
 function addToCart(id) {
-  const p = currentProducts.find((x) => Number(x.id) === Number(id));
-  if (!p) return;
+  const product = currentProducts.find((item) => Number(item.id) === Number(id));
+  if (!product) return;
 
-  const found = state.cart.find((i) => Number(i.id) === Number(id));
+  const found = state.cart.find((item) => Number(item.id) === Number(id));
   if (found) {
     found.qty += 1;
   } else {
-    state.cart.push({ ...p, qty: 1 });
+    state.cart.push({ ...product, qty: 1 });
   }
 
-  saveCart();
-  showToast(`تمت إضافة ${p.name} إلى السلة`);
-}
-
-function updateCartUI() {
-  const totalCount = state.cart.reduce((a, b) => a + b.qty, 0);
-  const countEl = $('#cartCount');
-  if (countEl) countEl.textContent = totalCount;
-
-  const itemsBox = $('#cartItems');
-  const footer = $('#cartFooter');
-  if (!itemsBox || !footer) return;
-
-  if (!state.cart.length) {
-    itemsBox.innerHTML = '<div class="empty">السلة فارغة. أضف بعض المنتجات أولًا.</div>';
-    footer.innerHTML = '';
-    return;
-  }
-
-  itemsBox.innerHTML = state.cart.map((item) => `
-    <div class="cart-item">
-      <img src="${item.image}" alt="${escHtml(item.name)}" onerror="this.style.background='#eee';this.removeAttribute('src')">
-      <div>
-        <h4>${escHtml(item.name)}</h4>
-        <p>${escHtml(item.weight)}</p>
-        <p>${money(item.price)}</p>
-        <div class="qty-row">
-          <button data-action="inc" data-id="${item.id}" type="button">+</button>
-          <strong>${item.qty}</strong>
-          <button data-action="dec" data-id="${item.id}" type="button">-</button>
-        </div>
-      </div>
-      <button class="remove-btn" data-action="remove" data-id="${item.id}" type="button">🗑️</button>
-    </div>
-  `).join('');
-
-  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
-
-  footer.innerHTML = `
-    <div class="cart-summary">
-      <div class="cart-summary-row"><span>عدد القطع</span><strong>${totalItems}</strong></div>
-      <div class="cart-summary-row">
-        <span>المجموع الفرعي</span>
-        <strong class="price">${money(total)}</strong>
-      </div>
-      <div class="cart-summary-row"><span>الشحن</span><strong>يتم تأكيده حسب المنطقة</strong></div>
-      <div class="cart-summary-row total-row">
-        <span>الإجمالي</span>
-        <strong class="price">${money(total)}</strong>
-      </div>
-      <p class="helper">
-        سيتم تجهيز رسالة واتساب تلقائيًا تحتوي على تفاصيل الطلب، ثم نؤكد معك العنوان والشحن.
-      </p>
-      <button class="btn btn-whatsapp" id="checkoutBtn" type="button">إرسال الطلب عبر واتساب</button>
-    </div>
-  `;
-}
-
-async function checkout() {
-  if (!state.cart.length) {
-    showToast('السلة فارغة');
-    return;
-  }
-
-  const customerName = $('#customerName')?.value?.trim() || '';
-  const customerPhone = $('#customerPhone')?.value?.trim() || '';
-  const customerCity = $('#customerCity')?.value?.trim() || '';
-  const customerNotes = $('#customerNotes')?.value?.trim() || '';
-
-  if (!customerName || !customerPhone || !customerCity) {
-    showToast('من فضلك املأ الاسم والموبايل والمدينة');
-    return;
-  }
-
-  if (!isValidEgyptPhone(customerPhone)) {
-    showToast('اكتب رقم موبايل مصري صحيح');
-    return;
-  }
-
-  const checkoutBtn = $('#checkoutBtn');
-  if (checkoutBtn) {
-    checkoutBtn.disabled = true;
-    checkoutBtn.textContent = 'جارٍ تجهيز الطلب...';
-  }
-
-  try {
-    const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const lines = state.cart
-      .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nالسعر: ${money(i.price * i.qty)}`)
-      .join('\n\n');
-
-    const msg =
-      `مرحبًا، أريد إتمام الطلب:\n\n` +
-      `الاسم: ${customerName}\n` +
-      `الموبايل: ${customerPhone}\n` +
-      `المدينة: ${customerCity}\n` +
-      `ملاحظات: ${customerNotes || 'لا يوجد'}\n\n` +
-      `المنتجات:\n\n${lines}\n\n` +
-      `الإجمالي: ${money(total)}\n` +
-      `الشحن: يتم تأكيده حسب المنطقة`;
-
-    const savedOrder = await saveOrderToSupabase();
-
-    window.open(`https://wa.me/201095314011?text=${encodeURIComponent(msg)}`, '_blank');
-
-    clearCartAndForm();
-    showToast(`تم تجهيز الطلب بنجاح - رقم الطلب: ${savedOrder?.order_number || 'تم الحفظ'}`);
-  } catch (err) {
-    console.error('[Checkout] save failed:', err);
-    showToast('حدثت مشكلة أثناء حفظ الطلب');
-  } finally {
-    if (checkoutBtn) {
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = 'إرسال الطلب عبر واتساب';
-    }
-  }
+  writeCart(state.cart);
+  updateCartBadge();
+  showToast(`تمت إضافة ${product.name} إلى السلة`);
 }
 
 function openProduct(id) {
@@ -533,9 +396,9 @@ function closeProduct() {
 function guardMedia() {
   $$('video').forEach((video) => {
     video.addEventListener('error', () => {
-      const poster = video.getAttribute('poster');
-      if (poster && video.parentElement) {
-        video.parentElement.innerHTML = `<img class="video-fallback" src="${poster}" alt="منتج طبيعي">`;
+      const wrapper = video.parentElement;
+      if (wrapper) {
+        wrapper.innerHTML = '<div class="video-fallback">تعذر تحميل الفيديو</div>';
       }
     }, { once: true });
   });
@@ -578,33 +441,10 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  if (e.target.id === 'checkoutBtn') {
-    checkout();
-    return;
-  }
-
   const faqQ = e.target.closest('.faq-q');
   if (faqQ) {
     faqQ.parentElement.classList.toggle('open');
     return;
-  }
-
-  const action = e.target.dataset.action;
-  if (action) {
-    const id = Number(e.target.dataset.id);
-    const item = state.cart.find((i) => Number(i.id) === Number(id));
-    if (!item) return;
-
-    if (action === 'inc') {
-      item.qty += 1;
-    } else if (action === 'dec') {
-      if (item.qty > 1) item.qty -= 1;
-      else state.cart = state.cart.filter((i) => Number(i.id) !== Number(id));
-    } else if (action === 'remove') {
-      state.cart = state.cart.filter((i) => Number(i.id) !== Number(id));
-    }
-
-    saveCart();
   }
 });
 
@@ -615,7 +455,7 @@ async function init() {
     renderSteps();
     renderShipping();
     renderFaq();
-    updateCartUI();
+    updateCartBadge();
     guardMedia();
 
     showProductsLoading();

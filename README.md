@@ -14,13 +14,13 @@
 
 ## Short Description
 
-A fully Arabic RTL e-commerce website for a natural handmade soap brand. Products are loaded live from a Supabase database. Customers browse products, add them to a persistent cart, fill in their order details on a dedicated cart page, and complete their order via a pre-filled WhatsApp message. Every order is saved automatically to Supabase before WhatsApp opens.
+A fully Arabic RTL e-commerce website for a natural handmade soap brand. Products are loaded live from a Supabase database. Customers browse products, add them to a persistent cart, fill in their order details on a dedicated cart page, and complete their order via a pre-filled WhatsApp message. Every order is saved automatically to Supabase before WhatsApp opens. The codebase has been cleaned so storefront logic stays in `script.js` and checkout/order logic stays in `cart.js`.
 
 ---
 
 ## Overview
 
-The site is a zero-build-step static frontend — no framework, no bundler, no npm runtime. It consists of two HTML pages, two JavaScript files, and one shared CSS file, deployed directly to Netlify. Supabase provides both the product catalogue and order storage. The checkout flow is WhatsApp-first: the store owner receives a structured Arabic order message and then confirms delivery with the customer.
+The site is a zero-build-step static frontend — no framework, no bundler, no npm runtime. It consists of two HTML pages, two JavaScript files, and one shared CSS file, deployed directly to Netlify. Supabase provides both the product catalogue and order storage. The checkout flow is WhatsApp-first: the store owner receives a structured Arabic order message and then confirms delivery with the customer. The codebase is intentionally split so the storefront page no longer carries legacy checkout logic that belongs to the cart page.
 
 ---
 
@@ -75,12 +75,6 @@ No npm, no bundler, no React, no Vue, no TypeScript, no build pipeline.
 ├── style.css           # All styles for both pages (shared single file)
 ├── favicon.svg         # SVG favicon
 ├── netlify.toml        # Netlify deployment configuration
-├── script.js.bak       # Old backup file (not loaded, not used by the site)
-├── images/
-│   ├── olive.jpg       # Static product image — used as video poster fallback
-│   ├── honey.jpg
-│   ├── charcoal.jpg
-│   └── coffee.jpg
 └── videos/
     ├── olive-video.mp4     # Hero section autoplay video
     ├── honey-video.mp4
