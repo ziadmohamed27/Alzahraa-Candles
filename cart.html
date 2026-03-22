@@ -45,10 +45,13 @@
         <span class="brand-sub">AL-ZHRAA NATURAL SOAP</span>
       </a>
 
-      <a class="icon-btn cart-btn" href="./cart.html" aria-label="فتح السلة">
-        <span class="cart-emoji">🛍️</span>
-        <span class="cart-count" id="cartCount">0</span>
-      </a>
+      <div class="nav-actions">
+        <div class="auth-nav-slot" id="authNavDesktop"></div>
+        <a class="icon-btn cart-btn" href="./cart.html" aria-label="فتح السلة">
+          <span class="cart-emoji">🛍️</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </a>
+      </div>
     </div>
   </header>
 
@@ -59,7 +62,7 @@
           <div>
             <span class="pill small">سلة التسوق</span>
             <h1>راجع طلبك قبل الإرسال</h1>
-            <p>عدّل الكميات، أضف بياناتك، ثم أرسل الطلب عبر واتساب وسيتم تسجيله تلقائيًا.</p>
+            <p>عدّل الكميات، أضف بياناتك، ثم أكد الطلب من الموقع أو أرسله عبر واتساب حسب الطريقة الأنسب لك.</p>
           </div>
 
           <a href="./index.html#products" class="btn btn-ghost" id="backToProductsTopBtn">العودة للمنتجات</a>
@@ -80,6 +83,7 @@
           <aside class="cart-page-summary">
             <div class="order-form order-form-page" id="orderForm">
               <h3>بيانات الطلب</h3>
+              <div class="cart-auth-state" id="cartAuthState"></div>
 
               <div class="form-grid">
                 <div class="field">
@@ -166,6 +170,7 @@
   <div class="toast" id="toast" aria-live="polite"></div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./auth.js"></script>
   <script defer src="./cart.js"></script>
 </body>
 </html>
