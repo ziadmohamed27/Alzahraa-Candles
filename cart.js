@@ -75,37 +75,24 @@ function showOrderSuccess(orderNumber) {
 }
 
 function launchSoapBubbles() {
-  const previousLayer = document.querySelector('.soap-bubbles-layer');
-  if (previousLayer) previousLayer.remove();
-
   const container = document.createElement('div');
   container.className = 'soap-bubbles-layer';
-  const palette = [
-    'rgba(122, 176, 74, 0.34)',
-    'rgba(255, 146, 191, 0.32)',
-    'rgba(255, 214, 102, 0.34)',
-    'rgba(193, 236, 166, 0.28)',
-    'rgba(255, 190, 214, 0.28)'
-  ];
 
-  for (let i = 0; i < 34; i += 1) {
+  for (let i = 0; i < 20; i += 1) {
     const bubble = document.createElement('span');
     bubble.className = 'soap-bubble';
-    const size = 18 + Math.random() * 58;
+    const size = 18 + Math.random() * 54;
     bubble.style.width = `${size}px`;
     bubble.style.height = `${size}px`;
     bubble.style.left = `${Math.random() * 100}%`;
-    bubble.style.bottom = `${-10 - Math.random() * 16}%`;
-    bubble.style.animationDelay = `${Math.random() * 0.6}s`;
-    bubble.style.animationDuration = `${4.2 + Math.random() * 2.8}s`;
-    bubble.style.setProperty('--drift', `${-70 + Math.random() * 140}px`);
-    bubble.style.setProperty('--scale-end', `${0.88 + Math.random() * 0.45}`);
-    bubble.style.setProperty('--bubble-color', palette[Math.floor(Math.random() * palette.length)]);
+    bubble.style.animationDelay = `${Math.random() * 0.4}s`;
+    bubble.style.animationDuration = `${3.6 + Math.random() * 2.2}s`;
+    bubble.style.setProperty('--drift', `${-40 + Math.random() * 80}px`);
     container.appendChild(bubble);
   }
 
   document.body.appendChild(container);
-  setTimeout(() => container.remove(), 7600);
+  setTimeout(() => container.remove(), 6500);
 }
 
 
@@ -599,8 +586,7 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
     `المنتجات:\n\n${lines}\n\n` +
     `المجموع الفرعي: ${money(subtotal)}\n` +
     `${isUrgent ? `رسوم الطلب المستعجل: ${money(urgentFee)}\n` : ''}` +
-    `الإجمالي الحالي قبل الشحن: ${money(grandTotal)}\n` +
-    `الشحن: (+ مصاريف الشحن) ويتم تأكيده حسب المنطقة`
+    `الإجمالي الحالي قبل الشحن: ${money(grandTotal)}`
   );
 }
 

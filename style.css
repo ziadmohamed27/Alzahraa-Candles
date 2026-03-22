@@ -3808,47 +3808,50 @@ button.admin-stat-card{
 }
 
 
-/* Soap bubbles after successful order */
-.soap-bubbles-layer{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
+/* Admin phone alignment final fix */
+.admin-copy-field{
+  position:relative;
+  display:flex !important;
+  align-items:center;
+  gap:8px;
+  padding-inline-start:40px;
+}
+
+.admin-copy-field strong{
+  flex:0 0 auto;
+}
+
+.admin-copy-field .admin-phone-value{
+  flex:1 1 auto;
+  min-width:0;
+  text-align:start;
   overflow:hidden;
-  z-index:120;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-.soap-bubble{
+.admin-copy-field .admin-inline-copy{
   position:absolute;
-  bottom:-14%;
-  display:block;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,.92) 0 16%, rgba(255,255,255,.48) 17% 27%, transparent 28%),
-    radial-gradient(circle at 68% 32%, rgba(255,255,255,.36), transparent 34%),
-    radial-gradient(circle at 50% 58%, var(--bubble-color, rgba(122,176,74,.32)), rgba(255,255,255,.08) 68%, transparent 100%);
-  border:1px solid rgba(255,255,255,.58);
-  box-shadow:
-    0 0 0 1px rgba(122,176,74,.10) inset,
-    0 10px 22px rgba(76,99,37,.10),
-    0 0 22px rgba(255,255,255,.18);
-  opacity:0;
-  will-change:transform, opacity;
-  animation:orderSoapBubbleRise linear forwards;
+  inset-inline-start:10px;
+  top:50%;
+  transform:translateY(-50%);
 }
 
-@keyframes orderSoapBubbleRise{
-  0%{
-    transform:translate3d(0,0,0) scale(.55);
-    opacity:0;
+.admin-copy-field .admin-inline-copy:hover{
+  transform:translateY(-50%);
+}
+
+@media (max-width: 720px){
+  .admin-copy-field{
+    padding-inline-start:34px;
+    gap:6px;
   }
-  12%{
-    opacity:.95;
+
+  .admin-copy-field .admin-inline-copy{
+    inset-inline-start:8px;
   }
-  55%{
-    opacity:.82;
-  }
-  100%{
-    transform:translate3d(var(--drift, 0px), -118vh, 0) scale(var(--scale-end, 1.05));
-    opacity:0;
+
+  .admin-copy-field .admin-phone-value{
+    font-size:.82rem;
   }
 }
