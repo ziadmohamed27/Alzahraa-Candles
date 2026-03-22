@@ -20,6 +20,14 @@ const URGENT_RATE = 0.05;
 const URGENT_MIN_FEE = 10;
 const WHATSAPP_NUMBER = '201095314011';
 
+const ORDER_NOTE_PREFIXES = {
+  address: 'العنوان:',
+  customerNote: 'ملاحظات العميل:',
+  orderType: 'نوع الطلب:',
+  urgentFee: 'رسوم الطلب المستعجل:',
+  shipping: 'الشحن:',
+};
+
 (function initSupabase() {
   if (!window.supabase || !SUPABASE_ANON_KEY) return;
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -282,6 +290,22 @@ function calculateCartTotal() {
   return state.cart.reduce((s, i) => s + (toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0)), 0);
 }
 
+function sanitizeLineBreaks(value) {
+  return String(value || '').replace(/\r/g, '').split('\n').map(line => line.trim()).filter(Boolean).join(' / ');
+}
+
+function buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgentFee }) {
+  const lines = [
+    `${ORDER_NOTE_PREFIXES.address} ${sanitizeLineBreaks(customerAddress) || 'لا يوجد'}`,
+    `${ORDER_NOTE_PREFIXES.customerNote} ${sanitizeLineBreaks(customerNotes) || 'لا يوجد'}`,
+    `${ORDER_NOTE_PREFIXES.orderType} ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}`,
+    `${ORDER_NOTE_PREFIXES.urgentFee} ${isUrgent ? money(urgentFee) : money(0)}`,
+    `${ORDER_NOTE_PREFIXES.shipping} يضاف لاحقًا حسب المنطقة`,
+  ];
+
+  return lines.join('\n');
+}
+
 function resetSuccessState() {
   orderSubmittedSuccessfully = false;
   lastSubmittedOrderNumber = '';
@@ -456,17 +480,12 @@ function buildOrderPayload(orderNumber) {
   const total = subtotal + urgentFee;
   const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent } = getOrderFormData();
 
-  const notesParts = [];
-  if (customerAddress) notesParts.push(`العنوان: ${customerAddress}`);
-  if (customerNotes) notesParts.push(customerNotes);
-  if (isUrgent) notesParts.push(`طلب مستعجل (+${money(urgentFee)})`);
-
   return {
     order_number: orderNumber,
     customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
     city: customerCity,
-    notes: notesParts.join(' | ') || 'لا يوجد',
+    notes: buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgentFee }),
     items_json: state.cart,
     total,
     status: 'pending',
@@ -488,6 +507,10 @@ function getFriendlyOrderError(error) {
 
   const text = `${error?.message || ''} ${error?.details || ''}`.toLowerCase();
 
+  if (text.includes('supabase client is not ready') || text.includes('cdn') || text.includes('script')) {
+    return 'تعذر تهيئة خدمة الطلبات الآن. أعد تحميل الصفحة ثم حاول مرة أخرى';
+  }
+
   if (text.includes('network') || text.includes('fetch') || text.includes('failed to fetch')) {
     return 'تعذر الاتصال بالخدمة الآن. تأكد من الإنترنت ثم حاول مرة أخرى';
   }
@@ -501,7 +524,7 @@ function getFriendlyOrderError(error) {
 
 async function insertOrderOnce(orderNumber) {
   if (!supabaseClient) {
-    return { ok: true, orderNumber };
+    throw new Error('Supabase client is not ready');
   }
 
   const payload = buildOrderPayload(orderNumber);
@@ -544,11 +567,11 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
   const subtotal = calculateCartTotal();
   const urgentFee = calculateUrgentFee(subtotal);
   const grandTotal = subtotal + urgentFee;
+  const normalizedAddress = sanitizeLineBreaks(customerAddress) || 'لا يوجد';
+  const normalizedNotes = sanitizeLineBreaks(customerNotes) || 'لا يوجد';
 
   const lines = state.cart
-    .map((i, n) =>
-      `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nسعر القطعة: ${money(toSafeNumber(i.price, 0))}\nإجمالي المنتج: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`
-    )
+    .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nسعر القطعة: ${money(toSafeNumber(i.price, 0))}\nإجمالي المنتج: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`)
     .join('\n\n');
 
   return (
@@ -556,8 +579,9 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
     `رقم الطلب: ${orderNumber}\n` +
     `الاسم: ${customerName}\n` +
     `الموبايل: ${customerPhone}\n` +
-    `المدينة: ${customerCity}\n` +
-    `ملاحظات: ${customerNotes || 'لا يوجد'}\n` +
+    `المحافظة: ${customerCity}\n` +
+    `العنوان بالتفصيل: ${normalizedAddress}\n` +
+    `ملاحظات العميل: ${normalizedNotes}\n` +
     `حالة الطلب: ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}\n\n` +
     `المنتجات:\n\n${lines}\n\n` +
     `المجموع الفرعي: ${money(subtotal)}\n` +

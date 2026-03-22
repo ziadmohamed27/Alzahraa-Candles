@@ -31,6 +31,60 @@ const STATUS_MAP = {
   cancelled: { label: 'ملغي', className: 'is-cancelled' },
 };
 
+
+const NOTE_PREFIXES = {
+  address: 'العنوان:',
+  customerNote: 'ملاحظات العميل:',
+  orderType: 'نوع الطلب:',
+  urgentFee: 'رسوم الطلب المستعجل:',
+  shipping: 'الشحن:',
+};
+
+function parseStructuredNotes(rawValue) {
+  const raw = String(rawValue || '').replace(/\r/g, '').trim();
+  const meta = {
+    address: '',
+    customerNote: '',
+    orderType: '',
+    urgentFee: '',
+    shipping: '',
+    raw,
+  };
+
+  if (!raw) return meta;
+
+  const normalized = raw.split('|').map(part => part.trim()).filter(Boolean).join('\n');
+  const lines = normalized.split('\n').map(line => line.trim()).filter(Boolean);
+
+  for (const line of lines) {
+    if (line.startsWith(NOTE_PREFIXES.address)) meta.address = line.slice(NOTE_PREFIXES.address.length).trim();
+    else if (line.startsWith(NOTE_PREFIXES.customerNote)) meta.customerNote = line.slice(NOTE_PREFIXES.customerNote.length).trim();
+    else if (line.startsWith(NOTE_PREFIXES.orderType)) meta.orderType = line.slice(NOTE_PREFIXES.orderType.length).trim();
+    else if (line.startsWith(NOTE_PREFIXES.urgentFee)) meta.urgentFee = line.slice(NOTE_PREFIXES.urgentFee.length).trim();
+    else if (line.startsWith(NOTE_PREFIXES.shipping)) meta.shipping = line.slice(NOTE_PREFIXES.shipping.length).trim();
+  }
+
+  if (!meta.address) {
+    const legacyAddress = raw.match(/العنوان\s*:\s*([^|\n]+)/);
+    if (legacyAddress) meta.address = legacyAddress[1].trim();
+  }
+
+  if (!meta.customerNote) {
+    const legacyNote = raw.match(/ملاحظات(?: العميل)?\s*:\s*([^|\n]+)/);
+    if (legacyNote) meta.customerNote = legacyNote[1].trim();
+    else if (raw && !raw.includes(NOTE_PREFIXES.address)) meta.customerNote = raw;
+  }
+
+  if (!meta.orderType && /طلب\s+مستعجل/.test(raw)) meta.orderType = 'طلب مستعجل';
+  if (!meta.urgentFee && /\+\d/.test(raw)) {
+    const legacyUrgent = raw.match(/\((\+[^)]+)\)/);
+    if (legacyUrgent) meta.urgentFee = legacyUrgent[1];
+  }
+  if (!meta.shipping) meta.shipping = 'يحدد لاحقًا';
+
+  return meta;
+}
+
 async function requireAuth() {
   const { data } = await supabaseClient.auth.getUser();
   if (!data.user) window.location.href = './admin-login.html';
@@ -255,13 +309,14 @@ function renderOrders(orders) {
     const itemsCount = getOrderItemsCount(order);
     const isOrderNew = isToday(order.created_at);
     const overdue = isOverdue(order);
+    const orderMeta = parseStructuredNotes(order.notes);
 
     return `
       <article class="admin-order-card ${overdue ? 'is-overdue-card' : ''}" data-order-id="${order.id}">
         <div class="admin-order-grid">
           <div class="admin-order-col admin-order-summary">
             <div class="admin-order-price">الإجمالي: <strong>${money(order.total)}</strong></div>
-            <div class="admin-order-date">التاريخ الكامل: ${formatDate(order.created_at)}</div>
+            <div class="admin-order-date">${formatDate(order.created_at)}</div>
 
             <label class="admin-status-control">
               <span>تحديث الحالة</span>
@@ -275,10 +330,10 @@ function renderOrders(orders) {
             </label>
 
             <div class="admin-order-actions">
-              <button type="button" class="btn btn-ghost copyOrderBtn" data-number="${escapeHtml(order.order_number || '')}">نسخ الرقم</button>
-              <button type="button" class="btn btn-ghost copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}">نسخ الهاتف</button>
+              <button type="button" class="btn btn-ghost copyOrderBtn" data-number="${escapeHtml(order.order_number || '')}">نسخ رقم</button>
+              <button type="button" class="btn btn-ghost copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}">نسخ هاتف</button>
               <a class="btn btn-ghost" href="${toWhatsAppLink(order.phone)}" target="_blank" rel="noopener">واتساب</a>
-              <button type="button" class="btn btn-ghost admin-details-btn" data-id="${order.id}">عرض التفاصيل</button>
+              <button type="button" class="btn btn-ghost admin-details-btn" data-id="${order.id}">تفاصيل</button>
             </div>
           </div>
 
@@ -287,6 +342,7 @@ function renderOrders(orders) {
               <h3>${escapeHtml(order.order_number || '-')}</h3>
               <div class="admin-order-badges">
                 ${isOrderNew ? '<span class="admin-meta-chip is-new">جديد</span>' : ''}
+                ${orderMeta.orderType === 'طلب مستعجل' ? '<span class="admin-meta-chip is-overdue">مستعجل</span>' : ''}
                 ${overdue ? '<span class="admin-meta-chip is-overdue">تحتاج متابعة</span>' : ''}
                 <span class="admin-status-badge ${status.className}">${status.label}</span>
               </div>
@@ -299,9 +355,10 @@ function renderOrders(orders) {
             </div>
 
             <div class="admin-order-highlights">
-              <span class="admin-meta-chip">عدد القطع ${itemsCount}</span>
-              <span class="admin-meta-chip">العمر ${isToday(order.created_at) ? 'منذ أقل من يوم' : 'أكثر من يوم'}</span>
-              <span class="admin-meta-chip">التاريخ ${formatShortDate(order.created_at)}</span>
+              <span class="admin-meta-chip">${itemsCount} قطعة</span>
+              <span class="admin-meta-chip">${isToday(order.created_at) ? 'اليوم' : 'أقدم'}</span>
+              <span class="admin-meta-chip">${formatShortDate(order.created_at)}</span>
+              ${orderMeta.address ? `<span class="admin-meta-chip">عنوان محفوظ</span>` : ''}
             </div>
           </div>
         </div>
@@ -350,10 +407,14 @@ function applyFilters() {
   const selectedCity = normalizeCityValue(cityFilter?.value || '');
 
   let filtered = allOrders.filter(order => {
+    const meta = parseStructuredNotes(order.notes);
     const matchesSearch =
       String(order.order_number || '').toLowerCase().includes(q) ||
       String(order.customer_name || '').toLowerCase().includes(q) ||
-      String(order.phone || '').toLowerCase().includes(q);
+      String(order.phone || '').toLowerCase().includes(q) ||
+      String(order.city || '').toLowerCase().includes(q) ||
+      String(meta.address || '').toLowerCase().includes(q) ||
+      String(meta.customerNote || '').toLowerCase().includes(q);
 
     const matchesStatus = !status || order.status === status;
     const matchesCity = !selectedCity || normalizeCityValue(order.city) === selectedCity;
@@ -380,15 +441,21 @@ function applyFilters() {
 function renderDetailsHtml(order) {
   const items = Array.isArray(order.items_json) ? order.items_json : [];
   const itemsCount = getOrderItemsCount(order);
+  const meta = parseStructuredNotes(order.notes);
   const itemsHtml = items.length ? items.map(item => {
     const qty = Math.max(0, toSafeInt(item.qty, 0));
     const price = Number(item.price || 0);
     return `
     <div class="admin-detail-item">
-      <strong>${escapeHtml(item.name || '-')}</strong>
-      <span>الكمية: ${qty}</span>
-      <span>سعر القطعة: ${money(price)}</span>
-      <span>إجمالي المنتج: ${money(price * qty)}</span>
+      <div>
+        <strong>${escapeHtml(item.name || '-')}</strong>
+        <span>الكمية: ${qty}</span>
+        ${item.weight ? `<span>الوزن: ${escapeHtml(item.weight)}</span>` : ''}
+      </div>
+      <div class="admin-detail-prices">
+        <span>سعر القطعة: ${money(price)}</span>
+        <span>إجمالي المنتج: ${money(price * qty)}</span>
+      </div>
     </div>
   `;}).join('') : '<div class="admin-empty small">لا توجد تفاصيل منتجات.</div>';
 
@@ -401,10 +468,19 @@ function renderDetailsHtml(order) {
       </div>
       <div class="admin-details-side">
         <div class="admin-info-box">
-          <h4>تفاصيل إضافية</h4>
-          <p><strong>الملاحظات:</strong> ${escapeHtml(order.notes || 'لا يوجد')}</p>
-          <p><strong>المصدر:</strong> ${escapeHtml(order.source || '-')}</p>
+          <h4>بيانات العميل والتوصيل</h4>
+          <p><strong>المحافظة:</strong> ${escapeHtml(order.city || '-')}</p>
+          <p><strong>العنوان:</strong> ${escapeHtml(meta.address || 'غير مسجل')}</p>
+          <p><strong>ملاحظات العميل:</strong> ${escapeHtml(meta.customerNote || 'لا يوجد')}</p>
+        </div>
+        <div class="admin-info-box">
+          <h4>ملخص الطلب</h4>
+          <p><strong>نوع الطلب:</strong> ${escapeHtml(meta.orderType || 'طلب عادي')}</p>
+          <p><strong>رسوم الطلب المستعجل:</strong> ${escapeHtml(meta.urgentFee || money(0))}</p>
+          <p><strong>الشحن:</strong> ${escapeHtml(meta.shipping || 'يحدد لاحقًا')}</p>
+          <p><strong>إجمالي الطلب الحالي:</strong> ${money(order.total || 0)}</p>
           <p><strong>الحالة الحالية:</strong> ${escapeHtml(getStatusMeta(order.status).label)}</p>
+          <p><strong>المصدر:</strong> ${escapeHtml(order.source || '-')}</p>
         </div>
       </div>
     </div>
@@ -481,19 +557,24 @@ function exportCurrentViewToCsv() {
     '',
   ];
 
-  const header = ['رقم الطلب', 'الاسم', 'الهاتف', 'المدينة', 'الحالة', 'الإجمالي', 'عدد القطع', 'التاريخ'];
+  const header = ['رقم الطلب', 'الاسم', 'الهاتف', 'المحافظة', 'العنوان', 'نوع الطلب', 'رسوم الاستعجال', 'الحالة', 'الإجمالي', 'عدد القطع', 'التاريخ', 'ملاحظات العميل'];
   lines.push(header.map(h => csvText(h)).join(','));
 
   rows.forEach(order => {
+    const meta = parseStructuredNotes(order.notes);
     const cols = [
       csvText(order.order_number, true),
       csvText(order.customer_name),
       csvText(order.phone, true),
       csvText(order.city),
+      csvText(meta.address),
+      csvText(meta.orderType || 'طلب عادي'),
+      csvText(meta.urgentFee || money(0)),
       csvText(getStatusMeta(order.status).label),
       csvText(Number(order.total || 0).toFixed(2)),
       csvText(getOrderItemsCount(order)),
       csvText(formatDate(order.created_at)),
+      csvText(meta.customerNote),
     ];
     lines.push(cols.join(','));
   });
