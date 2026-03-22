@@ -556,8 +556,7 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
     `رقم الطلب: ${orderNumber}\n` +
     `الاسم: ${customerName}\n` +
     `الموبايل: ${customerPhone}\n` +
-    `المحافظة: ${customerCity}\n` +
-    `العنوان بالتفصيل: ${customerAddress || 'لا يوجد'}\n` +
+    `المدينة: ${customerCity}\n` +
     `ملاحظات: ${customerNotes || 'لا يوجد'}\n` +
     `حالة الطلب: ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}\n\n` +
     `المنتجات:\n\n${lines}\n\n` +
