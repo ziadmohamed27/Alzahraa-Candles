@@ -344,35 +344,24 @@ function renderProducts() {
   }
 
   el.innerHTML = list.map((p) => `
-    <article class="card product-card" data-id="${p.id}" tabindex="0" role="button" aria-label="عرض تفاصيل ${escHtml(p.name)}">
+    <article class="card product-card view-product" data-id="${p.id}" tabindex="0" role="button" aria-label="عرض تفاصيل ${escHtml(p.name)}">
       <img
-        class="product-image view-product"
+        class="product-image"
         src="${p.image}"
         alt="${escHtml(p.name)}"
         loading="lazy"
-        data-id="${p.id}"
         onerror="this.closest('article').classList.add('img-missing')"
       >
       <div class="card-body">
-        <div class="badge-row">
-          <span class="tag badge">${escHtml(p.badge)}</span>
-          <span class="tag best">${escHtml(p.tag)}</span>
-        </div>
+        <span class="product-skin-pill">${escHtml(p.bestFor || p.badge || p.tag || '')}</span>
         <h3 class="product-title">${escHtml(p.name)}</h3>
-        <p class="product-desc">${escHtml(p.description)}</p>
-        <div class="quick-points">
-          ${(p.highlights || []).map((h) => `<span>${escHtml(h)}</span>`).join('')}
-        </div>
-        <div class="meta">
-          <div>
-            <small>أنسب استخدام</small>
-            <strong>${escHtml(p.bestFor)}</strong>
-          </div>
+        <div class="product-mini-meta">
+          <span class="product-weight">${escHtml(p.weight || '120 جرام')}</span>
           <div class="price">${money(p.price)}</div>
         </div>
-        <div class="card-actions">
-          <button class="btn btn-primary add-to-cart" data-id="${p.id}">أضف إلى السلة</button>
-          <button class="btn btn-ghost view-product" data-id="${p.id}">عرض التفاصيل</button>
+        <div class="card-actions compact-actions">
+          <button class="btn btn-primary add-to-cart" data-id="${p.id}" type="button">أضف إلى السلة</button>
+          <button class="btn btn-ghost view-product" data-id="${p.id}" type="button">عرض التفاصيل</button>
         </div>
       </div>
     </article>
@@ -483,18 +472,17 @@ function renderSelectionGuide() {
       : `<div class="selection-match"><span>تصنيف مقترح</span><strong>${escHtml(profile.label)}</strong><span>استعرض الخيارات المشابهة</span></div>`;
 
     const primaryAction = match
-      ? `<button type="button" class="btn btn-primary guide-product-btn" data-id="${match.id}">عرض المنتج المقترح</button>`
+      ? `<button type="button" class="btn btn-primary guide-product-btn" data-id="${match.id}">عرض المنتج</button>`
       : `<button type="button" class="btn btn-primary guide-filter-btn" data-filter="${profile.fallbackFilter}">استعرض الخيارات</button>`;
 
     return `
-      <article class="selection-card">
+      <article class="selection-card compact-selection-card">
         <span class="selection-kicker">${escHtml(profile.label)}</span>
         <h3>${escHtml(profile.title)}</h3>
-        <p>${escHtml(profile.desc)}</p>
         ${badge}
-        <div class="selection-actions">
+        <div class="selection-actions compact-selection-actions">
           ${primaryAction}
-          <button type="button" class="btn btn-ghost guide-filter-btn" data-filter="${profile.fallbackFilter}">
+          <button type="button" class="btn btn-ghost guide-filter-btn secondary-guide-btn" data-filter="${profile.fallbackFilter}">
             منتجات مشابهة
           </button>
         </div>
@@ -755,12 +743,6 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  const productCard = e.target.closest('.product-card');
-  if (productCard && !e.target.closest('.add-to-cart') && !e.target.closest('.view-product')) {
-    openProduct(Number(productCard.dataset.id));
-    return;
-  }
-
   if (e.target.id === 'closeProductModal' || e.target.id === 'productModalOverlay') {
     closeProduct();
     return;
@@ -819,17 +801,16 @@ async function init() {
   }
 }
 
-document.addEventListener('keydown', (e) => {
-  const productCard = e.target.closest?.('.product-card');
-  if (!productCard) return;
+document.addEventListener('DOMContentLoaded', init);
 
+document.addEventListener('keydown', (e) => {
+  const card = e.target.closest('.product-card.view-product');
+  if (!card) return;
   if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
-    openProduct(Number(productCard.dataset.id));
+    openProduct(Number(card.dataset.id));
   }
 });
-
-document.addEventListener('DOMContentLoaded', init);
 
 window.addEventListener('load', () => {
   const floatingWaBtn = $('#floatingWhatsApp');

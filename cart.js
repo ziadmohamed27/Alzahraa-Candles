@@ -320,7 +320,7 @@ function renderCartItems() {
 
           <div class="qty-row qty-row-lg">
             <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}" autocomplete="off">
+            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="number" inputmode="numeric" min="1" step="1" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
             <button data-action="dec" data-id="${item.id}" type="button">-</button>
           </div>
         </div>
@@ -607,11 +607,6 @@ async function checkout() {
 }
 
 document.addEventListener('input', (e) => {
-  if (e.target.dataset.action === 'set-qty') {
-    e.target.value = String(e.target.value || '').replace(/[^0-9]/g, '');
-    return;
-  }
-
   if (
     e.target.id === 'customerName' ||
     e.target.id === 'customerPhone' ||
@@ -641,11 +636,26 @@ document.addEventListener('change', (e) => {
   }
 });
 
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('qty-input')) {
-    setTimeout(() => e.target.select(), 0);
-  }
+document.addEventListener('input', (e) => {
+  if (e.target.dataset.action !== 'set-qty') return;
+  const onlyDigits = String(e.target.value || '').replace(/[^0-9]/g, '');
+  e.target.value = onlyDigits;
+});
 
+document.addEventListener('focusin', (e) => {
+  if (e.target.dataset.action === 'set-qty') {
+    requestAnimationFrame(() => e.target.select());
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (e.target.dataset.action === 'set-qty') {
+    requestAnimationFrame(() => e.target.select());
+    return;
+  }
+});
+
+document.addEventListener('click', (e) => {
   const action = e.target.dataset.action;
 
   if (action) {
@@ -689,12 +699,6 @@ document.addEventListener('click', (e) => {
     if (lastSubmittedOrderNumber) {
       copyText(lastSubmittedOrderNumber);
     }
-  }
-});
-
-document.addEventListener('focusin', (e) => {
-  if (e.target.classList.contains('qty-input')) {
-    setTimeout(() => e.target.select(), 0);
   }
 });
 
