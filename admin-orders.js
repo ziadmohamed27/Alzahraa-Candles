@@ -8,9 +8,11 @@ const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 const ordersStats = document.getElementById('ordersStats');
 const ordersCountLabel = document.getElementById('ordersCountLabel');
+const ordersFilteredTotalLabel = document.getElementById('ordersFilteredTotalLabel');
 const logoutBtn = document.getElementById('logoutBtn');
 const refreshBtn = document.getElementById('refreshBtn');
 const dateFromInput = document.getElementById('dateFrom');
+const cityFilter = document.getElementById('cityFilter');
 const dateToInput = document.getElementById('dateTo');
 const sortSelect = document.getElementById('sortSelect');
 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
@@ -96,6 +98,7 @@ function getSortLabel(mode) {
 function getActiveFilterSummary(filteredRows) {
   const search = String(searchInput?.value || '').trim();
   const selectedStatus = statusFilter?.value || '';
+  const selectedCity = cityFilter?.value || '';
   const statusLabel = selectedStatus ? getStatusMeta(selectedStatus).label : 'كل الحالات';
   const statLabelMap = {
     all: 'كل الطلبات',
@@ -106,6 +109,7 @@ function getActiveFilterSummary(filteredRows) {
   return {
     search: search || '—',
     status: statusLabel,
+    city: selectedCity || 'كل المحافظات',
     dateFrom: dateFromInput?.value || '—',
     dateTo: dateToInput?.value || '—',
     sort: getSortLabel(sortSelect?.value || 'newest'),
@@ -150,6 +154,23 @@ function updateLastUpdated() {
   }
 }
 
+function normalizeCityValue(value) {
+  return String(value || '').trim();
+}
+
+function populateCityFilter(rows) {
+  if (!cityFilter) return;
+  const current = cityFilter.value || '';
+  const cities = [...new Set(rows.map(o => normalizeCityValue(o.city)).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'ar'));
+
+  cityFilter.innerHTML = '<option value="">كل المحافظات</option>' +
+    cities.map(city => `<option value="${escapeHtml(city)}">${escapeHtml(city)}</option>`).join('');
+
+  const stillExists = cities.includes(current);
+  cityFilter.value = stillExists ? current : '';
+}
+
 async function loadOrders() {
   ordersList.innerHTML = '<div class="admin-empty">جارٍ تحميل الطلبات...</div>';
 
@@ -174,6 +195,7 @@ async function loadOrders() {
   }
 
   allOrders = data || [];
+  populateCityFilter(allOrders);
   updateLastUpdated();
   applyFilters();
 }
@@ -325,6 +347,7 @@ function sortOrders(orders) {
 function applyFilters() {
   const q = String(searchInput?.value || '').trim().toLowerCase();
   const status = statusFilter?.value || '';
+  const selectedCity = normalizeCityValue(cityFilter?.value || '');
 
   let filtered = allOrders.filter(order => {
     const matchesSearch =
@@ -333,16 +356,22 @@ function applyFilters() {
       String(order.phone || '').toLowerCase().includes(q);
 
     const matchesStatus = !status || order.status === status;
+    const matchesCity = !selectedCity || normalizeCityValue(order.city) === selectedCity;
     const matchesDate = withinDateRange(order);
 
     let matchesStat = true;
     if (activeStatFilter === 'today') matchesStat = isToday(order.created_at);
     else if (activeStatFilter === 'overdue') matchesStat = isOverdue(order);
 
-    return matchesSearch && matchesStatus && matchesDate && matchesStat;
+    return matchesSearch && matchesStatus && matchesCity && matchesDate && matchesStat;
   });
 
   filtered = sortOrders(filtered);
+
+  const filteredTotal = filtered.reduce((sum, order) => sum + Number(order?.total || 0), 0);
+  if (ordersFilteredTotalLabel) {
+    ordersFilteredTotalLabel.textContent = `إجمالي النتائج: ${money(filteredTotal)}`;
+  }
 
   renderStats(allOrders);
   renderOrders(filtered);
@@ -442,6 +471,7 @@ function exportCurrentViewToCsv() {
     [csvText('ملخص الفلتر الحالي'), csvText('القيمة')].join(','),
     [csvText('البطاقة المحددة'), csvText(summary.statCard)].join(','),
     [csvText('الحالة'), csvText(summary.status)].join(','),
+    [csvText('المحافظة'), csvText(summary.city)].join(','),
     [csvText('البحث'), csvText(summary.search)].join(','),
     [csvText('من تاريخ'), csvText(summary.dateFrom)].join(','),
     [csvText('إلى تاريخ'), csvText(summary.dateTo)].join(','),
@@ -552,6 +582,10 @@ statusFilter?.addEventListener('change', () => {
   activeStatFilter = 'all';
   applyFilters();
 });
+cityFilter?.addEventListener('change', () => {
+  activeStatFilter = 'all';
+  applyFilters();
+});
 dateFromInput?.addEventListener('change', applyFilters);
 dateToInput?.addEventListener('change', applyFilters);
 sortSelect?.addEventListener('change', applyFilters);
@@ -561,6 +595,7 @@ clearFiltersBtn?.addEventListener('click', () => {
   if (statusFilter) statusFilter.value = '';
   if (dateFromInput) dateFromInput.value = '';
   if (dateToInput) dateToInput.value = '';
+  if (cityFilter) cityFilter.value = '';
   if (sortSelect) sortSelect.value = 'newest';
   activeStatFilter = 'all';
   applyFilters();
