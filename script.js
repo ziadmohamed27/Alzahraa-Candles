@@ -647,4 +647,50 @@ window.addEventListener('load', () => {
       $('#mobileMenu')?.classList.remove('open');
     });
   });
+
+  /* ── Account nav injection ── */
+  initAccountNav();
 });
+
+/**
+ * Checks Supabase auth session and injects account links into
+ * #accountNavWrap (next to the cart icon in the header).
+ * Uses auth-config.js which is loaded before this script.
+ */
+async function initAccountNav() {
+  const wrap = $('#accountNavWrap');
+  if (!wrap) return;
+
+  /* auth-config.js may not be ready yet if deferred — guard safely */
+  if (typeof createAuthClient !== 'function') return;
+
+  let sb;
+  try { sb = createAuthClient(); } catch { return; }
+
+  let session = null;
+  try {
+    const { data } = await sb.auth.getSession();
+    session = data?.session || null;
+  } catch { return; }
+
+  if (session) {
+    /* Logged-in: show account icon + name initial */
+    const email    = session.user?.email || '';
+    const initial  = email.charAt(0).toUpperCase();
+
+    wrap.innerHTML = `
+      <a href="./account.html" class="account-nav-btn" aria-label="حسابي" title="حسابي — ${escHtml(email)}">
+        <span style="font-size:1.1rem">👤</span>
+        <span class="account-nav-label">${escHtml(initial)}</span>
+      </a>
+    `;
+  } else {
+    /* Guest: show login link */
+    wrap.innerHTML = `
+      <a href="./login.html" class="account-nav-btn is-ghost" aria-label="تسجيل الدخول">
+        <span style="font-size:1rem">🔑</span>
+        <span class="account-nav-label">دخول</span>
+      </a>
+    `;
+  }
+}

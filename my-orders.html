@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>طلباتي | الزّهراء</title>
-  <meta name="description" content="تابع طلباتك السابقة من متجر الزّهراء واعرض التفاصيل والحالة والإجمالي بسهولة.">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#d78aa7">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,8 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body data-page="my-orders" data-requires-auth="true">
-  <header class="site-header" id="top">
+<body>
+  <header class="site-header">
     <div class="container nav">
       <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
         <span></span><span></span><span></span>
@@ -23,39 +22,170 @@
         <span class="brand-title">الزّهراء</span>
         <span class="brand-sub">AL-ZHRAA NATURAL SOAP</span>
       </a>
-      <div class="nav-actions">
-        <div class="auth-nav-slot" id="authNavDesktop"></div>
-        <a class="icon-btn cart-btn" href="./cart.html" aria-label="فتح السلة">
-          <span class="cart-emoji">🛍️</span>
-          <span class="cart-count" id="cartCount">0</span>
-        </a>
-      </div>
+      <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
+        <span class="cart-emoji">🛍️</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
     </div>
   </header>
 
-  <main class="orders-page">
-    <section class="section auth-section">
-      <div class="container auth-shell">
-        <div class="page-hero-card orders-hero-card">
+  <main class="account-page section">
+    <div class="container">
+      <div class="cart-page-head" style="margin-bottom:28px">
+        <div>
           <span class="pill small">طلباتي</span>
-          <h1>تابع طلباتك السابقة</h1>
-          <p>ستجد هنا رقم الطلب، التاريخ، الحالة، الإجمالي، مع زر للتفاصيل وخيار واتساب عند الحاجة.</p>
+          <h1>سجل طلباتي</h1>
+          <p>جميع طلباتك المسجلة عبر الموقع في مكان واحد.</p>
         </div>
-
-        <div class="orders-toolbar">
-          <button class="btn btn-ghost" id="refreshOrdersBtn" type="button">تحديث الطلبات</button>
-          <a class="btn btn-ghost" href="./cart.html">طلب جديد</a>
+        <div class="account-head-actions">
+          <a href="./account.html" class="btn btn-ghost">حسابي</a>
+          <a href="./index.html#products" class="btn btn-primary">تسوق الآن</a>
         </div>
-
-        <div class="auth-feedback" id="ordersMessage"></div>
-        <div class="orders-list" id="myOrdersList"></div>
       </div>
-    </section>
+
+      <div id="ordersContainer">
+        <div class="admin-empty">
+          <span style="font-size:2rem">🌿</span>
+          <p style="margin-top:10px">جارٍ تحميل طلباتك...</p>
+        </div>
+      </div>
+    </div>
   </main>
 
   <div class="toast" id="toast" aria-live="polite"></div>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="./auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./auth-config.js"></script>
+  <script>
+    const sb = createAuthClient();
+    const WHATSAPP_NUMBER = '201095314011';
+    const $ = (s) => document.querySelector(s);
+
+    function updateCartCount() {
+      try {
+        const raw = localStorage.getItem('soap-cart');
+        const cart = raw ? JSON.parse(raw) : [];
+        const count = Array.isArray(cart) ? cart.reduce((s, i) => s + (Number(i.qty) || 0), 0) : 0;
+        const el = $('#cartCount');
+        if (el) el.textContent = count;
+      } catch {}
+    }
+
+    function money(v) {
+      return `${Number(v || 0).toFixed(2)} ج.م`;
+    }
+
+    function escHtml(str) {
+      if (typeof str !== 'string') return String(str ?? '');
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      try {
+        return new Date(iso).toLocaleDateString('ar-EG', { year:'numeric', month:'short', day:'numeric' });
+      } catch { return iso; }
+    }
+
+    function statusLabel(s) {
+      const map = { pending:'قيد المراجعة', confirmed:'تم التأكيد', processing:'قيد التجهيز', delivered:'تم التوصيل', cancelled:'ملغى' };
+      return map[s] || s || '—';
+    }
+    function statusClass(s) {
+      const map = { pending:'is-pending', confirmed:'is-confirmed', processing:'is-processing', delivered:'is-delivered', cancelled:'is-cancelled' };
+      return map[s] || '';
+    }
+
+    function buildItemsList(items) {
+      if (!Array.isArray(items) || !items.length) return '<p style="color:var(--muted)">لا توجد تفاصيل منتجات.</p>';
+      return items.map(i => `
+        <div class="admin-detail-item">
+          <div>
+            <strong>${escHtml(i.name || '—')}</strong>
+            <div style="color:var(--muted);font-size:.9rem">الكمية: ${escHtml(String(i.qty || 1))} × ${money(i.price)}</div>
+          </div>
+          <strong style="margin-right:auto">${money((i.price || 0) * (i.qty || 1))}</strong>
+        </div>
+      `).join('');
+    }
+
+    function buildWhatsAppLink(order) {
+      const msg = `مرحبًا، أريد الاستفسار عن طلبي رقم: ${order.order_number || order.id}`;
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function renderOrders(orders) {
+      const container = $('#ordersContainer');
+      if (!container) return;
+
+      if (!orders || !orders.length) {
+        container.innerHTML = `
+          <div class="admin-empty">
+            <span style="font-size:2.5rem">🧼</span>
+            <p style="margin-top:12px">لا توجد طلبات مسجلة بعد.</p>
+            <a href="./index.html#products" class="btn btn-primary" style="margin-top:14px;display:inline-flex">ابدئي التسوق</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = `<div class="admin-orders-list">${orders.map(order => `
+        <article class="admin-order-card">
+          <div class="myorders-top">
+            <div>
+              <strong class="myorders-number">${escHtml(order.order_number || `#${order.id}`)}</strong>
+              <span class="admin-status-badge ${statusClass(order.status)}">${escHtml(statusLabel(order.status))}</span>
+            </div>
+            <span class="admin-order-date">${formatDate(order.created_at)}</span>
+          </div>
+
+          <div class="myorders-meta">
+            <span>الإجمالي: <strong class="price">${money(order.total)}</strong></span>
+            ${order.city ? `<span>المحافظة: <strong>${escHtml(order.city)}</strong></span>` : ''}
+          </div>
+
+          <div class="admin-detail-items" style="margin-top:12px">
+            ${buildItemsList(order.items_json)}
+          </div>
+
+          <div class="admin-order-actions" style="margin-top:12px">
+            <a href="${buildWhatsAppLink(order)}" target="_blank" rel="noopener"
+               class="btn btn-whatsapp btn-sm">
+              متابعة الطلب عبر واتساب
+            </a>
+          </div>
+        </article>
+      `).join('')}</div>`;
+    }
+
+    async function init() {
+      updateCartCount();
+
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = './login.html?redirect=' + encodeURIComponent('./my-orders.html');
+        return;
+      }
+
+      const userId = session.user.id;
+
+      const { data: orders, error } = await sb
+        .from('orders')
+        .select('id, order_number, status, total, city, items_json, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        $('#ordersContainer').innerHTML = `
+          <div class="admin-empty admin-empty.is-error">
+            <p>تعذر تحميل الطلبات. أعد المحاولة لاحقًا.</p>
+          </div>`;
+        return;
+      }
+
+      renderOrders(orders);
+    }
+
+    init();
+  </script>
 </body>
 </html>

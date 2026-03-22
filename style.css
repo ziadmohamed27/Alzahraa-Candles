@@ -3874,408 +3874,202 @@ button.admin-stat-card{
   }
 }
 
+/* =================================================================
+   Account / Auth additions — v29
+   ================================================================= */
 
-/* =========================
-   Auth / Account / My Orders
-========================= */
-.nav-actions{
+/* Nav end group (account icon + cart icon) */
+.nav-end-group{
   display:flex;
   align-items:center;
-  gap:10px;
-  justify-self:start;
+  gap:8px;
 }
 
-.auth-nav-slot{
-  display:flex;
-  align-items:center;
-}
-
-.auth-desktop-link{
+/* Account nav button (icon-btn style, reuses existing) */
+.account-nav-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-height:48px;
-  padding:0 18px;
-  border-radius:15px;
-  border:1px solid rgba(107,146,40,.18);
+  gap:6px;
+  min-height:44px;
+  padding:0 12px;
+  border:1px solid rgba(107,146,40,.22);
+  border-radius:14px;
   background:#fff;
+  font-family:inherit;
+  font-size:.9rem;
+  font-weight:700;
+  color:var(--olive);
+  cursor:pointer;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:background .2s ease, border-color .2s ease;
+}
+.account-nav-btn:hover{background:var(--bg);border-color:var(--olive)}
+.account-nav-btn.is-ghost{color:var(--muted);border-color:var(--line)}
+.account-nav-btn.is-ghost:hover{color:var(--text);background:var(--bg)}
+
+/* Auth pages — card wrapper */
+.auth-card{
+  text-align:right;
+}
+
+.auth-brand{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  margin-bottom:4px;
+}
+
+.auth-links{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:.95rem;
+  color:var(--muted);
+  flex-wrap:wrap;
+}
+
+.auth-link{
   color:var(--olive);
   font-weight:700;
-  box-shadow:0 10px 24px rgba(0,0,0,.04);
+  text-decoration:underline;
+  text-underline-offset:3px;
 }
+.auth-link:hover{color:var(--olive-dark)}
 
-.mobile-auth-group{
-  display:grid;
-  gap:8px;
-  margin-bottom:8px;
-}
-
-.mobile-auth-group .mobile-auth-logout{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:14px;
-  padding:12px 14px;
-  font:inherit;
-  text-align:right;
-  cursor:pointer;
-}
-
-.auth-section{
-  padding-top:56px;
-}
-
-.auth-shell{
-  display:grid;
-  gap:24px;
-}
-
-.page-hero-card,
-.auth-card,
-.auth-side-card,
-.my-order-card,
-.empty-state{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:28px;
-  box-shadow:0 12px 28px rgba(0,0,0,.04);
-}
-
-.page-hero-card{
-  padding:24px;
-}
-
-.page-hero-card h1{
-  font-family:"El Messiri",sans-serif;
-  font-size:clamp(2rem,3vw,3rem);
-  margin-bottom:10px;
-}
-
-.page-hero-card p{
-  color:var(--muted);
-  line-height:1.9;
-}
-
-.auth-benefits-list{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:14px;
-}
-
-.auth-benefits-list span{
-  background:#faf8f2;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:8px 12px;
-  font-size:.95rem;
-}
-
-.auth-grid,
-.account-layout{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:22px;
-}
-
-.auth-card,
-.auth-side-card{
-  padding:22px;
-}
-
-.auth-tabs{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-  margin-bottom:16px;
-}
-
-.auth-tab{
-  border:1px solid var(--line);
-  background:#faf8f2;
-  border-radius:16px;
-  padding:14px 12px;
-  font:inherit;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.auth-tab.active{
-  background:var(--olive);
-  color:#fff;
-  border-color:var(--olive);
-}
-
-.auth-form{
-  display:grid;
-  gap:14px;
-}
-
-.auth-submit-btn{
-  width:100%;
-}
-
-.auth-feedback{
-  display:none;
-  margin-bottom:16px;
-  border-radius:18px;
-  padding:14px 16px;
-  line-height:1.8;
-}
-
-.auth-feedback.show{display:block}
-.auth-feedback.success{background:#f4fff4;border:1px solid rgba(37,211,102,.24);color:#166534}
-.auth-feedback.error{background:#fff6f5;border:1px solid rgba(240,68,56,.18);color:#b42318}
-.auth-feedback.info{background:#f7f7ff;border:1px solid rgba(76,111,255,.12);color:#344054}
-
-.auth-side-card h2{
-  font-family:"El Messiri",sans-serif;
-  font-size:1.7rem;
-  margin-bottom:14px;
-}
-
-.auth-side-steps{
-  display:grid;
-  gap:14px;
-  margin-bottom:18px;
-}
-
-.auth-side-steps strong{
-  display:block;
-  margin-bottom:5px;
-}
-
-.auth-side-steps p{
-  color:var(--muted);
-  line-height:1.8;
-}
-
-.account-side-actions{
-  display:grid;
-  gap:10px;
-}
-
-.orders-toolbar{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.orders-list{
-  display:grid;
-  gap:16px;
-}
-
-.my-order-card{
-  padding:18px;
-}
-
-.my-order-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:14px;
-}
-
-.my-order-number{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:8px 12px;
-  border-radius:999px;
-  background:#faf8f2;
-  border:1px solid var(--line);
-  direction:ltr;
-  font-weight:700;
-  margin-bottom:8px;
-}
-
-.my-order-head h3{
-  font-family:"El Messiri",sans-serif;
-  font-size:1.35rem;
-}
-
-.my-order-total{
-  font-family:"El Messiri",sans-serif;
-  font-size:1.35rem;
-  color:var(--price);
-  font-weight:700;
-}
-
-.my-order-meta-grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px;
-  margin-bottom:16px;
-}
-
-.my-order-meta-grid div{
-  background:#faf8f2;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:12px 14px;
-}
-
-.my-order-meta-grid span{
-  display:block;
-  color:var(--muted);
-  margin-bottom:6px;
-}
-
-.my-order-meta-grid strong{
-  display:block;
-  word-break:break-word;
-}
-
-.my-order-details{
-  border-top:1px solid var(--line);
-  padding-top:14px;
-  margin-top:14px;
-}
-
-.my-order-details summary{
-  cursor:pointer;
-  font-weight:700;
-  list-style:none;
-}
-
-.my-order-details summary::-webkit-details-marker{display:none}
-
-.my-order-details-body{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
-  margin-top:14px;
-}
-
-.my-order-details-block{
-  background:#faf8f2;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-}
-
-.my-order-details-block h4{
-  font-family:"El Messiri",sans-serif;
-  margin-bottom:8px;
-}
-
-.my-order-details-block p{
-  color:var(--muted);
-  line-height:1.8;
-}
-
-.my-order-item-row{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:8px 0;
-  border-bottom:1px dashed rgba(0,0,0,.08);
-}
-
-.my-order-item-row:last-child{border-bottom:none;padding-bottom:0}
-
-.my-order-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:16px;
-}
-
-.empty-state{
-  padding:24px;
+/* Email confirmation screen */
+.auth-confirm-card{
   text-align:center;
 }
 
-.empty-state h3{
-  font-family:"El Messiri",sans-serif;
-  font-size:1.7rem;
-  margin-bottom:8px;
+.auth-confirm-icon{
+  font-size:3rem;
+  margin:8px 0;
+  line-height:1;
 }
 
-.empty-state p{
+.auth-confirm-body{
+  display:grid;
+  gap:10px;
   color:var(--muted);
-  line-height:1.8;
-  margin-bottom:14px;
+  line-height:1.85;
+  font-size:.97rem;
 }
-
-.cart-auth-state{
-  margin:12px 0 18px;
-  border-radius:18px;
-  padding:14px 16px;
-  background:#faf8f2;
-  border:1px solid var(--line);
+.auth-confirm-body strong{
+  color:var(--olive);
+  font-size:1rem;
+  word-break:break-all;
 }
-
-.cart-auth-state.is-auth{
-  background:#f4fff4;
-  border-color:rgba(37,211,102,.22);
+.auth-confirm-hint{
+  font-size:.88rem;
+  color:var(--muted);
+  opacity:.85;
 }
-
-.cart-auth-state strong{
+.auth-confirm-btn{
   display:block;
-  margin-bottom:6px;
+  text-align:center;
+  text-decoration:none;
 }
 
-.cart-auth-state p{
-  color:var(--muted);
-  line-height:1.7;
+/* Account page layout */
+.account-page{
+  min-height:calc(100vh - 80px);
 }
 
-.cart-auth-links{
+.account-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 260px;
+  gap:22px;
+  align-items:start;
+}
+
+.account-section{
+  padding:22px;
+}
+
+.account-sidebar{
+  padding:22px;
+  position:sticky;
+  top:96px;
+}
+
+.account-head-actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-top:10px;
+  align-items:center;
 }
 
-.cart-auth-links a{
-  color:var(--olive);
-  font-weight:700;
-}
-
-.cart-submit-actions{
+.account-quick-links{
   display:grid;
   gap:10px;
-  margin-top:14px;
 }
 
-.cart-page-submit{
-  margin-top:0;
+/* My orders list */
+.myorders-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
 }
-
-.cart-page-submit-secondary{
-  min-height:52px;
+.myorders-number{
+  font-family:"El Messiri",sans-serif;
+  font-size:1.3rem;
+  margin-left:10px;
 }
-
-.account-helper{
-  color:#166534;
+.myorders-meta{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:.95rem;
+  margin-bottom:8px;
 }
+.myorders-meta strong{color:var(--text)}
 
-@media (max-width:1080px){
-  .auth-grid,
-  .account-layout,
-  .my-order-details-body{grid-template-columns:1fr}
-  .my-order-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Direct order (logged-in) checkout button */
+.btn-direct-order{
+  background:var(--olive);
+  color:#fff;
+  box-shadow:0 8px 22px rgba(107,146,40,.22);
+}
+.btn-direct-order:hover{background:var(--olive-dark);transform:translateY(-1px)}
+
+/* Cart logged-in notice */
+.cart-auth-notice{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#f4fff4;
+  border:1px solid rgba(37,211,102,.22);
+  color:#127a39;
+  font-size:.93rem;
+  font-weight:600;
+  margin-bottom:14px;
+}
+.cart-auth-notice a{color:var(--olive);text-decoration:underline;text-underline-offset:2px}
+
+/* Logged-in order success (distinct from guest) */
+.order-success-box.is-direct{
+  background:linear-gradient(180deg,#f0f8ff,#e8f4ff);
+  border-color:rgba(107,146,40,.3);
+}
+.order-success-box.is-direct h3{color:#0a5a8a}
+
+/* Responsive */
+@media (max-width:900px){
+  .account-layout{grid-template-columns:1fr}
+  .account-sidebar{position:static}
 }
 
 @media (max-width:640px){
-  .nav-actions{gap:8px}
-  .auth-desktop-link{
-    min-height:42px;
-    padding:0 14px;
-    font-size:.92rem;
-  }
-  .auth-section{padding-top:40px}
-  .page-hero-card,
-  .auth-card,
-  .auth-side-card,
-  .my-order-card,
-  .empty-state{border-radius:22px;padding:16px}
-  .auth-benefits-list{display:grid}
-  .my-order-head{flex-direction:column;align-items:flex-start}
-  .my-order-total{font-size:1.25rem}
-  .my-order-meta-grid{grid-template-columns:1fr}
-  .my-order-actions{display:grid}
-  .cart-submit-actions.has-two-actions{grid-template-columns:1fr}
+  .account-nav-btn span.account-nav-label{display:none}
+  .myorders-top{flex-direction:column;align-items:flex-start}
 }
