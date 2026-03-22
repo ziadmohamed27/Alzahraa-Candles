@@ -91,10 +91,12 @@
                   <label for="customerPhone">رقم الموبايل</label>
                   <input type="tel" id="customerPhone" placeholder="01xxxxxxxxx" inputmode="tel" autocomplete="tel">
                 </div>
+
                 <div class="field">
                   <label for="customerCity">المحافظة</label>
-                  <select id="customerCity" autocomplete="address-level1">
-                    <option value="">اختر المحافظة</option>
+                  <div class="select-wrap">
+                    <select id="customerCity" autocomplete="address-level1">
+                      <option value="">اختر المحافظة</option>
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
                     <option value="الإسكندرية">الإسكندرية</option>
@@ -122,7 +124,8 @@
                     <option value="قنا">قنا</option>
                     <option value="شمال سيناء">شمال سيناء</option>
                     <option value="سوهاج">سوهاج</option>
-                  </select>
+                    </select>
+                  </div>
                 </div>
 
                 <div class="field field-full">
@@ -132,13 +135,14 @@
 
                 <div class="field field-full">
                   <label for="customerNotes">ملاحظات</label>
-                  <textarea id="customerNotes" rows="4" placeholder="أي تفاصيل إضافية عن الطلب أو العنوان"></textarea>
+                  <textarea id="customerNotes" rows="4" placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
                 </div>
 
                 <div class="field field-full">
-                  <label class="choice-card urgent-choice" for="isUrgentOrder">
+                  <label class="urgent-choice-box" for="isUrgentOrder">
                     <input type="checkbox" id="isUrgentOrder">
-                    <div>
+                    <span class="urgent-check"></span>
+                    <div class="urgent-choice-copy">
                       <strong>أريد الطلب بشكل مستعجل</strong>
                       <p>سيتم إضافة 5% من الإجمالي بحد أدنى 10 جنيه على الطلب المستعجل.</p>
                     </div>

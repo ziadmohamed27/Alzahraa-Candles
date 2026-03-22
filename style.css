@@ -2717,3 +2717,134 @@ button.admin-stat-card{
     overflow:hidden;
   }
 }
+
+
+/* Governorate select + detailed address + urgent choice styling */
+.field select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+  padding:12px 44px 12px 14px;
+  font:inherit;
+  color:var(--text);
+  outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  cursor:pointer;
+}
+
+.field select:focus{
+  border-color:rgba(107,146,40,.45);
+  box-shadow:0 0 0 4px rgba(107,146,40,.08);
+}
+
+.select-wrap{
+  position:relative;
+}
+
+.select-wrap::after{
+  content:'⌄';
+  position:absolute;
+  inset-inline-start:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--brand);
+  font-size:1.2rem;
+  pointer-events:none;
+}
+
+.urgent-choice-box{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:linear-gradient(180deg,#fff,#fbfaf6);
+  cursor:pointer;
+  transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.urgent-choice-box:hover{
+  border-color:rgba(237,137,28,.35);
+  box-shadow:0 10px 22px rgba(237,137,28,.08);
+}
+
+.urgent-choice-box input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+.urgent-check{
+  width:22px;
+  height:22px;
+  border-radius:7px;
+  border:1.5px solid #d8d0bd;
+  background:#fff;
+  flex:0 0 22px;
+  position:relative;
+  transition:all .2s ease;
+}
+
+.urgent-choice-copy{
+  display:grid;
+  gap:4px;
+}
+
+.urgent-choice-copy strong{
+  display:block;
+  font-size:1.02rem;
+  color:var(--text);
+}
+
+.urgent-choice-copy p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:.94rem;
+}
+
+.urgent-choice-box input:checked + .urgent-check{
+  background:linear-gradient(180deg,#ffb24d,#ff8f1f);
+  border-color:#ff8f1f;
+  box-shadow:0 0 0 4px rgba(255,143,31,.12);
+}
+
+.urgent-choice-box input:checked + .urgent-check::after{
+  content:'';
+  position:absolute;
+  width:6px;
+  height:11px;
+  border-right:2px solid #fff;
+  border-bottom:2px solid #fff;
+  top:3px;
+  left:7px;
+  transform:rotate(45deg);
+}
+
+.urgent-choice-box:has(input:checked){
+  border-color:rgba(255,143,31,.35);
+  box-shadow:0 10px 22px rgba(255,143,31,.08);
+  background:linear-gradient(180deg,#fff9f2,#fff);
+}
+
+@media (max-width: 640px){
+  .urgent-choice-box{
+    padding:14px;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .urgent-choice-copy strong{
+    font-size:.98rem;
+  }
+
+  .urgent-choice-copy p{
+    font-size:.88rem;
+    line-height:1.7;
+  }
+}
