@@ -299,11 +299,14 @@ function showProductsLoading() {
   if (!el) return;
 
   el.innerHTML = `
-    <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 16px;color:var(--muted);font-size:1.05rem">
-      <span style="font-size:1.8rem;animation:spin 1s linear infinite">🌿</span>
+    <div class="products-loading-state" aria-live="polite">
+      <div class="products-loading-soap" aria-hidden="true">
+        <span class="products-loading-bubble bubble-one"></span>
+        <span class="products-loading-bubble bubble-two"></span>
+        <span class="products-loading-bubble bubble-three"></span>
+      </div>
       <span>جارٍ تحميل المنتجات...</span>
     </div>
-    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
   `;
 }
 
