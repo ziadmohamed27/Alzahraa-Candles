@@ -320,7 +320,7 @@ function renderCartItems() {
 
           <div class="qty-row qty-row-lg">
             <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="number" inputmode="numeric" min="1" step="1" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
+            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
             <button data-action="dec" data-id="${item.id}" type="button">-</button>
           </div>
         </div>
