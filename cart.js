@@ -850,9 +850,7 @@ function prefillFromProfile(profile) {
     if (el && !el.value && val) el.value = val;
   };
 
-  const resolvedName = profile.full_name || authState.session?.user?.user_metadata?.full_name || '';
-
-  set('#customerName',    resolvedName);
+  set('#customerName',    profile.full_name);
   set('#customerPhone',   profile.phone);
   /* governorate maps to the select */
   const govEl = $('#customerCity');

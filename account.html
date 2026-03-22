@@ -158,8 +158,8 @@
       return error;
     }
 
-    function fillForm(profile, userEmail, userMetaName = '') {
-      if ($('#accName'))        $('#accName').value        = profile?.full_name || userMetaName || '';
+    function fillForm(profile, userEmail) {
+      if ($('#accName'))        $('#accName').value        = profile?.full_name || '';
       if ($('#accEmail'))       $('#accEmail').value       = userEmail || '';
       if ($('#accPhone'))       $('#accPhone').value       = profile?.phone || '';
       if ($('#accGovernoate'))  $('#accGovernoate').value  = profile?.governorate || '';
@@ -177,11 +177,10 @@
 
       currentUser = session.user;
       const profile = await loadProfile(currentUser.id);
-      const metaName = currentUser.user_metadata?.full_name || '';
-      fillForm(profile, currentUser.email, metaName);
+      fillForm(profile, currentUser.email);
 
       /* Update heading with name */
-      const displayName = profile?.full_name || metaName || currentUser.email || 'مرحبًا';
+      const displayName = profile?.full_name || currentUser.email || 'مرحبًا';
       const heading = $('#accountHeading');
       if (heading) heading.textContent = `مرحبًا، ${displayName}`;
     }

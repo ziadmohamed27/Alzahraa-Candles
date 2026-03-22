@@ -166,12 +166,12 @@
         return;
       }
 
-      const userId = session.user.id;
+      const userEmail = session.user.email;
 
       const { data: orders, error } = await sb
         .from('orders')
         .select('id, order_number, status, total, city, items_json, created_at')
-        .eq('user_id', userId)
+        .eq('customer_email', userEmail)
         .order('created_at', { ascending: false });
 
       if (error) {
