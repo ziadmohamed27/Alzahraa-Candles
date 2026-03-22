@@ -3755,3 +3755,54 @@ button.admin-stat-card{
     width:100%;
   }
 }
+
+
+/* Admin mobile phone field fix */
+.admin-copy-field{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) 28px;
+  align-items:center;
+  gap:6px;
+}
+
+.admin-copy-field strong{
+  display:inline;
+  margin:0;
+  white-space:nowrap;
+}
+
+.admin-phone-value{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  direction:ltr;
+  unicode-bidi:embed;
+  text-align:left;
+  font-variant-numeric:tabular-nums;
+}
+
+@media (max-width: 720px){
+  .admin-copy-field{
+    grid-template-columns:auto minmax(0,1fr) 24px;
+    gap:4px;
+  }
+
+  .admin-phone-value{
+    font-size:.72rem;
+  }
+}
+
+@media (max-width: 560px){
+  .admin-order-identity{
+    grid-template-columns:1fr;
+  }
+
+  .admin-copy-field{
+    grid-template-columns:auto minmax(0,1fr) 22px;
+  }
+
+  .admin-phone-value{
+    font-size:.74rem;
+  }
+}

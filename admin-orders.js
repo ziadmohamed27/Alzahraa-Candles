@@ -351,13 +351,12 @@ function renderOrders(orders) {
 
             <div class="admin-order-identity">
               <p><strong>الاسم:</strong> <span>${escapeHtml(order.customer_name || '-')}</span></p>
-              <p class="admin-copy-field"><strong>الهاتف:</strong> <span>${escapeHtml(order.phone || '-')}</span><button type="button" class="admin-inline-copy copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}" aria-label="نسخ الهاتف" title="نسخ الهاتف">⧉</button></p>
+              <p class="admin-copy-field"><strong>الهاتف:</strong> <span class="admin-phone-value" dir="ltr">${escapeHtml(order.phone || '-')}</span><button type="button" class="admin-inline-copy copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}" aria-label="نسخ الهاتف" title="نسخ الهاتف">⧉</button></p>
               <p><strong>المدينة:</strong> <span>${escapeHtml(order.city || '-')}</span></p>
             </div>
 
             <div class="admin-order-highlights">
               <span class="admin-meta-chip">${itemsCount} قطعة</span>
-              <span class="admin-meta-chip">${isToday(order.created_at) ? 'اليوم' : 'أقدم'}</span>
               <span class="admin-meta-chip">${formatShortDate(order.created_at)}</span>
               ${orderMeta.address ? `<span class="admin-meta-chip">عنوان محفوظ</span>` : ''}
             </div>
@@ -534,6 +533,31 @@ async function copyText(text) {
   }
 }
 
+function ensureCopyToast() {
+  let toast = document.getElementById('copyToast');
+  if (toast) return toast;
+
+  toast = document.createElement('div');
+  toast.id = 'copyToast';
+  toast.className = 'toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.textContent = 'تم النسخ';
+  document.body.appendChild(toast);
+  return toast;
+}
+
+let copyToastTimer = null;
+function showCopyToast(message = 'تم النسخ') {
+  const toast = ensureCopyToast();
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(copyToastTimer);
+  copyToastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 1000);
+}
+
 function exportCurrentViewToCsv() {
   const rows = [...document.querySelectorAll('.admin-order-card')]
     .map(card => {
@@ -621,15 +645,13 @@ document.addEventListener('click', async (e) => {
 
   if (e.target.classList.contains('copyOrderBtn')) {
     await copyText(e.target.dataset.number || '');
-    e.target.textContent = 'تم النسخ';
-    setTimeout(() => { e.target.textContent = 'نسخ الرقم'; }, 1400);
+    showCopyToast('تم النسخ');
     return;
   }
 
   if (e.target.classList.contains('copyPhoneBtn')) {
     await copyText(e.target.dataset.phone || '');
-    e.target.textContent = 'تم النسخ';
-    setTimeout(() => { e.target.textContent = 'نسخ الهاتف'; }, 1400);
+    showCopyToast('تم النسخ');
     return;
   }
 });
