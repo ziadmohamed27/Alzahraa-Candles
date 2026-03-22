@@ -3807,51 +3807,69 @@ button.admin-stat-card{
   }
 }
 
-
-/* Admin phone alignment final fix */
-.admin-copy-field{
-  position:relative;
-  display:flex !important;
+/* Admin phone row final alignment fix */
+.admin-order-identity .admin-copy-field{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 72px;
+  grid-template-areas:"copy value label";
   align-items:center;
   gap:8px;
-  padding-inline-start:40px;
+  direction:ltr;
 }
 
-.admin-copy-field strong{
-  flex:0 0 auto;
+.admin-order-identity .admin-copy-field > strong{
+  grid-area:label;
+  direction:rtl;
+  text-align:right;
+  white-space:nowrap;
+  min-width:72px;
+  justify-self:end;
 }
 
-.admin-copy-field .admin-phone-value{
-  flex:1 1 auto;
-  min-width:0;
-  text-align:start;
+.admin-order-identity .admin-copy-field > .admin-phone-value{
+  grid-area:value;
+  direction:ltr;
+  unicode-bidi:plaintext;
+  text-align:right;
+  white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  white-space:nowrap;
+  min-width:0;
 }
 
-.admin-copy-field .admin-inline-copy{
-  position:absolute;
-  inset-inline-start:10px;
-  top:50%;
-  transform:translateY(-50%);
-}
-
-.admin-copy-field .admin-inline-copy:hover{
-  transform:translateY(-50%);
+.admin-order-identity .admin-copy-field > .admin-inline-copy{
+  grid-area:copy;
+  justify-self:start;
 }
 
 @media (max-width: 720px){
-  .admin-copy-field{
-    padding-inline-start:34px;
+  .admin-order-identity .admin-copy-field{
+    grid-template-columns:28px minmax(0,1fr) 64px;
     gap:6px;
   }
 
-  .admin-copy-field .admin-inline-copy{
-    inset-inline-start:8px;
+  .admin-order-identity .admin-copy-field > strong{
+    min-width:64px;
+    font-size:.86rem;
   }
 
-  .admin-copy-field .admin-phone-value{
+  .admin-order-identity .admin-copy-field > .admin-phone-value{
+    font-size:.78rem;
+  }
+}
+
+@media (max-width: 420px){
+  .admin-order-identity .admin-copy-field{
+    grid-template-columns:26px minmax(0,1fr) 60px;
+    gap:5px;
+  }
+
+  .admin-order-identity .admin-copy-field > strong{
+    min-width:60px;
     font-size:.82rem;
+  }
+
+  .admin-order-identity .admin-copy-field > .admin-phone-value{
+    font-size:.76rem;
   }
 }
