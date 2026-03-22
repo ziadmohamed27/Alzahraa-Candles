@@ -149,6 +149,7 @@ function saveCustomerInfo() {
     name: $('#customerName')?.value?.trim() || '',
     phone: $('#customerPhone')?.value?.trim() || '',
     city: $('#customerCity')?.value?.trim() || '',
+    address: $('#customerAddress')?.value?.trim() || '',
     notes: $('#customerNotes')?.value?.trim() || '',
     urgent: !!$('#isUrgentOrder')?.checked,
   };
@@ -164,6 +165,7 @@ function loadCustomerInfo() {
     if ($('#customerName')) $('#customerName').value = data.name || '';
     if ($('#customerPhone')) $('#customerPhone').value = data.phone || '';
     if ($('#customerCity')) $('#customerCity').value = data.city || '';
+    if ($('#customerAddress')) $('#customerAddress').value = data.address || '';
     if ($('#customerNotes')) $('#customerNotes').value = data.notes || '';
     if ($('#isUrgentOrder')) $('#isUrgentOrder').checked = !!data.urgent;
   } catch {}
@@ -262,6 +264,7 @@ function getOrderFormData() {
   const customerName = $('#customerName')?.value?.trim() || '';
   const customerPhone = $('#customerPhone')?.value?.trim() || '';
   const customerCity = $('#customerCity')?.value?.trim() || '';
+  const customerAddress = $('#customerAddress')?.value?.trim() || '';
   const customerNotes = $('#customerNotes')?.value?.trim() || '';
   const isUrgent = isUrgentOrderSelected();
 
@@ -269,6 +272,7 @@ function getOrderFormData() {
     customerName,
     customerPhone,
     customerCity,
+    customerAddress,
     customerNotes,
     isUrgent,
   };
@@ -433,7 +437,7 @@ function clearCartAndForm() {
   writeCart([]);
   clearCustomerInfo();
 
-  const fields = ['#customerName', '#customerPhone', '#customerCity', '#customerNotes'];
+  const fields = ['#customerName', '#customerPhone', '#customerCity', '#customerAddress', '#customerNotes'];
   fields.forEach((selector) => {
     const el = $(selector);
     if (el) el.value = '';
@@ -450,9 +454,10 @@ function buildOrderPayload(orderNumber) {
   const subtotal = calculateCartTotal();
   const urgentFee = calculateUrgentFee(subtotal);
   const total = subtotal + urgentFee;
-  const { customerName, customerPhone, customerCity, customerNotes, isUrgent } = getOrderFormData();
+  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent } = getOrderFormData();
 
   const notesParts = [];
+  if (customerAddress) notesParts.push(`العنوان: ${customerAddress}`);
   if (customerNotes) notesParts.push(customerNotes);
   if (isUrgent) notesParts.push(`طلب مستعجل (+${money(urgentFee)})`);
 
@@ -535,7 +540,7 @@ async function saveOrderWithUniqueNumber(maxRetries = 3) {
   throw lastError || new Error('تعذر حفظ الطلب');
 }
 
-function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes, isUrgent) {
+function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent) {
   const subtotal = calculateCartTotal();
   const urgentFee = calculateUrgentFee(subtotal);
   const grandTotal = subtotal + urgentFee;
@@ -551,7 +556,8 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
     `رقم الطلب: ${orderNumber}\n` +
     `الاسم: ${customerName}\n` +
     `الموبايل: ${customerPhone}\n` +
-    `المدينة: ${customerCity}\n` +
+    `المحافظة: ${customerCity}\n` +
+    `العنوان بالتفصيل: ${customerAddress || 'لا يوجد'}\n` +
     `ملاحظات: ${customerNotes || 'لا يوجد'}\n` +
     `حالة الطلب: ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}\n\n` +
     `المنتجات:\n\n${lines}\n\n` +
@@ -570,10 +576,10 @@ async function checkout() {
 
   if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
-  const { customerName, customerPhone, customerCity, customerNotes, isUrgent } = getOrderFormData();
+  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent } = getOrderFormData();
 
-  if (!customerName || !customerPhone || !customerCity) {
-    showToast('من فضلك املأ الاسم والموبايل والمدينة');
+  if (!customerName || !customerPhone || !customerCity || !customerAddress) {
+    showToast('من فضلك املأ الاسم والموبايل والمحافظة والعنوان بالتفصيل');
     return;
   }
 
@@ -587,7 +593,7 @@ async function checkout() {
 
   try {
     const { orderNumber } = await saveOrderWithUniqueNumber(3);
-    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerNotes, isUrgent);
+    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent);
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 
@@ -611,6 +617,7 @@ document.addEventListener('input', (e) => {
     e.target.id === 'customerName' ||
     e.target.id === 'customerPhone' ||
     e.target.id === 'customerCity' ||
+    e.target.id === 'customerAddress' ||
     e.target.id === 'customerNotes' ||
     e.target.id === 'isUrgentOrder'
   ) {
