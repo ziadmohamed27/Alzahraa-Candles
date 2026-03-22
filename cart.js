@@ -320,7 +320,7 @@ function renderCartItems() {
 
           <div class="qty-row qty-row-lg">
             <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
+            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}" autocomplete="off">
             <button data-action="dec" data-id="${item.id}" type="button">-</button>
           </div>
         </div>
@@ -607,6 +607,11 @@ async function checkout() {
 }
 
 document.addEventListener('input', (e) => {
+  if (e.target.dataset.action === 'set-qty') {
+    e.target.value = String(e.target.value || '').replace(/[^0-9]/g, '');
+    return;
+  }
+
   if (
     e.target.id === 'customerName' ||
     e.target.id === 'customerPhone' ||
@@ -637,6 +642,10 @@ document.addEventListener('change', (e) => {
 });
 
 document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('qty-input')) {
+    setTimeout(() => e.target.select(), 0);
+  }
+
   const action = e.target.dataset.action;
 
   if (action) {
@@ -680,6 +689,12 @@ document.addEventListener('click', (e) => {
     if (lastSubmittedOrderNumber) {
       copyText(lastSubmittedOrderNumber);
     }
+  }
+});
+
+document.addEventListener('focusin', (e) => {
+  if (e.target.classList.contains('qty-input')) {
+    setTimeout(() => e.target.select(), 0);
   }
 });
 

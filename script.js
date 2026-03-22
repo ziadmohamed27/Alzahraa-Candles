@@ -344,7 +344,7 @@ function renderProducts() {
   }
 
   el.innerHTML = list.map((p) => `
-    <article class="card product-card">
+    <article class="card product-card" data-id="${p.id}" tabindex="0" role="button" aria-label="عرض تفاصيل ${escHtml(p.name)}">
       <img
         class="product-image view-product"
         src="${p.image}"
@@ -755,6 +755,12 @@ document.addEventListener('click', (e) => {
     return;
   }
 
+  const productCard = e.target.closest('.product-card');
+  if (productCard && !e.target.closest('.add-to-cart') && !e.target.closest('.view-product')) {
+    openProduct(Number(productCard.dataset.id));
+    return;
+  }
+
   if (e.target.id === 'closeProductModal' || e.target.id === 'productModalOverlay') {
     closeProduct();
     return;
@@ -812,6 +818,16 @@ async function init() {
     showProductsError('تعذر تحميل المنتجات من قاعدة البيانات حاليًا.');
   }
 }
+
+document.addEventListener('keydown', (e) => {
+  const productCard = e.target.closest?.('.product-card');
+  if (!productCard) return;
+
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openProduct(Number(productCard.dataset.id));
+  }
+});
 
 document.addEventListener('DOMContentLoaded', init);
 
