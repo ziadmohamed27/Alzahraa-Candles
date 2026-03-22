@@ -8,7 +8,6 @@ const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 const ordersStats = document.getElementById('ordersStats');
 const ordersCountLabel = document.getElementById('ordersCountLabel');
-const ordersFilteredTotalLabel = document.getElementById('ordersFilteredTotalLabel');
 const logoutBtn = document.getElementById('logoutBtn');
 const refreshBtn = document.getElementById('refreshBtn');
 const dateFromInput = document.getElementById('dateFrom');
@@ -21,7 +20,6 @@ const adminLastUpdated = document.getElementById('adminLastUpdated');
 let allOrders = [];
 let detailsCache = new Map();
 let activeStatFilter = 'all';
-let currentFilteredOrders = [];
 
 const STATUS_MAP = {
   pending: { label: 'قيد المراجعة', className: 'is-pending' },
@@ -84,6 +82,46 @@ function formatShortDate(value) {
 function getStatusMeta(status) {
   return STATUS_MAP[status] || { label: status || '-', className: '' };
 }
+function getSortLabel(mode) {
+  const map = {
+    newest: 'الأحدث أولًا',
+    oldest: 'الأقدم أولًا',
+    highest_total: 'الأعلى قيمة',
+    lowest_total: 'الأقل قيمة',
+    pending_first: 'قيد المراجعة أولًا',
+  };
+  return map[mode] || 'الأحدث أولًا';
+}
+
+function getActiveFilterSummary(filteredRows) {
+  const search = String(searchInput?.value || '').trim();
+  const selectedStatus = statusFilter?.value || '';
+  const statusLabel = selectedStatus ? getStatusMeta(selectedStatus).label : 'كل الحالات';
+  const statLabelMap = {
+    all: 'كل الطلبات',
+    today: 'طلبات اليوم',
+    overdue: 'طلبات تحتاج متابعة',
+  };
+
+  return {
+    search: search || '—',
+    status: statusLabel,
+    dateFrom: dateFromInput?.value || '—',
+    dateTo: dateToInput?.value || '—',
+    sort: getSortLabel(sortSelect?.value || 'newest'),
+    statCard: statLabelMap[activeStatFilter] || 'كل الطلبات',
+    count: filteredRows.length,
+    total: filteredRows.reduce((sum, order) => sum + Number(order?.total || 0), 0),
+  };
+}
+
+function csvText(value, forceText = false) {
+  const raw = String(value ?? '');
+  const escaped = raw.replace(/"/g, '""');
+  if (forceText) return `"=""${escaped}"""`;
+  return `"${escaped}"`;
+}
+
 
 function toWhatsAppLink(phone) {
   const normalized = String(phone || '').replace(/\D/g, '');
@@ -183,10 +221,7 @@ function renderStats(baseOrders) {
 }
 
 function renderOrders(orders) {
-  currentFilteredOrders = orders;
-  const filteredTotal = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
   if (ordersCountLabel) ordersCountLabel.textContent = `عدد النتائج: ${orders.length} من أصل ${allOrders.length}`;
-  if (ordersFilteredTotalLabel) ordersFilteredTotalLabel.textContent = `إجمالي النتائج: ${money(filteredTotal)}`;
 
   if (!orders.length) {
     ordersList.innerHTML = '<div class="admin-empty">لا توجد طلبات مطابقة.</div>';
@@ -393,32 +428,31 @@ async function copyText(text) {
   }
 }
 
-function csvText(value, forceText = false) {
-  const raw = String(value ?? '');
-  const escaped = raw.replace(/"/g, '""');
-
-  if (forceText) {
-    return `"=""${escaped}"""`;
-  }
-
-  return `"${escaped}"`;
-}
-
 function exportCurrentViewToCsv() {
-  const rows = currentFilteredOrders.length ? currentFilteredOrders : allOrders;
+  const rows = [...document.querySelectorAll('.admin-order-card')]
+    .map(card => {
+      const id = card.dataset.orderId;
+      return allOrders.find(o => String(o.id) === String(id));
+    })
+    .filter(Boolean);
 
-  const header = [
-    'رقم الطلب',
-    'الاسم',
-    'الهاتف',
-    'المدينة',
-    'الحالة',
-    'الإجمالي',
-    'عدد القطع',
-    'التاريخ'
+  const summary = getActiveFilterSummary(rows);
+
+  const lines = [
+    [csvText('ملخص الفلتر الحالي'), csvText('القيمة')].join(','),
+    [csvText('البطاقة المحددة'), csvText(summary.statCard)].join(','),
+    [csvText('الحالة'), csvText(summary.status)].join(','),
+    [csvText('البحث'), csvText(summary.search)].join(','),
+    [csvText('من تاريخ'), csvText(summary.dateFrom)].join(','),
+    [csvText('إلى تاريخ'), csvText(summary.dateTo)].join(','),
+    [csvText('الترتيب'), csvText(summary.sort)].join(','),
+    [csvText('عدد النتائج'), csvText(summary.count)].join(','),
+    [csvText('إجمالي النتائج'), csvText(Number(summary.total || 0).toFixed(2))].join(','),
+    '',
   ];
 
-  const lines = [header.map(h => csvText(h)).join(',')];
+  const header = ['رقم الطلب', 'الاسم', 'الهاتف', 'المدينة', 'الحالة', 'الإجمالي', 'عدد القطع', 'التاريخ'];
+  lines.push(header.map(h => csvText(h)).join(','));
 
   rows.forEach(order => {
     const cols = [
@@ -431,21 +465,18 @@ function exportCurrentViewToCsv() {
       csvText(getOrderItemsCount(order)),
       csvText(formatDate(order.created_at)),
     ];
-
     lines.push(cols.join(','));
   });
 
   const csvContent = '\uFEFF' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-
   const link = document.createElement('a');
   link.href = url;
   link.download = `orders-export-${new Date().toISOString().slice(0, 10)}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-
   URL.revokeObjectURL(url);
 }
 

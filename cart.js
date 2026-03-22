@@ -253,7 +253,7 @@ function calculateGrandTotal() {
 }
 
 function normalizeQtyValue(value) {
-  const parsed = Math.floor(toSafeNumber(value, NaN));
+  const parsed = Math.floor(toSafeNumber(String(value ?? '').trim(), NaN));
   if (!Number.isFinite(parsed) || parsed < 1) return 1;
   return parsed;
 }
@@ -320,7 +320,7 @@ function renderCartItems() {
 
           <div class="qty-row qty-row-lg">
             <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="number" min="1" step="1" value="${item.qty}" inputmode="numeric" aria-label="كمية ${escHtml(item.name)}">
+            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
             <button data-action="dec" data-id="${item.id}" type="button">-</button>
           </div>
         </div>

@@ -1,4 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="45" fill="#6b9228"/>
-  <text x="50" y="68" font-size="55" text-anchor="middle" fill="white" font-family="serif">🌿</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="صابونة وردية">
+  <defs>
+    <linearGradient id="soap" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffd5ea"/>
+      <stop offset="100%" stop-color="#f48fc1"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="18" width="44" height="30" rx="10" fill="url(#soap)" stroke="#d96aa8" stroke-width="2"/>
+  <path d="M18 24c7-5 18-5 28 0" fill="none" stroke="#fff" stroke-opacity="0.7" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="20" cy="15" r="5" fill="#fff" fill-opacity="0.72"/>
+  <circle cx="28" cy="11" r="3.5" fill="#fff" fill-opacity="0.82"/>
+  <circle cx="34" cy="17" r="2.6" fill="#fff" fill-opacity="0.65"/>
+  <ellipse cx="25" cy="30" rx="10" ry="5" fill="url(#shine)"/>
 </svg>
