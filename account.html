@@ -193,7 +193,7 @@
       const governorate = $('#accGovernoate')?.value?.trim() || '';
       const address    = $('#accAddress')?.value?.trim() || '';
 
-      if (phone && !validatePhone(phone)) {
+     if (phone && !authValidatePhone(phone)) {
         setMsg('اكتب رقم موبايل مصري صحيح', 'is-error');
         return;
       }
