@@ -869,7 +869,10 @@ function init() {
   /* Async: resolve auth session and profile, then re-render */
   (async function resolveAuth() {
     const sb = getAuthClient();
-    if (!sb) return;
+    if (!sb) {
+      if (typeof renderAccountNav === 'function') await renderAccountNav({ wrapSelector: '#accountNavWrap', session: null });
+      return;
+    }
 
     try {
       const { data } = await sb.auth.getSession();
@@ -877,7 +880,7 @@ function init() {
     } catch { authState.session = null; }
 
     if (!authState.session) {
-      /* Not logged in — re-render to ensure no stale logged-in UI */
+      if (typeof renderAccountNav === 'function') await renderAccountNav({ wrapSelector: '#accountNavWrap', session: null, supabase: sb });
       renderSummary();
       return;
     }
@@ -891,6 +894,10 @@ function init() {
         .single();
       authState.profile = profile;
     } catch { authState.profile = null; }
+
+    if (typeof renderAccountNav === 'function') {
+      await renderAccountNav({ wrapSelector: '#accountNavWrap', session: authState.session, profile: authState.profile, supabase: sb });
+    }
 
     prefillFromProfile(authState.profile);
     renderSummary(); /* Re-render to show logged-in notice + direct order button */

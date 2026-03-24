@@ -24,6 +24,83 @@
     return /^01[0-2,5][0-9]{8}$/.test(n);
   };
 
+
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizeDisplayName(nameLike) {
+    const raw = String(nameLike || '').trim();
+    if (!raw) return 'حسابي';
+    const first = raw.split(/\s+/)[0] || raw;
+    return first.length > 18 ? first.slice(0, 18) : first;
+  }
+
+  global.renderAccountNav = async function renderAccountNav(options = {}) {
+    const wrapSelector = options.wrapSelector || '#accountNavWrap';
+    const wrap = typeof wrapSelector === 'string' ? document.querySelector(wrapSelector) : wrapSelector;
+    if (!wrap) return;
+
+    let client = options.supabase || null;
+    try {
+      if (!client) client = global.createAuthClient();
+    } catch {
+      return;
+    }
+
+    let session = options.session || null;
+    if (!session) {
+      try {
+        const { data } = await client.auth.getSession();
+        session = data?.session || null;
+      } catch {
+        session = null;
+      }
+    }
+
+    if (!session) {
+      wrap.innerHTML = `
+        <a href="./login.html" class="account-nav-btn is-ghost" aria-label="تسجيل الدخول">
+          <span style="font-size:1rem">🔑</span>
+          <span class="account-nav-label">دخول</span>
+        </a>
+      `;
+      return;
+    }
+
+    let fullName = options.profile?.full_name || '';
+    if (!fullName) {
+      try {
+        const { data: profile } = await client
+          .from('profiles')
+          .select('full_name')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        fullName = profile?.full_name || '';
+      } catch {}
+    }
+
+    const displayName = normalizeDisplayName(
+      fullName ||
+      session.user?.user_metadata?.full_name ||
+      session.user?.user_metadata?.name ||
+      (session.user?.email || '').split('@')[0]
+    );
+
+    wrap.innerHTML = `
+      <a href="./account.html" class="account-nav-btn" aria-label="حسابي" title="حسابي — ${escapeHtml(displayName)}">
+        <span style="font-size:1.05rem">👤</span>
+        <span class="account-nav-label">${escapeHtml(displayName)}</span>
+      </a>
+    `;
+  };
+
   /* Friendly auth error messages */
   global.authErrorMessage = function authErrorMessage(error) {
     if (!error) return 'حدث خطأ غير متوقع';

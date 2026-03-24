@@ -59,6 +59,7 @@
   <script>
     const sb = createAuthClient();
     const WHATSAPP_NUMBER = '201095314011';
+    const PRODUCT_IMAGES_BUCKET = 'products';
     const $ = (s) => document.querySelector(s);
 
     function updateCartCount() {
@@ -69,6 +70,16 @@
         const el = $('#cartCount');
         if (el) el.textContent = count;
       } catch {}
+    }
+
+
+    function showToast(message) {
+      const toast = $('#toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
     function money(v) {
@@ -114,16 +125,101 @@
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     }
 
+
+    function getProductImageUrl(imagePath) {
+      const value = String(imagePath || '').trim();
+      if (!value) return '';
+      if (/^https?:\/\//i.test(value)) return value;
+      const cleanPath = value.replace(/^\/+/, '');
+      const normalizedPath = cleanPath.startsWith(`${PRODUCT_IMAGES_BUCKET}/`)
+        ? cleanPath.slice(PRODUCT_IMAGES_BUCKET.length + 1)
+        : cleanPath;
+      const { data } = sb.storage.from(PRODUCT_IMAGES_BUCKET).getPublicUrl(normalizedPath);
+      return data?.publicUrl || '';
+    }
+
+    function normalizeReorderItem(product, qty) {
+      return {
+        id: Number(product.id),
+        name: product.name || '',
+        price: Number(product.price) || 0,
+        weight: product.weight || '',
+        image_path: product.image || '',
+        image: getProductImageUrl(product.image || ''),
+        qty: Math.max(1, Number(qty) || 1),
+      };
+    }
+
+    async function reorderOrder(orderId) {
+      const order = (window.__ordersCache || []).find((item) => String(item.id) === String(orderId));
+      if (!order) {
+        showToast('تعذر العثور على الطلب');
+        return;
+      }
+
+      const previousItems = Array.isArray(order.items_json) ? order.items_json : [];
+      const productIds = previousItems
+        .map((item) => Number(item?.id))
+        .filter((id) => Number.isFinite(id));
+
+      if (!productIds.length) {
+        showToast('لا توجد منتجات قابلة لإعادة الطلب لهذا الطلب');
+        return;
+      }
+
+      const { data: products, error } = await sb
+        .from('products')
+        .select('id, name, price, weight, image')
+        .in('id', productIds);
+
+      if (error) {
+        console.error('[Reorder] failed to load current products', error);
+        showToast('تعذر تجهيز الطلب الآن');
+        return;
+      }
+
+      const productMap = new Map((products || []).map((product) => [String(product.id), product]));
+      const rebuiltCart = [];
+      const missingItems = [];
+
+      previousItems.forEach((item) => {
+        const product = productMap.get(String(item?.id));
+        if (!product) {
+          missingItems.push(item?.name || `#${item?.id || '—'}`);
+          return;
+        }
+        rebuiltCart.push(normalizeReorderItem(product, item?.qty));
+      });
+
+      if (!rebuiltCart.length) {
+        showToast('هذا الطلب يحتوي على منتجات غير متاحة حاليًا');
+        return;
+      }
+
+      localStorage.setItem('soap-cart', JSON.stringify(rebuiltCart));
+
+      if (missingItems.length) {
+        showToast('تمت إضافة المنتجات المتاحة فقط من الطلب السابق');
+      } else {
+        showToast('تمت إعادة تجهيز الطلب في السلة');
+      }
+
+      setTimeout(() => {
+        window.location.href = './cart.html';
+      }, 350);
+    }
+
     function renderOrders(orders) {
       const container = $('#ordersContainer');
       if (!container) return;
+      window.__ordersCache = Array.isArray(orders) ? orders : [];
 
       if (!orders || !orders.length) {
         container.innerHTML = `
           <div class="admin-empty">
             <span style="font-size:2.5rem">🧼</span>
             <p style="margin-top:12px">لا توجد طلبات مسجلة بعد.</p>
-            <a href="./index.html#products" class="btn btn-primary" style="margin-top:14px;display:inline-flex">ابدئي التسوق</a>
+            <a href="./index.html#products" class="btn btn-primary" style="margin-top:14px;display:inline-flex">ابدأ التسوق</a>
           </div>`;
         return;
       }
@@ -148,6 +244,9 @@
           </div>
 
           <div class="admin-order-actions" style="margin-top:12px">
+            <button type="button" class="btn btn-primary btn-sm" data-action="reorder-order" data-order-id="${escHtml(String(order.id))}">
+              إعادة الطلب
+            </button>
             <a href="${buildWhatsAppLink(order)}" target="_blank" rel="noopener"
                class="btn btn-whatsapp btn-sm">
               متابعة الطلب عبر واتساب
@@ -166,12 +265,10 @@
         return;
       }
 
-      const userEmail = session.user.email;
-
       const { data: orders, error } = await sb
         .from('orders')
         .select('id, order_number, status, total, city, items_json, created_at')
-        .eq('customer_email', userEmail)
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -184,6 +281,12 @@
 
       renderOrders(orders);
     }
+
+    document.addEventListener('click', (event) => {
+      const reorderBtn = event.target.closest('[data-action="reorder-order"]');
+      if (!reorderBtn) return;
+      reorderOrder(reorderBtn.dataset.orderId);
+    });
 
     init();
   </script>

@@ -4073,3 +4073,32 @@ button.admin-stat-card{
   .account-nav-btn span.account-nav-label{display:none}
   .myorders-top{flex-direction:column;align-items:flex-start}
 }
+
+
+.account-nav-btn{
+  max-width:160px;
+}
+
+.account-nav-btn .account-nav-label{
+  display:inline-block;
+  max-width:92px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+@media (max-width:640px){
+  .account-nav-btn{
+    min-height:40px;
+    padding:0 10px;
+    gap:5px;
+    max-width:112px;
+    border-radius:12px;
+    font-size:.82rem;
+  }
+
+  .account-nav-btn span.account-nav-label{
+    display:inline-block;
+    max-width:56px;
+  }
+}

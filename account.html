@@ -193,7 +193,7 @@
       const governorate = $('#accGovernoate')?.value?.trim() || '';
       const address    = $('#accAddress')?.value?.trim() || '';
 
-     if (phone && !authValidatePhone(phone)) {
+      if (phone && typeof authValidatePhone === 'function' && !authValidatePhone(phone)) {
         setMsg('اكتب رقم موبايل مصري صحيح', 'is-error');
         return;
       }
@@ -216,6 +216,18 @@
         setMsg('تعذر الحفظ، أعد المحاولة', 'is-error');
         showToast('تعذر حفظ التغييرات');
       } else {
+        try {
+          const rawCustomer = localStorage.getItem('soap-customer-info');
+          const currentCustomer = rawCustomer ? JSON.parse(rawCustomer) : {};
+          localStorage.setItem('soap-customer-info', JSON.stringify({
+            ...currentCustomer,
+            name,
+            phone,
+            city: governorate,
+            address,
+          }));
+        } catch {}
+
         setMsg('تم حفظ التغييرات ✓', 'is-success');
         showToast('تم حفظ بياناتك بنجاح');
         /* Update heading */
