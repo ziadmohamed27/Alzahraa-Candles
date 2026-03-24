@@ -152,13 +152,41 @@
                     <div class="delivery-location-status" id="deliveryLocationStatus">لم يتم تحديد موقع تسليم على الخريطة بعد.</div>
                     <a id="deliveryLocationLink" class="delivery-location-link hidden" href="#" target="_blank" rel="noopener">فتح الموقع المحدد</a>
 
-                    <div id="deliveryMapWrap" class="delivery-map-wrap hidden">
-                      <div class="delivery-map-head">
-                        <strong>اختيار موقع التسليم</strong>
-                        <span>اضغط على الخريطة لوضع العلامة في المكان الصحيح.</span>
+                    <div class="delivery-picker-helper">
+                      <span>افتح الخريطة الكاملة للبحث أو تحديد موقع التسليم بدقة ثم اضغط تأكيد.</span>
+                    </div>
+
+                    <div id="deliveryLocationModal" class="delivery-location-modal hidden" aria-hidden="true">
+                      <div class="delivery-location-backdrop" data-close-delivery-modal></div>
+                      <div class="delivery-location-dialog" role="dialog" aria-modal="true" aria-labelledby="deliveryLocationModalTitle">
+                        <div class="delivery-location-dialog-head">
+                          <div>
+                            <h3 id="deliveryLocationModalTitle">اختيار موقع التسليم</h3>
+                            <p>ابحث عن المنطقة أو الشارع أو حرّك العلامة على الخريطة ثم اضغط <strong>تأكيد الموقع</strong>.</p>
+                          </div>
+                          <button type="button" class="delivery-location-close" id="closeDeliveryModalBtn" aria-label="إغلاق نافذة اختيار الموقع">×</button>
+                        </div>
+
+                        <form id="deliveryLocationSearchForm" class="delivery-location-search" autocomplete="off">
+                          <input type="search" id="deliveryLocationSearchInput" placeholder="ابحث عن شارع أو منطقة أو عنوان" aria-label="ابحث عن موقع التسليم">
+                          <button type="submit" class="btn btn-primary btn-sm">بحث</button>
+                        </form>
+
+                        <div class="delivery-location-search-meta hidden" id="deliveryLocationSearchMeta"></div>
+                        <div class="delivery-location-search-results hidden" id="deliveryLocationSearchResults"></div>
+
+                        <div class="delivery-map-modal-wrap">
+                          <div id="deliveryMap" class="delivery-map" aria-label="خريطة اختيار موقع التسليم"></div>
+                        </div>
+
+                        <div class="delivery-map-selection" id="deliveryMapSelectionStatus">لم يتم اختيار موقع بعد.</div>
+
+                        <div class="delivery-map-toolbar">
+                          <button type="button" class="btn btn-ghost btn-sm" id="modalUseCurrentLocationBtn">استخدم موقعي الحالي داخل الخريطة</button>
+                          <button type="button" class="btn btn-ghost btn-sm" id="cancelDeliveryLocationBtn">إلغاء</button>
+                          <button type="button" class="btn btn-primary btn-sm" id="confirmDeliveryLocationBtn">تأكيد الموقع</button>
+                        </div>
                       </div>
-                      <div id="deliveryMap" class="delivery-map" aria-label="خريطة اختيار موقع التسليم"></div>
-                      <p class="delivery-map-hint">يمكنك اختيار مكان مختلف عن موقعك الحالي، وسيتم حفظ الرابط مع الطلب.</p>
                     </div>
                   </div>
                 </div>
