@@ -38,6 +38,8 @@ const NOTE_PREFIXES = {
   orderType: 'نوع الطلب:',
   urgentFee: 'رسوم الطلب المستعجل:',
   shipping: 'الشحن:',
+  locationSource: 'مصدر موقع التسليم:',
+  locationLink: 'رابط موقع التسليم:',
 };
 
 function parseStructuredNotes(rawValue) {
@@ -48,6 +50,8 @@ function parseStructuredNotes(rawValue) {
     orderType: '',
     urgentFee: '',
     shipping: '',
+    locationSource: '',
+    locationLink: '',
     raw,
   };
 
@@ -62,6 +66,8 @@ function parseStructuredNotes(rawValue) {
     else if (line.startsWith(NOTE_PREFIXES.orderType)) meta.orderType = line.slice(NOTE_PREFIXES.orderType.length).trim();
     else if (line.startsWith(NOTE_PREFIXES.urgentFee)) meta.urgentFee = line.slice(NOTE_PREFIXES.urgentFee.length).trim();
     else if (line.startsWith(NOTE_PREFIXES.shipping)) meta.shipping = line.slice(NOTE_PREFIXES.shipping.length).trim();
+    else if (line.startsWith(NOTE_PREFIXES.locationSource)) meta.locationSource = line.slice(NOTE_PREFIXES.locationSource.length).trim();
+    else if (line.startsWith(NOTE_PREFIXES.locationLink)) meta.locationLink = line.slice(NOTE_PREFIXES.locationLink.length).trim();
   }
 
   if (!meta.address) {
@@ -186,6 +192,25 @@ function toWhatsAppLink(phone) {
   if (!normalized) return '#';
   const e164 = normalized.startsWith('20') ? normalized : normalized.startsWith('0') ? `2${normalized}` : normalized;
   return `https://wa.me/${e164}`;
+}
+
+function getDeliveryLocationUrl(order, meta = null) {
+  const direct = String(order?.delivery_maps_link || '').trim();
+  if (direct) return direct;
+  const parsed = String(meta?.locationLink || '').trim();
+  if (/^https?:\/\//i.test(parsed)) return parsed;
+  const lat = Number(order?.delivery_lat);
+  const lng = Number(order?.delivery_lng);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) return `https://www.google.com/maps?q=${lat},${lng}`;
+  return '';
+}
+
+function getDeliveryLocationSourceLabel(order, meta = null) {
+  const raw = String(order?.delivery_location_source || meta?.locationSource || '').trim();
+  if (!raw) return 'غير محدد';
+  if (raw === 'current_gps') return 'الموقع الحالي';
+  if (raw === 'map_picker') return 'الخريطة اليدوية';
+  return raw;
 }
 
 function isToday(value) {
@@ -442,6 +467,8 @@ function renderDetailsHtml(order) {
   const items = Array.isArray(order.items_json) ? order.items_json : [];
   const itemsCount = getOrderItemsCount(order);
   const meta = parseStructuredNotes(order.notes);
+  const deliveryUrl = getDeliveryLocationUrl(order, meta);
+  const deliverySourceLabel = getDeliveryLocationSourceLabel(order, meta);
   const itemsHtml = items.length ? items.map(item => {
     const qty = Math.max(0, toSafeInt(item.qty, 0));
     const price = Number(item.price || 0);
@@ -472,6 +499,9 @@ function renderDetailsHtml(order) {
           <p><strong>المحافظة:</strong> ${escapeHtml(order.city || '-')}</p>
           <p><strong>العنوان:</strong> ${escapeHtml(meta.address || 'غير مسجل')}</p>
           <p><strong>ملاحظات العميل:</strong> ${escapeHtml(meta.customerNote || 'لا يوجد')}</p>
+          <p><strong>مصدر الموقع:</strong> ${escapeHtml(deliverySourceLabel)}</p>
+          <p><strong>الموقع على الخريطة:</strong> ${deliveryUrl ? 'متوفر' : 'غير متوفر'}</p>
+          ${deliveryUrl ? `<a class="btn btn-ghost btn-sm" href="${escapeHtml(deliveryUrl)}" target="_blank" rel="noopener">فتح الموقع</a>` : ''}
         </div>
         <div class="admin-info-box">
           <h4>ملخص الطلب</h4>
@@ -582,7 +612,7 @@ function exportCurrentViewToCsv() {
     '',
   ];
 
-  const header = ['رقم الطلب', 'الاسم', 'الهاتف', 'المحافظة', 'العنوان', 'نوع الطلب', 'رسوم الاستعجال', 'الحالة', 'الإجمالي', 'عدد القطع', 'التاريخ', 'ملاحظات العميل'];
+  const header = ['رقم الطلب', 'الاسم', 'الهاتف', 'المحافظة', 'العنوان', 'نوع الطلب', 'رسوم الاستعجال', 'الحالة', 'الإجمالي', 'عدد القطع', 'التاريخ', 'ملاحظات العميل', 'مصدر الموقع', 'رابط الموقع'];
   lines.push(header.map(h => csvText(h)).join(','));
 
   rows.forEach(order => {
@@ -600,6 +630,8 @@ function exportCurrentViewToCsv() {
       csvText(getOrderItemsCount(order)),
       csvText(formatDate(order.created_at)),
       csvText(meta.customerNote),
+      csvText(getDeliveryLocationSourceLabel(order, meta)),
+      csvText(getDeliveryLocationUrl(order, meta)),
     ];
     lines.push(cols.join(','));
   });

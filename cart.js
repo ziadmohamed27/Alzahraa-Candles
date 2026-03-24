@@ -26,6 +26,8 @@ const ORDER_NOTE_PREFIXES = {
   orderType: 'نوع الطلب:',
   urgentFee: 'رسوم الطلب المستعجل:',
   shipping: 'الشحن:',
+  locationSource: 'مصدر موقع التسليم:',
+  locationLink: 'رابط موقع التسليم:',
 };
 
 (function initSupabase() {
@@ -172,6 +174,191 @@ const authState = {
   profile: null,
 };
 
+const DEFAULT_DELIVERY_CENTER = { lat: 30.0444, lng: 31.2357 };
+
+const deliveryLocationState = {
+  lat: null,
+  lng: null,
+  mapsLink: '',
+  source: '',
+};
+
+let deliveryMap = null;
+let deliveryMarker = null;
+
+function normalizeCoordinate(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? Number(n.toFixed(6)) : null;
+}
+
+function hasDeliveryLocation() {
+  return Number.isFinite(deliveryLocationState.lat) && Number.isFinite(deliveryLocationState.lng);
+}
+
+function buildMapsLink(lat, lng) {
+  const safeLat = normalizeCoordinate(lat);
+  const safeLng = normalizeCoordinate(lng);
+  if (!Number.isFinite(safeLat) || !Number.isFinite(safeLng)) return '';
+  return `https://www.google.com/maps?q=${safeLat},${safeLng}`;
+}
+
+function getLocationSourceLabel(source) {
+  const map = {
+    current_gps: 'الموقع الحالي',
+    map_picker: 'الخريطة اليدوية',
+  };
+  return map[source] || 'غير محدد';
+}
+
+function updateDeliveryMarker() {
+  if (!deliveryMap) return;
+
+  if (!hasDeliveryLocation()) {
+    if (deliveryMarker) {
+      deliveryMap.removeLayer(deliveryMarker);
+      deliveryMarker = null;
+    }
+    return;
+  }
+
+  const latLng = [deliveryLocationState.lat, deliveryLocationState.lng];
+  if (!deliveryMarker) {
+    deliveryMarker = window.L.marker(latLng).addTo(deliveryMap);
+  } else {
+    deliveryMarker.setLatLng(latLng);
+  }
+}
+
+function renderDeliveryLocationUi() {
+  const statusEl = $('#deliveryLocationStatus');
+  const linkEl = $('#deliveryLocationLink');
+  const clearBtn = $('#clearLocationBtn');
+
+  if (statusEl) {
+    if (hasDeliveryLocation()) {
+      statusEl.innerHTML = `تم تحديد موقع التسليم بنجاح — <strong>${getLocationSourceLabel(deliveryLocationState.source)}</strong><span dir="ltr"> (${deliveryLocationState.lat.toFixed(5)}, ${deliveryLocationState.lng.toFixed(5)})</span>`;
+      statusEl.classList.add('is-selected');
+    } else {
+      statusEl.textContent = 'لم يتم تحديد موقع تسليم على الخريطة بعد.';
+      statusEl.classList.remove('is-selected');
+    }
+  }
+
+  if (linkEl) {
+    if (deliveryLocationState.mapsLink) {
+      linkEl.href = deliveryLocationState.mapsLink;
+      linkEl.classList.remove('hidden');
+    } else {
+      linkEl.href = '#';
+      linkEl.classList.add('hidden');
+    }
+  }
+
+  if (clearBtn) {
+    clearBtn.classList.toggle('hidden', !hasDeliveryLocation());
+  }
+
+  updateDeliveryMarker();
+}
+
+function setDeliveryLocation({ lat, lng, source = 'map_picker' }) {
+  const safeLat = normalizeCoordinate(lat);
+  const safeLng = normalizeCoordinate(lng);
+  if (!Number.isFinite(safeLat) || !Number.isFinite(safeLng)) return;
+
+  deliveryLocationState.lat = safeLat;
+  deliveryLocationState.lng = safeLng;
+  deliveryLocationState.source = source;
+  deliveryLocationState.mapsLink = buildMapsLink(safeLat, safeLng);
+
+  renderDeliveryLocationUi();
+  saveCustomerInfo();
+}
+
+function clearDeliveryLocation() {
+  deliveryLocationState.lat = null;
+  deliveryLocationState.lng = null;
+  deliveryLocationState.mapsLink = '';
+  deliveryLocationState.source = '';
+  renderDeliveryLocationUi();
+  saveCustomerInfo();
+}
+
+function ensureDeliveryMap() {
+  const mapEl = $('#deliveryMap');
+  if (!mapEl || !window.L) return null;
+  if (deliveryMap) return deliveryMap;
+
+  deliveryMap = window.L.map(mapEl, { scrollWheelZoom: false }).setView([
+    deliveryLocationState.lat || DEFAULT_DELIVERY_CENTER.lat,
+    deliveryLocationState.lng || DEFAULT_DELIVERY_CENTER.lng,
+  ], deliveryLocationState.mapsLink ? 15 : 6);
+
+  window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors',
+  }).addTo(deliveryMap);
+
+  deliveryMap.on('click', (event) => {
+    setDeliveryLocation({ lat: event.latlng.lat, lng: event.latlng.lng, source: 'map_picker' });
+    deliveryMap.setView(event.latlng, Math.max(deliveryMap.getZoom(), 15));
+    showToast('تم تحديد موقع التسليم على الخريطة');
+  });
+
+  updateDeliveryMarker();
+  return deliveryMap;
+}
+
+function toggleDeliveryMap(forceOpen = null) {
+  const wrap = $('#deliveryMapWrap');
+  if (!wrap) return;
+  const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : wrap.classList.contains('hidden');
+  wrap.classList.toggle('hidden', !shouldOpen);
+  if (!shouldOpen) return;
+
+  const map = ensureDeliveryMap();
+  if (!map) {
+    showToast('تعذر تحميل الخريطة الآن');
+    return;
+  }
+  setTimeout(() => {
+    map.invalidateSize();
+    if (hasDeliveryLocation()) {
+      map.setView([deliveryLocationState.lat, deliveryLocationState.lng], Math.max(map.getZoom(), 15));
+    }
+  }, 80);
+}
+
+async function useCurrentLocation() {
+  if (!navigator.geolocation) {
+    showToast('المتصفح لا يدعم تحديد الموقع');
+    return;
+  }
+
+  showToast('جارٍ تحديد موقعك الحالي...');
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords || {};
+      setDeliveryLocation({ lat: latitude, lng: longitude, source: 'current_gps' });
+      const map = ensureDeliveryMap();
+      if (map) {
+        toggleDeliveryMap(true);
+        map.setView([deliveryLocationState.lat, deliveryLocationState.lng], 16);
+      }
+      showToast('تم استخدام موقعك الحالي');
+    },
+    (error) => {
+      const code = error?.code;
+      if (code === 1) showToast('تم رفض إذن الوصول للموقع');
+      else if (code === 2) showToast('تعذر تحديد الموقع الحالي الآن');
+      else if (code === 3) showToast('انتهت مهلة تحديد الموقع، حاول مرة أخرى');
+      else showToast('تعذر الحصول على الموقع الحالي');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
 /**
  * Initialise Supabase auth client using auth-config.js (loaded before cart.js).
  * Returns null if not available (guest-only mode).
@@ -191,6 +378,10 @@ function saveCustomerInfo() {
     address: $('#customerAddress')?.value?.trim() || '',
     notes: $('#customerNotes')?.value?.trim() || '',
     urgent: !!$('#isUrgentOrder')?.checked,
+    deliveryLat: hasDeliveryLocation() ? deliveryLocationState.lat : null,
+    deliveryLng: hasDeliveryLocation() ? deliveryLocationState.lng : null,
+    deliveryMapsLink: deliveryLocationState.mapsLink || '',
+    deliveryLocationSource: deliveryLocationState.source || '',
   };
   localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(payload));
 }
@@ -207,6 +398,20 @@ function loadCustomerInfo() {
     if ($('#customerAddress')) $('#customerAddress').value = data.address || '';
     if ($('#customerNotes')) $('#customerNotes').value = data.notes || '';
     if ($('#isUrgentOrder')) $('#isUrgentOrder').checked = !!data.urgent;
+
+    if (Number.isFinite(Number(data.deliveryLat)) && Number.isFinite(Number(data.deliveryLng))) {
+      deliveryLocationState.lat = normalizeCoordinate(data.deliveryLat);
+      deliveryLocationState.lng = normalizeCoordinate(data.deliveryLng);
+      deliveryLocationState.source = String(data.deliveryLocationSource || '').trim();
+      deliveryLocationState.mapsLink = String(data.deliveryMapsLink || buildMapsLink(data.deliveryLat, data.deliveryLng)).trim();
+    } else {
+      deliveryLocationState.lat = null;
+      deliveryLocationState.lng = null;
+      deliveryLocationState.source = '';
+      deliveryLocationState.mapsLink = '';
+    }
+
+    renderDeliveryLocationUi();
   } catch {}
 }
 
@@ -314,6 +519,10 @@ function getOrderFormData() {
     customerAddress,
     customerNotes,
     isUrgent,
+    deliveryLat: hasDeliveryLocation() ? deliveryLocationState.lat : null,
+    deliveryLng: hasDeliveryLocation() ? deliveryLocationState.lng : null,
+    deliveryMapsLink: deliveryLocationState.mapsLink || '',
+    deliveryLocationSource: deliveryLocationState.source || '',
   };
 }
 
@@ -325,13 +534,15 @@ function sanitizeLineBreaks(value) {
   return String(value || '').replace(/\r/g, '').split('\n').map(line => line.trim()).filter(Boolean).join(' / ');
 }
 
-function buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgentFee }) {
+function buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgentFee, deliveryMapsLink, deliveryLocationSource }) {
   const lines = [
     `${ORDER_NOTE_PREFIXES.address} ${sanitizeLineBreaks(customerAddress) || 'لا يوجد'}`,
     `${ORDER_NOTE_PREFIXES.customerNote} ${sanitizeLineBreaks(customerNotes) || 'لا يوجد'}`,
     `${ORDER_NOTE_PREFIXES.orderType} ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}`,
     `${ORDER_NOTE_PREFIXES.urgentFee} ${isUrgent ? money(urgentFee) : money(0)}`,
     `${ORDER_NOTE_PREFIXES.shipping} يضاف لاحقًا حسب المنطقة`,
+    `${ORDER_NOTE_PREFIXES.locationSource} ${deliveryLocationSource ? getLocationSourceLabel(deliveryLocationSource) : 'غير محدد'}`,
+    `${ORDER_NOTE_PREFIXES.locationLink} ${deliveryMapsLink || 'غير محدد'}`,
   ];
 
   return lines.join('\n');
@@ -519,6 +730,8 @@ function clearCartAndForm() {
 
   if ($('#isUrgentOrder')) $('#isUrgentOrder').checked = false;
 
+  clearDeliveryLocation();
+
   updateCartCount();
   renderCartItems();
   renderSummary();
@@ -528,15 +741,19 @@ function buildOrderPayload(orderNumber) {
   const subtotal = calculateCartTotal();
   const urgentFee = calculateUrgentFee(subtotal);
   const total = subtotal + urgentFee;
-  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent } = getOrderFormData();
+  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryLat, deliveryLng, deliveryMapsLink, deliveryLocationSource } = getOrderFormData();
 
   const payload = {
     order_number: orderNumber,
     customer_name: customerName || 'طلب من الموقع',
     phone: customerPhone,
     city: customerCity,
-    notes: buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgentFee }),
+    notes: buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgentFee, deliveryMapsLink, deliveryLocationSource }),
     items_json: state.cart,
+    delivery_lat: Number.isFinite(deliveryLat) ? deliveryLat : null,
+    delivery_lng: Number.isFinite(deliveryLng) ? deliveryLng : null,
+    delivery_maps_link: deliveryMapsLink || null,
+    delivery_location_source: deliveryLocationSource || null,
     total,
     status: 'pending',
     source: 'website',
@@ -621,7 +838,7 @@ async function saveOrderWithUniqueNumber(maxRetries = 3) {
   throw lastError || new Error('تعذر حفظ الطلب');
 }
 
-function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent) {
+function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryMapsLink, deliveryLocationSource) {
   const subtotal = calculateCartTotal();
   const urgentFee = calculateUrgentFee(subtotal);
   const grandTotal = subtotal + urgentFee;
@@ -656,7 +873,7 @@ async function checkout() {
 
   if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
-  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent } = getOrderFormData();
+  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryLat, deliveryLng, deliveryMapsLink, deliveryLocationSource } = getOrderFormData();
 
   if (!customerName || !customerPhone || !customerCity || !customerAddress) {
     showToast('من فضلك املأ الاسم والموبايل والمحافظة والعنوان بالتفصيل');
@@ -673,7 +890,7 @@ async function checkout() {
 
   try {
     const { orderNumber } = await saveOrderWithUniqueNumber(3);
-    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent);
+    const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryMapsLink, deliveryLocationSource);
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 
@@ -776,6 +993,22 @@ document.addEventListener('click', (e) => {
     return;
   }
 
+  if (e.target.id === 'useCurrentLocationBtn') {
+    useCurrentLocation();
+    return;
+  }
+
+  if (e.target.id === 'chooseOnMapBtn') {
+    toggleDeliveryMap();
+    return;
+  }
+
+  if (e.target.id === 'clearLocationBtn') {
+    clearDeliveryLocation();
+    showToast('تم مسح موقع التسليم');
+    return;
+  }
+
   if (e.target.id === 'copyOrderNumberBtn') {
     const numberEl = document.querySelector('.order-success-number');
     if (numberEl) {
@@ -805,7 +1038,7 @@ async function directCheckout() {
 
   if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
-  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent } = getOrderFormData();
+  const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryLat, deliveryLng, deliveryMapsLink, deliveryLocationSource } = getOrderFormData();
 
   if (!customerName || !customerPhone || !customerCity || !customerAddress) {
     showToast('من فضلك املأ الاسم والموبايل والمحافظة والعنوان بالتفصيل');
@@ -863,6 +1096,7 @@ function prefillFromProfile(profile) {
 function init() {
   updateCartCount();
   loadCustomerInfo();
+  renderDeliveryLocationUi();
   renderCartItems();
   renderSummary();
 

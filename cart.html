@@ -27,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="./style.css">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -136,6 +137,32 @@
                   <textarea id="customerAddress" rows="3" placeholder="اكتب العنوان بالتفصيل: المنطقة، الشارع، العمارة، الدور، الشقة..."></textarea>
                 </div>
 
+
+                <div class="field field-full">
+                  <label>موقع التسليم على الخريطة <span class="field-label-note">(اختياري)</span></label>
+                  <div class="delivery-location-card">
+                    <p class="delivery-location-copy">يمكنك استخدام موقعك الحالي أو تحديد <strong>موقع التسليم</strong> يدويًا من الخريطة إذا كان التسليم في مكان آخر.</p>
+
+                    <div class="delivery-location-actions">
+                      <button type="button" class="btn btn-ghost btn-sm" id="useCurrentLocationBtn">استخدم موقعي الحالي</button>
+                      <button type="button" class="btn btn-ghost btn-sm" id="chooseOnMapBtn">اختيار موقع التسليم على الخريطة</button>
+                      <button type="button" class="btn btn-ghost btn-sm hidden" id="clearLocationBtn">مسح الموقع</button>
+                    </div>
+
+                    <div class="delivery-location-status" id="deliveryLocationStatus">لم يتم تحديد موقع تسليم على الخريطة بعد.</div>
+                    <a id="deliveryLocationLink" class="delivery-location-link hidden" href="#" target="_blank" rel="noopener">فتح الموقع المحدد</a>
+
+                    <div id="deliveryMapWrap" class="delivery-map-wrap hidden">
+                      <div class="delivery-map-head">
+                        <strong>اختيار موقع التسليم</strong>
+                        <span>اضغط على الخريطة لوضع العلامة في المكان الصحيح.</span>
+                      </div>
+                      <div id="deliveryMap" class="delivery-map" aria-label="خريطة اختيار موقع التسليم"></div>
+                      <p class="delivery-map-hint">يمكنك اختيار مكان مختلف عن موقعك الحالي، وسيتم حفظ الرابط مع الطلب.</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="field field-full">
                   <label for="customerNotes">ملاحظات</label>
                   <textarea id="customerNotes" rows="4" placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
@@ -170,6 +197,7 @@
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./auth-config.js"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script defer src="./cart.js"></script>
 </body>
 </html>

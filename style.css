@@ -4102,3 +4102,94 @@ button.admin-stat-card{
     max-width:56px;
   }
 }
+
+
+/* Delivery location picker */
+.field-label-note{
+  font-size:.88rem;
+  color:var(--muted);
+  font-weight:500;
+}
+
+.delivery-location-card{
+  border:1px solid rgba(107,146,40,.18);
+  background:#fcfbf7;
+  border-radius:18px;
+  padding:16px;
+  display:grid;
+  gap:12px;
+}
+
+.delivery-location-copy{
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.delivery-location-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.delivery-location-status{
+  padding:12px 14px;
+  border-radius:14px;
+  background:#fff;
+  border:1px dashed rgba(107,146,40,.28);
+  color:var(--muted);
+  line-height:1.75;
+}
+
+.delivery-location-status.is-selected{
+  color:#1f4f13;
+  background:#f4fbef;
+  border-style:solid;
+}
+
+.delivery-location-link{
+  color:var(--olive);
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  width:max-content;
+}
+
+.delivery-map-wrap{
+  display:grid;
+  gap:10px;
+  border:1px solid rgba(107,146,40,.16);
+  border-radius:18px;
+  padding:12px;
+  background:#fff;
+}
+
+.delivery-map-head{
+  display:grid;
+  gap:4px;
+}
+
+.delivery-map-head span,
+.delivery-map-hint{
+  color:var(--muted);
+  font-size:.94rem;
+  line-height:1.7;
+}
+
+.delivery-map{
+  width:100%;
+  height:320px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(107,146,40,.14);
+}
+
+@media (max-width:640px){
+  .delivery-location-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .delivery-map{
+    height:260px;
+  }
+}
