@@ -210,6 +210,7 @@ function getDeliveryLocationSourceLabel(order, meta = null) {
   if (!raw) return 'غير محدد';
   if (raw === 'current_gps') return 'الموقع الحالي';
   if (raw === 'map_picker') return 'الخريطة اليدوية';
+  if (raw === 'google_maps_link') return 'رابط من خرائط Google';
   return raw;
 }
 
