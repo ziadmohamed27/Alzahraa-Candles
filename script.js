@@ -123,6 +123,7 @@ function writeCart(cart) {
 
 const state = {
   filter: 'all',
+  search: '',
   cart: readCart(),
 };
 
@@ -131,6 +132,56 @@ let currentProducts = [];
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 const money = (v) => `${Number(v).toFixed(2)} ج.م`;
+
+function normalizeArabicSearch(value = '') {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/[ى]/g, 'ي')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getSkinKeywords(product) {
+  const category = String(product?.category || '').toLowerCase();
+  const map = {
+    dry: ['جاف', 'جافة', 'جفاف', 'البشرة الجافة', 'الحساسه', 'الحساسة', 'ترطيب'],
+    oily: ['دهني', 'دهنية', 'دهنيه', 'مختلطة', 'مختلطه', 'البشرة الدهنية', 'تنظيف عميق', 'دهون'],
+    scrub: ['تقشير', 'مقشر', 'مقشره', 'انتعاش', 'تجديد'],
+    normal: ['عادية', 'عاديه', 'البشرة العادية']
+  };
+  return map[category] || [];
+}
+
+function matchesProductSearch(product, query) {
+  if (!query) return true;
+
+  const haystack = normalizeArabicSearch([
+    product.name,
+    product.bestFor,
+    product.badge,
+    product.tag,
+    product.description,
+    product.longDescription,
+    product.usage,
+    ...(product.highlights || []),
+    ...(product.benefits || []),
+    ...(product.ingredients || []),
+    ...getSkinKeywords(product),
+  ].join(' '));
+
+  return haystack.includes(normalizeArabicSearch(query));
+}
+
+function getVisibleProducts() {
+  const byFilter = state.filter === 'all'
+    ? currentProducts
+    : currentProducts.filter((p) => p.category === state.filter);
+
+  return byFilter.filter((product) => matchesProductSearch(product, state.search));
+}
+
 
 function toArray(val) {
   if (Array.isArray(val)) return val;
@@ -275,15 +326,17 @@ function renderProducts() {
     return;
   }
 
-  const list = state.filter === 'all'
-    ? currentProducts
-    : currentProducts.filter((p) => p.category === state.filter);
+  const list = getVisibleProducts();
 
   if (!list.length) {
+    const message = state.search
+      ? `لا توجد نتائج مطابقة للبحث عن "${escHtml(state.search)}".`
+      : 'لا توجد منتجات في هذا التصنيف حالياً.';
+
     el.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--muted)">
         <div style="font-size:2.5rem;margin-bottom:14px">🌿</div>
-        <p>لا توجد منتجات في هذا التصنيف حالياً.</p>
+        <p>${message}</p>
       </div>
     `;
     return;
@@ -546,6 +599,29 @@ function escHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+function bindProductSearch() {
+  const searchInput = $('#productSearchInput');
+  const clearBtn = $('#productSearchClear');
+  if (!searchInput || !clearBtn) return;
+
+  searchInput.value = state.search || '';
+  clearBtn.hidden = !state.search;
+
+  searchInput.addEventListener('input', (event) => {
+    state.search = event.target.value.trim();
+    clearBtn.hidden = !state.search;
+    renderProducts();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    state.search = '';
+    searchInput.value = '';
+    clearBtn.hidden = true;
+    renderProducts();
+    searchInput.focus();
+  });
+}
+
 document.addEventListener('click', (e) => {
   const filterBtn = e.target.closest('.filter-btn');
   if (filterBtn) {
@@ -596,6 +672,7 @@ document.addEventListener('click', (e) => {
 async function init() {
   try {
     renderFilters();
+    bindProductSearch();
     renderFeatures();
     renderSteps();
     renderShipping();
