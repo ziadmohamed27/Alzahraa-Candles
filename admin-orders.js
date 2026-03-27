@@ -473,12 +473,16 @@ function renderDetailsHtml(order) {
   const itemsHtml = items.length ? items.map(item => {
     const qty = Math.max(0, toSafeInt(item.qty, 0));
     const price = Number(item.price || 0);
+    const metaBits = [];
+    if (item.color_name) metaBits.push(`اللون: ${escapeHtml(item.color_name)}`);
+    if (item.size_label) metaBits.push(`المقاس: ${escapeHtml(item.size_label)}`);
+    if (item.weight) metaBits.push(`الوزن: ${escapeHtml(item.weight)}`);
     return `
     <div class="admin-detail-item">
       <div>
         <strong>${escapeHtml(item.name || '-')}</strong>
         <span>الكمية: ${qty}</span>
-        ${item.weight ? `<span>الوزن: ${escapeHtml(item.weight)}</span>` : ''}
+        ${metaBits.length ? `<span>${metaBits.join(' · ')}</span>` : ''}
       </div>
       <div class="admin-detail-prices">
         <span>سعر القطعة: ${money(price)}</span>

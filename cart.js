@@ -74,7 +74,7 @@ function showOrderSuccess(orderNumber, isDirect = false) {
   } else {
     box.innerHTML = `
       <h3>تم إرسال طلبك بنجاح ✅</h3>
-      <p>احتفظ برقم الطلب للمتابعة، وتم فتح رسالة واتساب الخاصة بالطلب.</p>
+      <p>احتفظ برقم الطلب للمتابعة، وتم فتح رسالة واتساب الخاصة بالطلب مع تفاصيل القطع المختارة.</p>
       <div class="order-success-actions">
         <div class="order-success-number">${escHtml(orderNumber || 'تم حفظ الطلب')}</div>
         <button type="button" class="btn btn-ghost btn-sm" id="copyOrderNumberBtn">نسخ الرقم</button>
@@ -126,21 +126,36 @@ function hideOrderSuccess() {
 function sanitizeCartItem(item) {
   if (!item || typeof item !== 'object') return null;
 
-  const id = toSafeNumber(item.id, NaN);
+  const productId = toSafeNumber(item.product_id ?? item.id, NaN);
+  const variantId = toSafeNumber(item.variant_id, NaN);
   const price = toSafeNumber(item.price, NaN);
   const qty = Math.max(1, Math.floor(toSafeNumber(item.qty, 1)));
   const name = typeof item.name === 'string' ? item.name.trim() : '';
   const image = typeof item.image === 'string' ? item.image.trim() : '';
   const weight = typeof item.weight === 'string' ? item.weight.trim() : '';
+  const colorName = typeof item.color_name === 'string' ? item.color_name.trim() : '';
+  const sizeLabel = typeof item.size_label === 'string' ? item.size_label.trim() : '';
+  const cartKey = typeof item.cart_key === 'string' && item.cart_key.trim()
+    ? item.cart_key.trim()
+    : Number.isFinite(variantId)
+      ? `variant-${variantId}`
+      : Number.isFinite(productId)
+        ? `product-${productId}`
+        : '';
 
-  if (!Number.isFinite(id) || !Number.isFinite(price) || !name) return null;
+  if (!Number.isFinite(productId) || !Number.isFinite(price) || !name || !cartKey) return null;
 
   return {
     ...item,
-    id,
+    cart_key: cartKey,
+    id: productId,
+    product_id: productId,
+    variant_id: Number.isFinite(variantId) ? variantId : null,
     name,
     image,
     weight,
+    color_name: colorName,
+    size_label: sizeLabel,
     price,
     qty,
   };
@@ -850,6 +865,25 @@ function calculateCartTotal() {
   return state.cart.reduce((s, i) => s + (toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0)), 0);
 }
 
+function getCartItemKey(item) {
+  if (!item) return '';
+  if (typeof item.cart_key === 'string' && item.cart_key.trim()) return item.cart_key.trim();
+  if (Number.isFinite(Number(item.variant_id))) return `variant-${Number(item.variant_id)}`;
+  if (Number.isFinite(Number(item.product_id ?? item.id))) return `product-${Number(item.product_id ?? item.id)}`;
+  return '';
+}
+
+function buildItemMetaLine(item) {
+  const bits = [];
+  const colorName = String(item?.color_name || '').trim();
+  const sizeLabel = String(item?.size_label || '').trim();
+  const weight = String(item?.weight || '').trim();
+  if (colorName) bits.push(`اللون: ${colorName}`);
+  if (sizeLabel) bits.push(`المقاس: ${sizeLabel}`);
+  if (weight) bits.push(weight);
+  return bits.join(' · ');
+}
+
 function sanitizeLineBreaks(value) {
   return String(value || '').replace(/\r/g, '').split('\n').map(line => line.trim()).filter(Boolean).join(' / ');
 }
@@ -890,33 +924,37 @@ function renderCartItems() {
     return;
   }
 
-  el.innerHTML = state.cart.map((item) => `
-    <article class="cart-page-item">
-      <div class="cart-page-item-image">
-        <img src="${escHtml(item.image || '')}" alt="${escHtml(item.name)}" onerror="this.style.background='#eee';this.removeAttribute('src')">
-      </div>
-
-      <div class="cart-page-item-content">
-        <div class="cart-page-item-top">
-          <div>
-            <h3>${escHtml(item.name)}</h3>
-            <p>${escHtml(item.weight || '')}</p>
-          </div>
-          <button class="remove-btn" data-action="remove" data-id="${item.id}" type="button">🗑️</button>
+  el.innerHTML = state.cart.map((item) => {
+    const itemKey = getCartItemKey(item);
+    const metaLine = buildItemMetaLine(item);
+    return `
+      <article class="cart-page-item">
+        <div class="cart-page-item-image">
+          <img src="${escHtml(item.image || '')}" alt="${escHtml(item.name)}" onerror="this.style.background='#eee';this.removeAttribute('src')">
         </div>
 
-        <div class="cart-page-item-bottom">
-          <div class="cart-page-item-price">${money(item.price)}</div>
+        <div class="cart-page-item-content">
+          <div class="cart-page-item-top">
+            <div>
+              <h3>${escHtml(item.name)}</h3>
+              <p>${escHtml(metaLine || 'سيتم حفظ الاختيار الحالي مع الطلب')}</p>
+            </div>
+            <button class="remove-btn" data-action="remove" data-key="${escHtml(itemKey)}" type="button">🗑️</button>
+          </div>
 
-          <div class="qty-row qty-row-lg">
-            <button data-action="inc" data-id="${item.id}" type="button">+</button>
-            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
-            <button data-action="dec" data-id="${item.id}" type="button">-</button>
+          <div class="cart-page-item-bottom">
+            <div class="cart-page-item-price">${money(item.price)}</div>
+
+            <div class="qty-row qty-row-lg">
+              <button data-action="inc" data-key="${escHtml(itemKey)}" type="button">+</button>
+              <input class="qty-input" data-action="set-qty" data-key="${escHtml(itemKey)}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
+              <button data-action="dec" data-key="${escHtml(itemKey)}" type="button">-</button>
+            </div>
           </div>
         </div>
-      </div>
-    </article>
-  `).join('');
+      </article>
+    `;
+  }).join('');
 }
 
 function renderSummary() {
@@ -931,11 +969,14 @@ function renderSummary() {
   const isLoggedIn = !!authState.session;
 
   const itemsSummary = state.cart.length
-    ? state.cart.map((item) => `
+    ? state.cart.map((item) => {
+      const metaLine = buildItemMetaLine(item);
+      return `
       <div class="summary-product">
         <div class="summary-product-head">
           <strong>${escHtml(item.name)}</strong>
         </div>
+        ${metaLine ? `<div class="summary-product-row"><span>الاختيار</span><span>${escHtml(metaLine)}</span></div>` : ''}
         <div class="summary-product-row">
           <span>سعر القطعة</span>
           <span>${money(item.price)}</span>
@@ -949,7 +990,7 @@ function renderSummary() {
           <span>${money(item.price * item.qty)}</span>
         </div>
       </div>
-    `).join('')
+    `;}).join('')
     : `<div class="empty">${orderSubmittedSuccessfully ? 'تم إرسال الطلب بنجاح.' : 'لا توجد منتجات في السلة.'}</div>`;
 
   const checkoutBtnDisabled = !state.cart.length || isSubmittingOrder || orderSubmittedSuccessfully;
@@ -959,7 +1000,6 @@ function renderSummary() {
       ? 'جارٍ تجهيز الطلب...'
       : 'إرسال الطلب عبر واتساب';
 
-  /* Logged-in notice + direct order button */
   const loggedInNotice = isLoggedIn ? `
     <div class="cart-auth-notice">
       <span>👤</span>
@@ -1167,30 +1207,54 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
   const normalizedAddress = sanitizeLineBreaks(customerAddress) || 'لا يوجد';
   const normalizedNotes = sanitizeLineBreaks(customerNotes) || 'لا يوجد';
   const locationBlock = deliveryMapsLink
-    ? `مصدر الموقع: ${getLocationSourceLabel(deliveryLocationSource)}\nرابط الموقع: ${deliveryMapsLink}\n`
+    ? `مصدر الموقع: ${getLocationSourceLabel(deliveryLocationSource)}
+رابط الموقع: ${deliveryMapsLink}
+`
     : '';
 
   const lines = state.cart
-    .map((i, n) => `${n + 1}. ${i.name}\nالكمية: ${i.qty}\nسعر القطعة: ${money(toSafeNumber(i.price, 0))}\nإجمالي المنتج: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`)
+    .map((i, n) => {
+      const metaLine = buildItemMetaLine(i);
+      return `${n + 1}. ${i.name}
+${metaLine ? `${metaLine}
+` : ''}الكمية: ${i.qty}
+سعر القطعة: ${money(toSafeNumber(i.price, 0))}
+إجمالي المنتج: ${money(toSafeNumber(i.price, 0) * toSafeNumber(i.qty, 0))}`;
+    })
     .join('\n\n');
 
   return (
-    `مرحبًا، أريد إتمام الطلب:\n\n` +
-    `رقم الطلب: ${orderNumber}\n` +
-    `الاسم: ${customerName}\n` +
-    `الموبايل: ${customerPhone}\n` +
-    `المحافظة: ${customerCity}\n` +
-    `العنوان بالتفصيل: ${normalizedAddress}\n` +
-    `ملاحظات العميل: ${normalizedNotes}\n` +
+    `مرحبًا، أريد إتمام الطلب:
+
+` +
+    `رقم الطلب: ${orderNumber}
+` +
+    `الاسم: ${customerName}
+` +
+    `الموبايل: ${customerPhone}
+` +
+    `المحافظة: ${customerCity}
+` +
+    `العنوان بالتفصيل: ${normalizedAddress}
+` +
+    `ملاحظات العميل: ${normalizedNotes}
+` +
     locationBlock +
-    `حالة الطلب: ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}\n\n` +
-    `المنتجات:\n\n${lines}\n\n` +
-    `المجموع الفرعي: ${money(subtotal)}\n` +
-    `${isUrgent ? `رسوم الطلب المستعجل: ${money(urgentFee)}\n` : ''}` +
+    `حالة الطلب: ${isUrgent ? 'طلب مستعجل' : 'طلب عادي'}
+
+` +
+    `المنتجات:
+
+${lines}
+
+` +
+    `المجموع الفرعي: ${money(subtotal)}
+` +
+    `${isUrgent ? `رسوم الطلب المستعجل: ${money(urgentFee)}
+` : ''}` +
     `الإجمالي الحالي قبل الشحن: ${money(grandTotal)}`
   );
 }
-
 async function checkout() {
   if (!state.cart.length) {
     showToast('السلة فارغة');
@@ -1256,8 +1320,8 @@ document.addEventListener('change', (e) => {
   }
 
   if (e.target.dataset.action === 'set-qty') {
-    const id = Number(e.target.dataset.id);
-    const item = state.cart.find((i) => Number(i.id) === id);
+    const key = String(e.target.dataset.key || '');
+    const item = state.cart.find((entry) => getCartItemKey(entry) === key);
     if (!item) return;
     item.qty = normalizeQtyValue(e.target.value);
     e.target.value = item.qty;
@@ -1289,17 +1353,17 @@ document.addEventListener('click', (e) => {
   const action = e.target.dataset.action;
 
   if (action) {
-    const id = Number(e.target.dataset.id);
-    const item = state.cart.find((i) => Number(i.id) === id);
+    const key = String(e.target.dataset.key || '');
+    const item = state.cart.find((entry) => getCartItemKey(entry) === key);
     if (!item) return;
 
     if (action === 'inc') {
       item.qty += 1;
     } else if (action === 'dec') {
       if (item.qty > 1) item.qty -= 1;
-      else state.cart = state.cart.filter((i) => Number(i.id) !== id);
+      else state.cart = state.cart.filter((entry) => getCartItemKey(entry) !== key);
     } else if (action === 'remove') {
-      state.cart = state.cart.filter((i) => Number(i.id) !== id);
+      state.cart = state.cart.filter((entry) => getCartItemKey(entry) !== key);
     }
 
     persistAndRender();
@@ -1420,17 +1484,17 @@ function prefillFromProfile(profile) {
 
   const set = (id, val) => {
     const el = $(id);
-    if (el && !el.value && val) el.value = val;
+    if (el && val) el.value = val;
   };
 
-  set('#customerName',    profile.full_name);
-  set('#customerPhone',   profile.phone);
-  /* governorate maps to the select */
+  set('#customerName', profile.full_name);
+  set('#customerPhone', profile.phone);
   const govEl = $('#customerCity');
-  if (govEl && !govEl.value && profile.governorate) {
+  if (govEl && profile.governorate) {
     govEl.value = profile.governorate;
   }
   set('#customerAddress', profile.address);
+  saveCustomerInfo();
 }
 
 function init() {

@@ -4499,3 +4499,433 @@ body.modal-open{
 @media (prefers-reduced-motion: reduce){
   .soap-bubble{animation:none;opacity:.35}
 }
+
+/* =================================================================
+   Clothing storefront additions — 2026-03-27
+   ================================================================= */
+
+.account-nav-guest-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.hero-fashion{
+  padding-top:34px;
+}
+
+.hero-grid-fashion{
+  align-items:stretch;
+}
+
+.hero-lookbook{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+
+.lookbook-card{
+  min-height:170px;
+  border-radius:26px;
+  padding:20px;
+  border:1px solid rgba(107,146,40,.12);
+  background:linear-gradient(180deg,#fff,#fff9fb);
+  box-shadow:0 18px 40px rgba(28,16,24,.08);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.lookbook-card strong{
+  font-family:"El Messiri",sans-serif;
+  font-size:1.8rem;
+  color:var(--text);
+}
+
+.lookbook-card p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.75;
+}
+
+.lookbook-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  width:max-content;
+  padding:7px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.76);
+  color:var(--olive-dark);
+  font-size:.8rem;
+  font-weight:700;
+}
+
+.accent-soft{background:linear-gradient(180deg,#fff6f8,#fff)}
+.accent-olive{background:linear-gradient(180deg,#f8fcf1,#fff)}
+.accent-dark{background:linear-gradient(180deg,#f8f4f7,#fff)}
+.accent-light{background:linear-gradient(180deg,#f5fbff,#fff)}
+
+.clothing-product-card .product-card-link{
+  display:block;
+  color:inherit;
+  text-decoration:none;
+  height:100%;
+}
+
+.product-image-wrap{
+  position:relative;
+}
+
+.product-image-placeholder{
+  min-height:300px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:28px;
+  color:var(--olive);
+  background:linear-gradient(180deg,#fff8fb,#f9fff2);
+  font-family:"El Messiri",sans-serif;
+  font-size:1.5rem;
+}
+
+.product-card-copy{
+  margin:10px 0 0;
+  color:var(--muted);
+  line-height:1.8;
+  min-height:52px;
+}
+
+.clothing-meta{
+  align-items:flex-start;
+}
+
+.price-from{
+  font-size:1.12rem;
+}
+
+.product-page-shell{
+  min-height:calc(100vh - 88px);
+}
+
+.product-page-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:30px;
+  align-items:start;
+}
+
+.product-gallery-panel,
+.product-info-panel,
+.product-description-card{
+  background:#fff;
+  border:1px solid rgba(107,146,40,.12);
+  border-radius:28px;
+  box-shadow:0 18px 40px rgba(28,16,24,.08);
+}
+
+.product-gallery-panel{
+  padding:22px;
+}
+
+.product-info-panel{
+  padding:26px;
+}
+
+.product-gallery-main{
+  width:100%;
+  border-radius:24px;
+  overflow:hidden;
+  background:#f8f6f8;
+  border:1px solid rgba(107,146,40,.1);
+}
+
+.product-gallery-image,
+.product-gallery-placeholder{
+  width:100%;
+  min-height:520px;
+  display:block;
+}
+
+.product-gallery-image{
+  object-fit:cover;
+  background:#f3f1f2;
+}
+
+.product-gallery-placeholder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--olive);
+  font-family:"El Messiri",sans-serif;
+  font-size:2rem;
+  background:linear-gradient(180deg,#fff8fb,#f9fff2);
+}
+
+.product-gallery-thumbs{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(92px,1fr));
+  gap:12px;
+  margin-top:16px;
+}
+
+.product-thumb{
+  border:1px solid rgba(107,146,40,.12);
+  background:#fff;
+  border-radius:18px;
+  padding:0;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+
+.product-thumb img{
+  width:100%;
+  height:96px;
+  object-fit:cover;
+  display:block;
+}
+
+.product-thumb.is-active,
+.product-thumb:hover{
+  border-color:var(--olive);
+  box-shadow:0 10px 24px rgba(107,146,40,.15);
+  transform:translateY(-2px);
+}
+
+.product-breadcrumbs{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  margin-bottom:18px;
+  font-size:.95rem;
+}
+
+.product-breadcrumbs a{
+  color:var(--olive);
+  text-decoration:none;
+}
+
+.product-short-copy{
+  color:var(--muted);
+  line-height:1.9;
+  margin:12px 0 20px;
+}
+
+.product-price-box{
+  margin-bottom:22px;
+  display:grid;
+  gap:8px;
+}
+
+.product-live-price{
+  font-size:2rem;
+}
+
+.product-compare-price{
+  color:var(--muted);
+  text-decoration:line-through;
+  font-weight:700;
+}
+
+.product-price-note{
+  color:var(--muted);
+  font-size:.92rem;
+}
+
+.product-option-group{
+  margin-bottom:20px;
+}
+
+.product-option-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:10px;
+}
+
+.product-option-head h3{
+  margin:0;
+  font-family:"El Messiri",sans-serif;
+  font-size:1.15rem;
+}
+
+.product-option-head span{
+  color:var(--olive);
+  font-weight:700;
+}
+
+.product-option-list{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.product-option-chip{
+  min-height:46px;
+  padding:0 16px;
+  border-radius:14px;
+  border:1px solid rgba(107,146,40,.18);
+  background:#fff;
+  color:var(--text);
+  font-family:inherit;
+  font-size:.95rem;
+  font-weight:700;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+
+.product-option-chip:hover,
+.product-option-chip.is-active{
+  border-color:var(--olive);
+  background:#f9fff2;
+  box-shadow:0 10px 24px rgba(107,146,40,.12);
+  transform:translateY(-1px);
+}
+
+.color-chip-swatch{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  flex:0 0 auto;
+}
+
+.product-stock-row{
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  padding:12px 16px;
+  border-radius:16px;
+  margin-bottom:18px;
+  font-weight:700;
+}
+
+.product-stock-row.is-in{
+  background:#f4fff4;
+  color:#127a39;
+  border:1px solid rgba(37,211,102,.2);
+}
+
+.product-stock-row.is-out{
+  background:#fff3f0;
+  color:#b42318;
+  border:1px solid rgba(180,35,24,.14);
+}
+
+.product-qty-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+
+.product-qty-row label{
+  font-weight:700;
+}
+
+.product-page-qty-row{
+  min-width:170px;
+}
+
+.product-page-actions{
+  margin-bottom:22px;
+}
+
+.product-page-actions .btn[disabled]{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.product-info-cards{
+  display:grid;
+  gap:14px;
+}
+
+.product-info-card{
+  border:1px solid rgba(107,146,40,.12);
+  border-radius:18px;
+  padding:16px 18px;
+  background:#fffdfd;
+}
+
+.product-info-card h3,
+.product-description-card h2{
+  margin:0 0 8px;
+  font-family:"El Messiri",sans-serif;
+}
+
+.product-info-card p,
+.product-description-card p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.9;
+}
+
+.product-description-section{
+  padding-top:22px;
+}
+
+.product-description-card{
+  padding:22px 24px;
+}
+
+.product-page-loading{
+  min-height:240px;
+}
+
+@media (max-width:1000px){
+  .hero-lookbook{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .product-page-layout{
+    grid-template-columns:1fr;
+  }
+
+  .product-gallery-image,
+  .product-gallery-placeholder{
+    min-height:420px;
+  }
+}
+
+@media (max-width:760px){
+  .hero-lookbook{
+    grid-template-columns:1fr;
+  }
+
+  .lookbook-card{
+    min-height:140px;
+  }
+
+  .product-gallery-image,
+  .product-gallery-placeholder{
+    min-height:320px;
+  }
+
+  .product-option-head,
+  .product-qty-row{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .account-nav-guest-group{
+    gap:6px;
+  }
+
+  .account-nav-guest-group .account-nav-btn{
+    max-width:none;
+  }
+}

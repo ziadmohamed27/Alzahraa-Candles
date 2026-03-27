@@ -66,10 +66,16 @@
 
     if (!session) {
       wrap.innerHTML = `
-        <a href="./login.html" class="account-nav-btn is-ghost" aria-label="تسجيل الدخول">
-          <span style="font-size:1rem">🔑</span>
-          <span class="account-nav-label">دخول</span>
-        </a>
+        <div class="account-nav-guest-group">
+          <a href="./login.html" class="account-nav-btn is-ghost" aria-label="تسجيل الدخول">
+            <span style="font-size:1rem">🔑</span>
+            <span class="account-nav-label">دخول</span>
+          </a>
+          <a href="./signup.html" class="account-nav-btn" aria-label="إنشاء حساب">
+            <span style="font-size:1rem">✨</span>
+            <span class="account-nav-label">حساب جديد</span>
+          </a>
+        </div>
       `;
       return;
     }

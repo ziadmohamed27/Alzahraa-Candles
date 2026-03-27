@@ -20,12 +20,15 @@
       </a>
       <a class="brand" href="./index.html">
         <span class="brand-title">الزّهراء</span>
-        <span class="brand-sub">AL-ZHRAA NATURAL SOAP</span>
+        <span class="brand-sub">AL-ZHRAA MODEST WEAR</span>
       </a>
-      <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
-        <span class="cart-emoji">🛍️</span>
-        <span class="cart-count" id="cartCount">0</span>
-      </a>
+      <div class="nav-end-group">
+        <span id="accountNavWrap"></span>
+        <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
+          <span class="cart-emoji">🛍️</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </a>
+      </div>
     </div>
   </header>
 
@@ -35,7 +38,7 @@
         <div>
           <span class="pill small">طلباتي</span>
           <h1>سجل طلباتي</h1>
-          <p>جميع طلباتك المسجلة عبر الموقع في مكان واحد.</p>
+          <p>جميع طلباتك المسجلة عبر الموقع في مكان واحد، مع تفاصيل اللون والمقاس لكل قطعة.</p>
         </div>
         <div class="account-head-actions">
           <a href="./account.html" class="btn btn-ghost">حسابي</a>
@@ -56,11 +59,17 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./auth-config.js"></script>
+  <script src="./catalog-data.js"></script>
   <script>
     const sb = createAuthClient();
     const WHATSAPP_NUMBER = '201095314011';
-    const PRODUCT_IMAGES_BUCKET = 'products';
     const $ = (s) => document.querySelector(s);
+
+    async function initAccountNav() {
+      if (typeof renderAccountNav === 'function') {
+        await renderAccountNav({ wrapSelector: '#accountNavWrap', supabase: sb });
+      }
+    }
 
     function updateCartCount() {
       try {
@@ -109,45 +118,37 @@
 
     function buildItemsList(items) {
       if (!Array.isArray(items) || !items.length) return '<p style="color:var(--muted)">لا توجد تفاصيل منتجات.</p>';
-      return items.map(i => `
+      return items.map(i => {
+        const bits = [];
+        if (i.color_name) bits.push(`اللون: ${escHtml(i.color_name)}`);
+        if (i.size_label) bits.push(`المقاس: ${escHtml(i.size_label)}`);
+        if (i.weight) bits.push(escHtml(i.weight));
+        const metaLine = bits.join(' · ');
+        return `
         <div class="admin-detail-item">
           <div>
             <strong>${escHtml(i.name || '—')}</strong>
+            ${metaLine ? `<div style="color:var(--muted);font-size:.9rem">${metaLine}</div>` : ''}
             <div style="color:var(--muted);font-size:.9rem">الكمية: ${escHtml(String(i.qty || 1))} × ${money(i.price)}</div>
           </div>
           <strong style="margin-right:auto">${money((i.price || 0) * (i.qty || 1))}</strong>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     function buildWhatsAppLink(order) {
       const msg = `مرحبًا، أريد الاستفسار عن طلبي رقم: ${order.order_number || order.id}`;
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     }
-
-
     function getProductImageUrl(imagePath) {
-      const value = String(imagePath || '').trim();
-      if (!value) return '';
-      if (/^https?:\/\//i.test(value)) return value;
-      const cleanPath = value.replace(/^\/+/, '');
-      const normalizedPath = cleanPath.startsWith(`${PRODUCT_IMAGES_BUCKET}/`)
-        ? cleanPath.slice(PRODUCT_IMAGES_BUCKET.length + 1)
-        : cleanPath;
-      const { data } = sb.storage.from(PRODUCT_IMAGES_BUCKET).getPublicUrl(normalizedPath);
-      return data?.publicUrl || '';
+      return window.ZahraaCatalog.getPublicImageUrl(imagePath);
     }
 
-    function normalizeReorderItem(product, qty) {
-      return {
-        id: Number(product.id),
-        name: product.name || '',
-        price: Number(product.price) || 0,
-        weight: product.weight || '',
-        image_path: product.image || '',
-        image: getProductImageUrl(product.image || ''),
-        qty: Math.max(1, Number(qty) || 1),
-      };
+    function normalizeReorderItem(product, variant, qty) {
+      const images = window.ZahraaCatalog.getImagesForColor(product, variant?.color_name);
+      const image = images[0]?.image_url || product.cover_image || '';
+      return window.ZahraaCatalog.makeCartItem(product, variant, Math.max(1, Number(qty) || 1), image);
     }
 
     async function reorderOrder(orderId) {
@@ -158,37 +159,87 @@
       }
 
       const previousItems = Array.isArray(order.items_json) ? order.items_json : [];
-      const productIds = previousItems
-        .map((item) => Number(item?.id))
-        .filter((id) => Number.isFinite(id));
+      const productIds = [...new Set(previousItems
+        .map((item) => Number(item?.product_id ?? item?.id))
+        .filter((id) => Number.isFinite(id)))];
+      const variantIds = [...new Set(previousItems
+        .map((item) => Number(item?.variant_id))
+        .filter((id) => Number.isFinite(id)))];
 
       if (!productIds.length) {
         showToast('لا توجد منتجات قابلة لإعادة الطلب لهذا الطلب');
         return;
       }
 
-      const { data: products, error } = await sb
+      const { data: products, error: productsError } = await sb
         .from('products')
-        .select('id, name, price, weight, image')
-        .in('id', productIds);
+        .select('id, slug, name, category, short_description, description, long_description, fabric, care_note, size_guide, sort_order, is_active')
+        .in('id', productIds)
+        .eq('is_active', true);
 
-      if (error) {
-        console.error('[Reorder] failed to load current products', error);
+      if (productsError) {
+        console.error('[Reorder] failed to load products', productsError);
         showToast('تعذر تجهيز الطلب الآن');
         return;
       }
 
-      const productMap = new Map((products || []).map((product) => [String(product.id), product]));
+      const { data: variants, error: variantsError } = await sb
+        .from('product_variants')
+        .select('id, product_id, size_label, color_name, color_hex, price, compare_price, stock_quantity, sku, sort_order, is_active')
+        .in('product_id', productIds)
+        .eq('is_active', true);
+
+      if (variantsError) {
+        console.error('[Reorder] failed to load variants', variantsError);
+        showToast('تعذر تجهيز الطلب الآن');
+        return;
+      }
+
+      const { data: images, error: imagesError } = await sb
+        .from('product_images')
+        .select('id, product_id, color_name, image_path, alt_text, sort_order, is_active')
+        .in('product_id', productIds)
+        .eq('is_active', true);
+
+      if (imagesError) {
+        console.error('[Reorder] failed to load images', imagesError);
+        showToast('تعذر تجهيز الطلب الآن');
+        return;
+      }
+
+      const catalog = (window.ZahraaCatalog.normalizeCatalog || ((p,v,i)=>[]))(products || [], variants || [], images || []);
+      const productMap = new Map(catalog.map((product) => [String(product.id), product]));
+      const variantMap = new Map();
+      catalog.forEach((product) => {
+        (product.variants || []).forEach((variant) => variantMap.set(String(variant.id), { product, variant }));
+      });
+
       const rebuiltCart = [];
       const missingItems = [];
 
       previousItems.forEach((item) => {
-        const product = productMap.get(String(item?.id));
+        const productId = String(item?.product_id ?? item?.id ?? '');
+        const variantId = String(item?.variant_id ?? '');
+
+        if (variantId && variantMap.has(variantId)) {
+          const { product, variant } = variantMap.get(variantId);
+          rebuiltCart.push(normalizeReorderItem(product, variant, item?.qty));
+          return;
+        }
+
+        const product = productMap.get(productId);
         if (!product) {
           missingItems.push(item?.name || `#${item?.id || '—'}`);
           return;
         }
-        rebuiltCart.push(normalizeReorderItem(product, item?.qty));
+
+        const fallbackVariant = (product.variants || []).find((variant) => variant.stock_quantity > 0) || product.variants?.[0];
+        if (!fallbackVariant) {
+          missingItems.push(item?.name || product.name || `#${item?.id || '—'}`);
+          return;
+        }
+
+        rebuiltCart.push(normalizeReorderItem(product, fallbackVariant, item?.qty));
       });
 
       if (!rebuiltCart.length) {
@@ -217,7 +268,7 @@
       if (!orders || !orders.length) {
         container.innerHTML = `
           <div class="admin-empty">
-            <span style="font-size:2.5rem">🧼</span>
+            <span style="font-size:2.5rem">🛍️</span>
             <p style="margin-top:12px">لا توجد طلبات مسجلة بعد.</p>
             <a href="./index.html#products" class="btn btn-primary" style="margin-top:14px;display:inline-flex">ابدأ التسوق</a>
           </div>`;
@@ -258,6 +309,7 @@
 
     async function init() {
       updateCartCount();
+      await initAccountNav();
 
       const { data: { session } } = await sb.auth.getSession();
       if (!session) {
