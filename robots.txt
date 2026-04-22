@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin-login.html
-Disallow: /admin-orders.html
-
-Sitemap: https://zhraastore.netlify.app/sitemap.xml
