@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>طلباتي | Alzahraa Candles</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#c57b49">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
+        <span></span><span></span><span></span>
+      </a>
+      <a class="brand" href="./index.html">
+        <span class="brand-title">Alzahraa Candles</span>
+        <span class="brand-sub">ALZAHRAA CANDLES</span>
+      </a>
+      <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
+        <span class="cart-emoji">🛍️</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="account-page section">
+    <div class="container">
+      <div class="cart-page-head" style="margin-bottom:28px">
+        <div>
+          <span class="pill small">طلباتي</span>
+          <h1>سجل طلباتي</h1>
+          <p>جميع طلباتك المسجلة عبر الموقع في مكان واحد.</p>
+        </div>
+        <div class="account-head-actions">
+          <a href="./account.html" class="btn btn-ghost">حسابي</a>
+          <a href="./index.html#products" class="btn btn-primary">تسوق الآن</a>
+        </div>
+      </div>
+
+      <div id="ordersContainer">
+        <div class="admin-empty">
+          <span style="font-size:2rem">🌿</span>
+          <p style="margin-top:10px">جارٍ تحميل طلباتك...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="./site-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./auth-config.js"></script>
+  <script>
+    const sb = createAuthClient();
+    const WHATSAPP_NUMBER = '201095314011';
+    const PRODUCT_IMAGES_BUCKET = 'products';
+    const $ = (s) => document.querySelector(s);
+
+    function updateCartCount() {
+      try {
+        const raw = localStorage.getItem('candles-cart');
+        const cart = raw ? JSON.parse(raw) : [];
+        const count = Array.isArray(cart) ? cart.reduce((s, i) => s + (Number(i.qty) || 0), 0) : 0;
+        const el = $('#cartCount');
+        if (el) el.textContent = count;
+      } catch {}
+    }
+
+
+    function showToast(message) {
+      const toast = $('#toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function money(v) {
+      return `${Number(v || 0).toFixed(2)} ج.م`;
+    }
+
+    function escHtml(str) {
+      if (typeof str !== 'string') return String(str ?? '');
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      try {
+        return new Date(iso).toLocaleDateString('ar-EG', { year:'numeric', month:'short', day:'numeric' });
+      } catch { return iso; }
+    }
+
+    function statusLabel(s) {
+      const map = { pending:'قيد المراجعة', confirmed:'تم التأكيد', processing:'قيد التجهيز', delivered:'تم التوصيل', cancelled:'ملغى' };
+      return map[s] || s || '—';
+    }
+    function statusClass(s) {
+      const map = { pending:'is-pending', confirmed:'is-confirmed', processing:'is-processing', delivered:'is-delivered', cancelled:'is-cancelled' };
+      return map[s] || '';
+    }
+
+    function buildItemsList(items) {
+      if (!Array.isArray(items) || !items.length) return '<p style="color:var(--muted)">لا توجد تفاصيل منتجات.</p>';
+      return items.map(i => `
+        <div class="admin-detail-item">
+          <div>
+            <strong>${escHtml(i.name || '—')}</strong>
+            <div style="color:var(--muted);font-size:.9rem">الكمية: ${escHtml(String(i.qty || 1))} × ${money(i.price)}</div>
+          </div>
+          <strong style="margin-right:auto">${money((i.price || 0) * (i.qty || 1))}</strong>
+        </div>
+      `).join('');
+    }
+
+    function buildWhatsAppLink(order) {
+      const msg = `مرحبًا، أريد الاستفسار عن طلبي رقم: ${order.order_number || order.id}`;
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    }
+
+
+    function getProductImageUrl(imagePath) {
+      const value = String(imagePath || '').trim();
+      if (!value) return '';
+      if (/^https?:\/\//i.test(value)) return value;
+      const cleanPath = value.replace(/^\/+/, '');
+      const normalizedPath = cleanPath.startsWith(`${PRODUCT_IMAGES_BUCKET}/`)
+        ? cleanPath.slice(PRODUCT_IMAGES_BUCKET.length + 1)
+        : cleanPath;
+      const { data } = sb.storage.from(PRODUCT_IMAGES_BUCKET).getPublicUrl(normalizedPath);
+      return data?.publicUrl || '';
+    }
+
+    function normalizeReorderItem(product, qty) {
+      return {
+        id: Number(product.id),
+        name: product.name || '',
+        price: Number(product.price) || 0,
+        weight: product.weight || '',
+        image_path: product.image || '',
+        image: getProductImageUrl(product.image || ''),
+        qty: Math.max(1, Number(qty) || 1),
+      };
+    }
+
+    async function reorderOrder(orderId) {
+      const order = (window.__ordersCache || []).find((item) => String(item.id) === String(orderId));
+      if (!order) {
+        showToast('تعذر العثور على الطلب');
+        return;
+      }
+
+      const previousItems = Array.isArray(order.items_json) ? order.items_json : [];
+      const productIds = previousItems
+        .map((item) => Number(item?.id))
+        .filter((id) => Number.isFinite(id));
+
+      if (!productIds.length) {
+        showToast('لا توجد منتجات قابلة لإعادة الطلب لهذا الطلب');
+        return;
+      }
+
+      const { data: products, error } = await sb
+        .from('products')
+        .select('id, name, price, weight, image')
+        .in('id', productIds);
+
+      if (error) {
+        console.error('[Reorder] failed to load current products', error);
+        showToast('تعذر تجهيز الطلب الآن');
+        return;
+      }
+
+      const productMap = new Map((products || []).map((product) => [String(product.id), product]));
+      const rebuiltCart = [];
+      const missingItems = [];
+
+      previousItems.forEach((item) => {
+        const product = productMap.get(String(item?.id));
+        if (!product) {
+          missingItems.push(item?.name || `#${item?.id || '—'}`);
+          return;
+        }
+        rebuiltCart.push(normalizeReorderItem(product, item?.qty));
+      });
+
+      if (!rebuiltCart.length) {
+        showToast('هذا الطلب يحتوي على منتجات غير متاحة حاليًا');
+        return;
+      }
+
+      localStorage.setItem('candles-cart', JSON.stringify(rebuiltCart));
+
+      if (missingItems.length) {
+        showToast('تمت إضافة المنتجات المتاحة فقط من الطلب السابق');
+      } else {
+        showToast('تمت إعادة تجهيز الطلب في السلة');
+      }
+
+      setTimeout(() => {
+        window.location.href = './cart.html';
+      }, 350);
+    }
+
+    function renderOrders(orders) {
+      const container = $('#ordersContainer');
+      if (!container) return;
+      window.__ordersCache = Array.isArray(orders) ? orders : [];
+
+      if (!orders || !orders.length) {
+        container.innerHTML = `
+          <div class="admin-empty">
+            <span style="font-size:2.5rem">🧼</span>
+            <p style="margin-top:12px">لا توجد طلبات مسجلة بعد.</p>
+            <a href="./index.html#products" class="btn btn-primary" style="margin-top:14px;display:inline-flex">ابدأ التسوق</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = `<div class="admin-orders-list">${orders.map(order => `
+        <article class="admin-order-card">
+          <div class="myorders-top">
+            <div>
+              <strong class="myorders-number">${escHtml(order.order_number || `#${order.id}`)}</strong>
+              <span class="admin-status-badge ${statusClass(order.status)}">${escHtml(statusLabel(order.status))}</span>
+            </div>
+            <span class="admin-order-date">${formatDate(order.created_at)}</span>
+          </div>
+
+          <div class="myorders-meta">
+            <span>الإجمالي: <strong class="price">${money(order.total)}</strong></span>
+            ${order.city ? `<span>المحافظة: <strong>${escHtml(order.city)}</strong></span>` : ''}
+          </div>
+
+          <div class="admin-detail-items" style="margin-top:12px">
+            ${buildItemsList(order.items_json)}
+          </div>
+
+          <div class="admin-order-actions" style="margin-top:12px">
+            <button type="button" class="btn btn-primary btn-sm" data-action="reorder-order" data-order-id="${escHtml(String(order.id))}">
+              إعادة الطلب
+            </button>
+            <a href="${buildWhatsAppLink(order)}" target="_blank" rel="noopener"
+               class="btn btn-whatsapp btn-sm">
+              متابعة الطلب عبر واتساب
+            </a>
+          </div>
+        </article>
+      `).join('')}</div>`;
+    }
+
+    async function init() {
+      updateCartCount();
+
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = './login.html?redirect=' + encodeURIComponent('./my-orders.html');
+        return;
+      }
+
+      const { data: orders, error } = await sb
+        .from('orders')
+        .select('id, order_number, status, total, city, items_json, created_at')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        $('#ordersContainer').innerHTML = `
+          <div class="admin-empty admin-empty.is-error">
+            <p>تعذر تحميل الطلبات. أعد المحاولة لاحقًا.</p>
+          </div>`;
+        return;
+      }
+
+      renderOrders(orders);
+    }
+
+    document.addEventListener('click', (event) => {
+      const reorderBtn = event.target.closest('[data-action="reorder-order"]');
+      if (!reorderBtn) return;
+      reorderOrder(reorderBtn.dataset.orderId);
+    });
+
+    init();
+  </script>
+</body>
+</html>

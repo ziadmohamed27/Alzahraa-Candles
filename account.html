@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حسابي | Alzahraa Candles</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#c57b49">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
+        <span></span><span></span><span></span>
+      </a>
+      <a class="brand" href="./index.html">
+        <span class="brand-title">Alzahraa Candles</span>
+        <span class="brand-sub">ALZAHRAA CANDLES</span>
+      </a>
+      <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
+        <span class="cart-emoji">🛍️</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="account-page section">
+    <div class="container">
+      <!-- Page head -->
+      <div class="cart-page-head" style="margin-bottom:28px">
+        <div>
+          <span class="pill small">حسابي</span>
+          <h1 id="accountHeading">حسابي</h1>
+          <p id="accountSubheading">مرحبًا — يمكنك مراجعة بياناتك وتحديثها من هنا.</p>
+        </div>
+        <div class="account-head-actions">
+          <a href="./my-orders.html" class="btn btn-ghost">طلباتي</a>
+          <button id="logoutBtn" type="button" class="btn btn-ghost">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <div class="account-layout">
+        <!-- Profile form -->
+        <section class="cart-page-items-wrap account-section">
+          <h2 class="cart-page-title-row" style="margin-bottom:16px">بيانات الحساب</h2>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="accName">الاسم الكامل</label>
+              <input type="text" id="accName" placeholder="اسمك الكامل" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="accEmail">البريد الإلكتروني</label>
+              <input type="email" id="accEmail" placeholder="بريدك الإلكتروني" autocomplete="email" disabled>
+            </div>
+            <div class="field">
+              <label for="accPhone">رقم الموبايل</label>
+              <input type="tel" id="accPhone" placeholder="01xxxxxxxxx" inputmode="tel" autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="accGovernoate">المحافظة</label>
+              <div class="select-wrap">
+                <select id="accGovernoate" autocomplete="address-level1">
+                  <option value="">اختر المحافظة</option>
+                  <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option>
+                  <option>الدقهلية</option><option>البحر الأحمر</option><option>البحيرة</option>
+                  <option>الفيوم</option><option>الغربية</option><option>الإسماعيلية</option>
+                  <option>المنوفية</option><option>المنيا</option><option>القليوبية</option>
+                  <option>الوادي الجديد</option><option>السويس</option><option>أسوان</option>
+                  <option>أسيوط</option><option>بني سويف</option><option>بورسعيد</option>
+                  <option>دمياط</option><option>الشرقية</option><option>جنوب سيناء</option>
+                  <option>كفر الشيخ</option><option>مطروح</option><option>الأقصر</option>
+                  <option>قنا</option><option>شمال سيناء</option><option>سوهاج</option>
+                </select>
+              </div>
+            </div>
+            <div class="field field-full">
+              <label for="accAddress">العنوان بالتفصيل</label>
+              <textarea id="accAddress" rows="3" placeholder="المنطقة، الشارع، العمارة، الدور، الشقة..."></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+            <button id="saveProfileBtn" type="button" class="admin-primary-btn" style="max-width:200px">حفظ التغييرات</button>
+            <p id="profileMsg" class="admin-login-msg" aria-live="polite" style="margin:0"></p>
+          </div>
+        </section>
+
+        <!-- Quick links -->
+        <aside class="cart-page-summary-card account-sidebar">
+          <h3 style="font-family:'El Messiri',sans-serif;font-size:1.5rem;margin-bottom:16px">الحساب</h3>
+          <div class="account-quick-links">
+            <a href="./my-orders.html" class="btn btn-primary" style="width:100%;text-align:center">طلباتي</a>
+            <a href="./index.html#products" class="btn btn-ghost" style="width:100%;text-align:center">تسوق الآن</a>
+            <a href="./cart.html" class="btn btn-ghost" style="width:100%;text-align:center">السلة</a>
+            <button id="logoutBtn2" type="button" class="btn btn-ghost" style="width:100%;text-align:center;color:#c54c4c;border-color:#efc4c4">تسجيل الخروج</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="./site-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./auth-config.js"></script>
+  <script>
+    const sb = createAuthClient();
+    let currentUser = null;
+
+    const $ = (s) => document.querySelector(s);
+
+    function showToast(msg) {
+      const t = $('#toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function setMsg(text, type = '') {
+      const el = $('#profileMsg');
+      if (!el) return;
+      el.textContent = text;
+      el.className = `admin-login-msg ${type}`.trim();
+    }
+
+    /* Update cart count from localStorage */
+    function updateCartCount() {
+      try {
+        const raw = localStorage.getItem('candles-cart');
+        const cart = raw ? JSON.parse(raw) : [];
+        const count = Array.isArray(cart) ? cart.reduce((s, i) => s + (Number(i.qty) || 0), 0) : 0;
+        const el = $('#cartCount');
+        if (el) el.textContent = count;
+      } catch {}
+    }
+
+    async function loadProfile(userId) {
+      const { data } = await sb
+        .from('profiles')
+        .select('full_name, email, phone, governorate, address')
+        .eq('id', userId)
+        .single();
+      return data;
+    }
+
+    async function saveProfile(userId, payload) {
+      const { error } = await sb
+        .from('profiles')
+        .upsert({ id: userId, ...payload, updated_at: new Date().toISOString() }, { onConflict: 'id' });
+      return error;
+    }
+
+    function fillForm(profile, userEmail) {
+      if ($('#accName'))        $('#accName').value        = profile?.full_name || '';
+      if ($('#accEmail'))       $('#accEmail').value       = userEmail || '';
+      if ($('#accPhone'))       $('#accPhone').value       = profile?.phone || '';
+      if ($('#accGovernoate'))  $('#accGovernoate').value  = profile?.governorate || '';
+      if ($('#accAddress'))     $('#accAddress').value     = profile?.address || '';
+    }
+
+    async function init() {
+      updateCartCount();
+
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = './login.html?redirect=' + encodeURIComponent('./account.html');
+        return;
+      }
+
+      currentUser = session.user;
+      const profile = await loadProfile(currentUser.id);
+      fillForm(profile, currentUser.email);
+
+      /* Update heading with name */
+      const displayName = profile?.full_name || currentUser.email || 'مرحبًا';
+      const heading = $('#accountHeading');
+      if (heading) heading.textContent = `مرحبًا، ${displayName}`;
+    }
+
+    async function handleSave() {
+      if (!currentUser) return;
+
+      const name       = $('#accName')?.value?.trim() || '';
+      const phone      = $('#accPhone')?.value?.trim() || '';
+      const governorate = $('#accGovernoate')?.value?.trim() || '';
+      const address    = $('#accAddress')?.value?.trim() || '';
+
+      if (phone && typeof authValidatePhone === 'function' && !authValidatePhone(phone)) {
+        setMsg('اكتب رقم موبايل مصري صحيح', 'is-error');
+        return;
+      }
+
+      const saveBtn = $('#saveProfileBtn');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'جارٍ الحفظ...'; }
+      setMsg('');
+
+      const error = await saveProfile(currentUser.id, {
+        full_name: name,
+        email: currentUser.email,
+        phone,
+        governorate,
+        address,
+      });
+
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'حفظ التغييرات'; }
+
+      if (error) {
+        setMsg('تعذر الحفظ، أعد المحاولة', 'is-error');
+        showToast('تعذر حفظ التغييرات');
+      } else {
+        try {
+          const rawCustomer = localStorage.getItem('candles-customer-info');
+          const currentCustomer = rawCustomer ? JSON.parse(rawCustomer) : {};
+          localStorage.setItem('candles-customer-info', JSON.stringify({
+            ...currentCustomer,
+            name,
+            phone,
+            city: governorate,
+            address,
+          }));
+        } catch {}
+
+        setMsg('تم حفظ التغييرات ✓', 'is-success');
+        showToast('تم حفظ بياناتك بنجاح');
+        /* Update heading */
+        const heading = $('#accountHeading');
+        if (heading && name) heading.textContent = `مرحبًا، ${name}`;
+      }
+    }
+
+    async function handleLogout() {
+      await sb.auth.signOut();
+      window.location.href = './index.html';
+    }
+
+    $('#saveProfileBtn')?.addEventListener('click', handleSave);
+    $('#logoutBtn')?.addEventListener('click', handleLogout);
+    $('#logoutBtn2')?.addEventListener('click', handleLogout);
+
+    init();
+  </script>
+</body>
+</html>

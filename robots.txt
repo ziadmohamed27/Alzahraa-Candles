@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://alzahraa-candles.netlify.app/sitemap.xml

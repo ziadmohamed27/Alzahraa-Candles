@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+<rect width="800" height="800" fill="#fbefe4"/><circle cx="180" cy="170" r="90" fill="#ffe1b5"/><circle cx="640" cy="620" r="120" fill="#edc9ac" opacity=".45"/>
+<rect x="180" y="340" width="170" height="240" rx="28" fill="#f2d5bf" stroke="#b07a54" stroke-width="6"/>
+<rect x="450" y="280" width="170" height="300" rx="28" fill="#e8c0a0" stroke="#a56a43" stroke-width="6"/>
+<rect x="258" y="280" width="14" height="70" rx="7" fill="#5a3a28"/><rect x="528" y="220" width="14" height="70" rx="7" fill="#5a3a28"/>
+<path d="M265 205 C230 250 236 295 265 310 C294 295 300 250 265 205Z" fill="#ffb65c"/><path d="M535 145 C500 190 506 235 535 250 C564 235 570 190 535 145Z" fill="#ffb65c"/>
+<text x="400" y="700" text-anchor="middle" font-size="42" font-family="Arial" fill="#7c4c2f">Handmade • Gift Ready</text></svg>
