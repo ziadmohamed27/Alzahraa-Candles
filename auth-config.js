@@ -4,8 +4,8 @@
    ================================================================= */
 
 (function initAuthConfig(global) {
-  const AUTH_SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
-  const AUTH_SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
+  const AUTH_SUPABASE_URL = global.__SITE_CONFIG__?.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
+  const AUTH_SUPABASE_ANON_KEY = global.__SITE_CONFIG__?.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
 
   global.AuthConfig = {
     supabaseUrl: AUTH_SUPABASE_URL,

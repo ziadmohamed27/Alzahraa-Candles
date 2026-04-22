@@ -1,6 +1,6 @@
 
-const SUPABASE_URL = 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_UgNH99IH4aP0aLN3OhH-Vw_w2-XqO_v';
+const SUPABASE_URL = window.__SITE_CONFIG__?.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
+const SUPABASE_ANON_KEY = window.__SITE_CONFIG__?.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const ordersList = document.getElementById('ordersList');
