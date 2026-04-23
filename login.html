@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسجيل الدخول | Alzahraa Candles</title>
   <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#c57b49">
+  <meta name="theme-color" content="#A07840">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
       <div class="admin-login-head">
         <a class="brand auth-brand" href="./index.html">
           <span class="brand-title">Alzahraa Candles</span>
-          <span class="brand-sub">ALZAHRAA CANDLES</span>
+          <span class="brand-sub">HANDMADE · LUXURY</span>
         </a>
         <span class="pill small" style="margin-top:8px">تسجيل الدخول</span>
         <h1>أهلاً بعودتك</h1>
@@ -53,7 +53,6 @@
   <script src="./auth-config.js"></script>
   <script>
     const sb = createAuthClient();
-
     const emailEl    = document.getElementById('loginEmail');
     const passwordEl = document.getElementById('loginPassword');
     const loginBtn   = document.getElementById('loginBtn');
@@ -64,7 +63,6 @@
       msgEl.className = `admin-login-msg ${type}`.trim();
     }
 
-    /* Redirect already-logged-in users */
     (async function checkSession() {
       const { data } = await sb.auth.getSession();
       if (data.session) {
@@ -76,25 +74,17 @@
     async function handleLogin() {
       const email    = emailEl.value.trim();
       const password = passwordEl.value;
-
-      if (!email || !password) {
-        setMsg('اكتب البريد الإلكتروني وكلمة المرور', 'is-error');
-        return;
-      }
-
+      if (!email || !password) { setMsg('اكتب البريد الإلكتروني وكلمة المرور', 'is-error'); return; }
       loginBtn.disabled = true;
       loginBtn.textContent = 'جارٍ تسجيل الدخول...';
       setMsg('');
-
       const { error } = await sb.auth.signInWithPassword({ email, password });
-
       if (error) {
         setMsg(authErrorMessage(error), 'is-error');
         loginBtn.disabled = false;
         loginBtn.textContent = 'تسجيل الدخول';
         return;
       }
-
       setMsg('تم تسجيل الدخول بنجاح ✓', 'is-success');
       const dest = new URLSearchParams(location.search).get('redirect') || './account.html';
       setTimeout(() => { window.location.href = dest; }, 600);

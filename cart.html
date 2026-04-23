@@ -5,28 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>سلة التسوق | Alzahraa Candles</title>
   <meta name="description" content="راجع طلبك من Alzahraa Candles، حدّث الكميات، واختر الطلب المستعجل قبل الإرسال عبر واتساب.">
-  <meta name="keywords" content="Alzahraa Candles, سلة التسوق, طلب شموع يدوية, candles cart, handmade candles">
-  <meta name="author" content="Alzahraa Candles">
-  <meta name="application-name" content="Alzahraa Candles | Alzahraa Candles">
   <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#c57b49">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="ar_EG">
-  <meta property="og:site_name" content="Alzahraa Candles | Alzahraa Candles">
-  <meta property="og:title" content="سلة التسوق | Alzahraa Candles">
-  <meta property="og:description" content="راجع طلبك من Alzahraa Candles، حدّث الكميات، واختر الطلب المستعجل قبل الإرسال عبر واتساب.">
-  <meta property="og:image" content="https://alzahraa-candles.netlify.app/og-image.png">
-  <meta property="og:image:alt" content="Alzahraa Candles للشموع اليدوية">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="سلة التسوق | Alzahraa Candles">
-  <meta name="twitter:description" content="راجع طلبك من Alzahraa Candles، حدّث الكميات، واختر الطلب المستعجل قبل الإرسال عبر واتساب.">
-  <meta name="twitter:image" content="https://alzahraa-candles.netlify.app/og-image.png">
+  <meta name="theme-color" content="#A07840">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -39,12 +23,10 @@
       <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
         <span></span><span></span><span></span>
       </a>
-
       <a class="brand" href="./index.html">
         <span class="brand-title">Alzahraa Candles</span>
-        <span class="brand-sub">ALZAHRAA CANDLES</span>
+        <span class="brand-sub">HANDMADE · LUXURY</span>
       </a>
-
       <div class="nav-end-group">
         <span id="accountNavWrap"></span>
         <a class="icon-btn cart-btn" href="./cart.html" aria-label="فتح السلة">
@@ -60,11 +42,10 @@
       <div class="container">
         <div class="cart-page-head">
           <div>
-            <span class="pill small">سلة التسوق</span>
-            <h1>راجع طلبك قبل الإرسال</h1>
-            <p>عدّل الكميات، أضف بياناتك، ثم أرسل الطلب عبر واتساب وسيتم تسجيله تلقائيًا.</p>
+            <span class="pill small">✦ سلة التسوق</span>
+            <h1>راجعي طلبك قبل الإرسال</h1>
+            <p>عدّلي الكميات، أضيفي بياناتك، ثم أرسلي الطلب عبر واتساب وسيتم تسجيله تلقائيًا.</p>
           </div>
-
           <a href="./index.html#products" class="btn btn-ghost" id="backToProductsTopBtn">العودة للمنتجات</a>
         </div>
 
@@ -76,97 +57,82 @@
               <h2>المنتجات المختارة</h2>
               <button class="btn btn-ghost btn-sm" id="clearCartBtn" type="button">تفريغ السلة</button>
             </div>
-
             <div id="cartPageItems" class="cart-page-items"></div>
           </section>
 
           <aside class="cart-page-summary">
             <div class="order-form order-form-page" id="orderForm">
               <h3>بيانات الطلب</h3>
-
               <div class="form-grid">
                 <div class="field">
                   <label for="customerName">الاسم</label>
                   <input type="text" id="customerName" placeholder="اكتب اسمك" autocomplete="name">
                 </div>
-
                 <div class="field">
                   <label for="customerPhone">رقم الموبايل</label>
                   <input type="tel" id="customerPhone" placeholder="01xxxxxxxxx" inputmode="tel" autocomplete="tel">
                 </div>
-
                 <div class="field">
                   <label for="customerCity">المحافظة</label>
                   <div class="select-wrap">
                     <select id="customerCity" autocomplete="address-level1">
                       <option value="">اختر المحافظة</option>
-                    <option value="القاهرة">القاهرة</option>
-                    <option value="الجيزة">الجيزة</option>
-                    <option value="الإسكندرية">الإسكندرية</option>
-                    <option value="الدقهلية">الدقهلية</option>
-                    <option value="البحر الأحمر">البحر الأحمر</option>
-                    <option value="البحيرة">البحيرة</option>
-                    <option value="الفيوم">الفيوم</option>
-                    <option value="الغربية">الغربية</option>
-                    <option value="الإسماعيلية">الإسماعيلية</option>
-                    <option value="المنوفية">المنوفية</option>
-                    <option value="المنيا">المنيا</option>
-                    <option value="القليوبية">القليوبية</option>
-                    <option value="الوادي الجديد">الوادي الجديد</option>
-                    <option value="السويس">السويس</option>
-                    <option value="أسوان">أسوان</option>
-                    <option value="أسيوط">أسيوط</option>
-                    <option value="بني سويف">بني سويف</option>
-                    <option value="بورسعيد">بورسعيد</option>
-                    <option value="دمياط">دمياط</option>
-                    <option value="الشرقية">الشرقية</option>
-                    <option value="جنوب سيناء">جنوب سيناء</option>
-                    <option value="كفر الشيخ">كفر الشيخ</option>
-                    <option value="مطروح">مطروح</option>
-                    <option value="الأقصر">الأقصر</option>
-                    <option value="قنا">قنا</option>
-                    <option value="شمال سيناء">شمال سيناء</option>
-                    <option value="سوهاج">سوهاج</option>
+                      <option value="القاهرة">القاهرة</option>
+                      <option value="الجيزة">الجيزة</option>
+                      <option value="الإسكندرية">الإسكندرية</option>
+                      <option value="الدقهلية">الدقهلية</option>
+                      <option value="البحر الأحمر">البحر الأحمر</option>
+                      <option value="البحيرة">البحيرة</option>
+                      <option value="الفيوم">الفيوم</option>
+                      <option value="الغربية">الغربية</option>
+                      <option value="الإسماعيلية">الإسماعيلية</option>
+                      <option value="المنوفية">المنوفية</option>
+                      <option value="المنيا">المنيا</option>
+                      <option value="القليوبية">القليوبية</option>
+                      <option value="الوادي الجديد">الوادي الجديد</option>
+                      <option value="السويس">السويس</option>
+                      <option value="أسوان">أسوان</option>
+                      <option value="أسيوط">أسيوط</option>
+                      <option value="بني سويف">بني سويف</option>
+                      <option value="بورسعيد">بورسعيد</option>
+                      <option value="دمياط">دمياط</option>
+                      <option value="الشرقية">الشرقية</option>
+                      <option value="جنوب سيناء">جنوب سيناء</option>
+                      <option value="كفر الشيخ">كفر الشيخ</option>
+                      <option value="مطروح">مطروح</option>
+                      <option value="الأقصر">الأقصر</option>
+                      <option value="قنا">قنا</option>
+                      <option value="شمال سيناء">شمال سيناء</option>
+                      <option value="سوهاج">سوهاج</option>
                     </select>
                   </div>
                 </div>
-
                 <div class="field field-full">
                   <label for="customerAddress">العنوان بالتفصيل</label>
                   <textarea id="customerAddress" rows="3" placeholder="اكتب العنوان بالتفصيل: المنطقة، الشارع، العمارة، الدور، الشقة..."></textarea>
                 </div>
-
-
                 <div class="field field-full">
                   <label>موقع التسليم على الخريطة <span class="field-label-note">(اختياري)</span></label>
                   <div class="delivery-location-card">
                     <p class="delivery-location-copy">يمكنك استخدام <strong>موقعك الحالي</strong> مباشرة، أو فتح خرائط Google لاختيار موقع تسليم مختلف ثم لصق الرابط هنا.</p>
-
                     <div class="delivery-location-actions">
                       <button type="button" class="btn btn-ghost btn-sm" id="useCurrentLocationBtn">استخدم موقعي الحالي</button>
                       <button type="button" class="btn btn-ghost btn-sm" id="openGoogleMapsBtn">افتح خرائط Google</button>
                       <button type="button" class="btn btn-ghost btn-sm hidden" id="clearLocationBtn">مسح الموقع</button>
                     </div>
-
                     <div class="delivery-google-link-row">
                       <input type="url" id="googleMapsLinkInput" class="delivery-google-link-input" placeholder="الصق رابط الموقع من خرائط Google هنا" dir="ltr" inputmode="url" autocomplete="off">
                       <button type="button" class="btn btn-primary btn-sm" id="applyGoogleMapsLinkBtn">تأكيد الرابط</button>
                     </div>
-
-                    <div class="delivery-picker-helper">
-                      <span>افتح خرائط Google، اختر الموقع الذي تريد التسليم إليه، ثم انسخ الرابط والصقه هنا.</span>
-                    </div>
-
+                    <div class="delivery-picker-helper"><span>افتح خرائط Google، اختر الموقع الذي تريد التسليم إليه، ثم انسخ الرابط والصقه هنا.</span></div>
                     <div class="delivery-location-status" id="deliveryLocationStatus">لم يتم تحديد موقع تسليم على الخريطة بعد.</div>
                     <a id="deliveryLocationLink" class="delivery-location-link hidden" href="#" target="_blank" rel="noopener">فتح الموقع المحدد</a>
                   </div>
                 </div>
-
                 <div class="field field-full">
                   <label for="customerNotes">ملاحظات</label>
                   <textarea id="customerNotes" rows="4" placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
                 </div>
-
                 <div class="field field-full">
                   <label class="urgent-choice-box" for="isUrgentOrder">
                     <input type="checkbox" id="isUrgentOrder">
@@ -178,7 +144,6 @@
                   </label>
                 </div>
               </div>
-
               <div class="shipping-note-box">
                 <strong>تنبيه مهم</strong>
                 <p>سيتم إضافة قيمة الشحن لاحقًا حسب المنطقة <span>(+ مصاريف الشحن)</span>.</p>
@@ -198,5 +163,12 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./auth-config.js"></script>
   <script defer src="./cart.js"></script>
+
+  <script>
+    const _hdr = document.querySelector('.site-header');
+    window.addEventListener('scroll', () => {
+      _hdr && _hdr.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+  </script>
 </body>
 </html>

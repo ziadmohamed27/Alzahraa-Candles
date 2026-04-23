@@ -9,7 +9,7 @@
   <meta name="author" content="Alzahraa Candles">
   <meta name="application-name" content="Alzahraa Candles">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#c57b49">
+  <meta name="theme-color" content="#A07840">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ar_EG">
   <meta property="og:site_name" content="Alzahraa Candles">
@@ -25,7 +25,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./style.css">
   <meta property="og:image:width" content="1200">
@@ -35,6 +35,8 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Store","name":"Alzahraa Candles","alternateName":"Alzahraa Candles","url":"https://alzahraa-candles.netlify.app/","logo":"https://alzahraa-candles.netlify.app/og-image.png","image":"https://alzahraa-candles.netlify.app/og-image.png","description":"متجر عربي لبيع الشموع اليدوية مع طلب سريع عبر واتساب داخل مصر.","telephone":"+20 109 531 4011","address":{"@type":"PostalAddress","addressCountry":"EG"},"sameAs":["https://alzahraa-candles.netlify.app/"]},{"@type":"WebSite","name":"Alzahraa Candles","url":"https://alzahraa-candles.netlify.app/","inLanguage":"ar-EG"}]}</script>
 </head>
 <body class="storefront-body">
+
+  <!-- ═══════════════════════════════ HEADER ═══ -->
   <header class="site-header" id="top">
     <div class="container nav">
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة">
@@ -43,7 +45,7 @@
 
       <a class="brand" href="#top">
         <span class="brand-title">Alzahraa Candles</span>
-        <span class="brand-sub">HANDMADE CANDLES</span>
+        <span class="brand-sub">HANDMADE · LUXURY</span>
       </a>
 
       <div class="nav-end-group">
@@ -67,171 +69,305 @@
   </header>
 
   <main>
-    <section class="hero section">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <span class="pill">شموع يدوية · روائح دافئة · لمسات أنيقة</span>
-          <h1>اختاري الشموع المناسبة لأجوائك<br>بطريقة أوضح وأجمل</h1>
-          <p>مجموعة مختارة من الشموع اليدوية بروائح ولمسات متنوعة، مع وصف واضح لكل منتج وتجربة طلب بسيطة تبدأ برسالة واتساب بدون خطوات معقدة.</p>
 
-          <div class="hero-actions">
-            <a href="#products" class="btn btn-primary">ابدئي الاختيار الآن</a>
-            <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">اسألي على واتساب</a>
+    <!-- ═══════════════════════════════ HERO ═══ -->
+    <section class="hero section" id="hero-section">
+      <div class="hero-inner">
+        <div class="container hero-grid">
+
+          <!-- Copy side -->
+          <div class="hero-copy" data-reveal>
+            <div class="eyebrow">
+              <span class="eyebrow-line"></span>
+              <span class="eyebrow-text">Alzahraa Candles · Cairo, Egypt</span>
+            </div>
+
+            <h1>شموع يدوية<br>لأجواء <em>أدفأ</em> وأكثر<br>أناقة</h1>
+
+            <p class="subtitle">كل شمعة تُصنع بعناية من شمع طبيعي وروائح مختارة — لمسات ديكور تُضيء المكان وتمنحه حضورًا فريدًا يليق بذوقك.</p>
+
+            <div class="hero-actions">
+              <a href="#products" class="btn btn-primary">استكشف المجموعة</a>
+              <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-ghost">اسألي على واتساب</a>
+            </div>
+
+            <div class="hero-badges">
+              <span class="hero-badge"><span>🕯️</span> مصنوع يدويًا</span>
+              <span class="hero-badge"><span>🌿</span> شمع طبيعي</span>
+              <span class="hero-badge"><span>🎁</span> مثالية للهدايا</span>
+              <span class="hero-badge"><span>✨</span> روائح فريدة</span>
+            </div>
           </div>
 
-          <div class="hero-note">لا تحتاجين إلى إنشاء حساب — اختاري منتجاتك، أضيفيها للسلة، وسنؤكد الطلب معك مباشرة عبر واتساب.</div>
-
-          <div class="hero-features">
-            <div>🕯️ شموع يدوية</div>
-            <div>✨ اختيار حسب الرائحة والمناسبة</div>
-            <div>🎁 مناسبة للهدايا والديكور</div>
-          </div>
-        </div>
-
-        <div class="hero-media">
-          <div class="media-card tall candle-card candle-card-main">
-            <img src="./candle-hero-1.svg" alt="شموع يدوية بتصميم دافئ">
-          </div>
-
-          <div class="media-column">
-            <div class="media-card candle-card">
+          <!-- Visual side -->
+          <div class="hero-visual" data-reveal data-reveal-delay="2">
+            <div class="hero-img-main">
+              <img src="./candle-hero-1.svg" alt="شمعة يدوية فاخرة من Alzahraa Candles">
+            </div>
+            <div class="hero-img-sm-1">
               <img src="./candle-hero-2.svg" alt="شمعة للهدايا والديكور">
             </div>
-
-            <div class="media-card candle-card">
+            <div class="hero-img-sm-2">
               <img src="./candle-hero-3.svg" alt="شموع بروائح مميزة">
             </div>
+            <div class="hero-float-1"><span>⭐</span> Hand-Poured</div>
+            <div class="hero-float-2"><span>🕯️</span> Premium Scents</div>
           </div>
+
         </div>
       </div>
     </section>
 
+    <!-- ═══════════════════════════════ TRUST STRIP ═══ -->
     <section class="section section-tight" id="trust">
-      <div class="container">
+      <div class="container" data-reveal>
         <div class="trust-strip" id="trustStrip"></div>
       </div>
     </section>
 
+    <!-- ═══════════════════════════════ PRODUCTS ═══ -->
     <section class="section" id="products">
       <div class="container">
-        <div class="section-head center">
-          <span class="pill small">منتجاتنا</span>
-          <h2>اكتشف الشموع المناسبة لذوقك</h2>
-          <p>كل منتج موضح برائحته وطابعه وحجمه لتسهيل القرار بسرعة.</p>
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ مجموعتنا</span>
+          <h2>اكتشفي الشمعة المناسبة لك</h2>
+          <p>كل منتج موضح بالتفصيل — الرائحة، الحجم، الأجواء المناسبة — لتختاري بثقة.</p>
         </div>
 
-        <div class="products-search-wrap">
+        <div class="products-search-wrap" data-reveal>
           <label class="products-search-field" for="productSearchInput">
             <span class="products-search-icon" aria-hidden="true">🔎</span>
             <input type="search" id="productSearchInput" placeholder="ابحث باسم المنتج أو الرائحة أو المناسبة" autocomplete="off" />
             <button type="button" class="products-search-clear" id="productSearchClear" aria-label="مسح البحث">✕</button>
           </label>
-          <p class="products-search-hint">ابحث باسم المنتج أو حسب الرائحة أو المناسبة مثل: فانيلا، هدية، ديكور، هادئ.</p>
+          <p class="products-search-hint">جربي: فانيلا · هدية · عود · ديكور · هادئ</p>
         </div>
 
-        <div class="filters" id="filters"></div>
+        <div class="filters" id="filters" data-reveal></div>
         <div class="product-grid" id="productGrid"></div>
       </div>
     </section>
 
-    <section class="section alt" id="guide">
-      <div class="container">
-        <div class="section-head center">
-          <span class="pill small">اختيار أسرع</span>
-          <h2>لو محتار، ابدأ من هذه الأجواء المقترحة</h2>
-          <p>جهزنا لك مسارات سريعة حسب الرائحة أو المناسبة أو الإحساس الذي تبحث عنه، مع زر مباشر لفتح المنتج أو استعراض الخيارات المشابهة.</p>
+    <!-- ═══════════════════════════════ BRAND STORY ═══ -->
+    <section class="brand-story" id="story">
+      <div class="container brand-story-grid">
+
+        <!-- Visual -->
+        <div class="brand-story-visual" data-reveal>
+          <div class="brand-story-img-wrap">
+            <img src="./candle-hero-1.svg" alt="صناعة شموع Alzahraa بالعناية">
+          </div>
+          <div class="brand-story-accent">
+            <strong>100%</strong>
+            <span>مصنوع يدويًا</span>
+          </div>
         </div>
 
-        <div class="selection-grid" id="selectionGrid"></div>
+        <!-- Copy -->
+        <div class="brand-story-copy" data-reveal data-reveal-delay="2">
+          <div class="eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">قصة البراند</span>
+          </div>
+          <h2>شموع مصنوعة <em>بالحب</em><br>لكل لحظة تستحق</h2>
+          <p>في Alzahraa Candles نؤمن أن كل مكان يستحق حضورًا دافئًا ومميزًا. نصنع شمعنا يدويًا من شمع طبيعي عالي الجودة وروائح مختارة بعناية لتضيف إلى بيتك — أو هديتك — لمسة أناقة حقيقية وإحساسًا لا يُنسى.</p>
 
-        <div class="consult-banner">
-          <div>
-            <strong>ما زلت غير متأكد؟</strong>
-            <p>أرسل لنا نوع أجوائك أو النتيجة التي تريدها، وسنرشح لك الخيار الأقرب قبل إتمام الطلب.</p>
+          <div class="story-features">
+            <div class="story-feature">
+              <div class="story-feature-icon">🌿</div>
+              <div>
+                <h4>شمع طبيعي نقي</h4>
+                <p>نستخدم شمع الصويا والخامات الطبيعية لضمان احتراق نظيف وآمن في منزلك.</p>
+              </div>
+            </div>
+            <div class="story-feature">
+              <div class="story-feature-icon">🕯️</div>
+              <div>
+                <h4>صب يدوي باحتراف</h4>
+                <p>كل شمعة تُصب وتُكمل بعناية فردية — لا إنتاج آلي، لا تفاصيل مهملة.</p>
+              </div>
+            </div>
+            <div class="story-feature">
+              <div class="story-feature-icon">✨</div>
+              <div>
+                <h4>روائح مختارة بدقة</h4>
+                <p>كل رائحة تُختار لتناسب أجواء معينة — من الهدوء الليلي إلى طاقة الصباح.</p>
+              </div>
+            </div>
           </div>
 
+          <a href="#products" class="btn btn-primary">اكتشف المجموعة الكاملة</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ BENEFITS ═══ -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ لماذا نحن</span>
+          <h2>ما يجعل شمعنا مختلفة</h2>
+          <p>تفاصيل أنيقة، روائح مدروسة، ومساعدة مباشرة قبل كل طلب.</p>
+        </div>
+
+        <div class="feature-grid" id="featureGrid" data-reveal></div>
+
+        <div class="stats-grid" data-reveal>
+          <div class="stat-card"><strong>Handmade</strong><span>صب يدوي بعناية</span></div>
+          <div class="stat-card"><strong>Warm Glow</strong><span>أجواء دافئة وهادئة</span></div>
+          <div class="stat-card"><strong>WhatsApp</strong><span>طلب سريع ومباشر</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ LIFESTYLE GALLERY ═══ -->
+    <section class="section alt lifestyle" id="lifestyle">
+      <div class="container lifestyle-header" data-reveal>
+        <div class="section-head center">
+          <span class="pill small">✦ أجواؤنا</span>
+          <h2>إحساس الدفء في كل زاوية</h2>
+          <p>شموع تصنع اللحظة — في غرفتك، هديتك، وطاولة قهوتك.</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="lifestyle-track" id="lifestyleTrack">
+          <div class="lifestyle-frame">
+            <img src="./candle-hero-1.svg" alt="شمعة ديكور فاخرة">
+            <div class="lifestyle-caption">لحظات دافئة · Warm Moments</div>
+          </div>
+          <div class="lifestyle-frame">
+            <img src="./candle-hero-2.svg" alt="شمعة هدية أنيقة">
+            <div class="lifestyle-caption">هدايا مميزة · Elegant Gifts</div>
+          </div>
+          <div class="lifestyle-frame">
+            <img src="./candle-hero-3.svg" alt="شموع بروائح فريدة">
+            <div class="lifestyle-caption">روائح فريدة · Unique Scents</div>
+          </div>
+          <div class="lifestyle-frame">
+            <img src="./candle-hero-1.svg" alt="شمعة استرخاء">
+            <div class="lifestyle-caption">أجواء هادئة · Calm Vibes</div>
+          </div>
+          <div class="lifestyle-frame">
+            <img src="./candle-hero-2.svg" alt="شمعة ديكور منزلي">
+            <div class="lifestyle-caption">ديكور منزلي · Home Decor</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ COLLECTIONS ═══ -->
+    <section class="section" id="collections">
+      <div class="container">
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ التصنيفات</span>
+          <h2>كل مناسبة لها شمعتها</h2>
+          <p>اختاري حسب الأجواء أو الرائحة أو المناسبة — لكل ذوق خيار يليق به.</p>
+        </div>
+
+        <div class="collections-grid" data-reveal>
+          <div class="collection-tile coll-bg-1">
+            <div class="collection-tile-label"><h3>أجواء هادئة</h3><span>Calm &amp; Soft</span></div>
+          </div>
+          <div class="collection-tile coll-bg-2">
+            <div class="collection-tile-label"><h3>هدايا فاخرة</h3><span>Gift Collection</span></div>
+          </div>
+          <div class="collection-tile coll-bg-3">
+            <div class="collection-tile-label"><h3>روائح الفانيلا</h3><span>Vanilla &amp; Warm</span></div>
+          </div>
+          <div class="collection-tile coll-bg-4">
+            <div class="collection-tile-label"><h3>عود وأمبر</h3><span>Oud &amp; Amber</span></div>
+          </div>
+          <div class="collection-tile coll-bg-5">
+            <div class="collection-tile-label"><h3>ديكور المنزل</h3><span>Home Decor</span></div>
+          </div>
+          <div class="collection-tile coll-bg-6">
+            <div class="collection-tile-label"><h3>الأكثر مبيعًا</h3><span>Best Sellers</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ GUIDE ═══ -->
+    <section class="section alt" id="guide">
+      <div class="container">
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ اختيار أسرع</span>
+          <h2>لو محتارة، ابدئي من هنا</h2>
+          <p>مسارات سريعة لاختيار الشمعة المناسبة حسب الأجواء أو المناسبة.</p>
+        </div>
+
+        <div class="selection-grid" id="selectionGrid" data-reveal></div>
+
+        <div class="consult-banner" data-reveal>
+          <div>
+            <strong>ما زلت غير متأكدة؟</strong>
+            <p>أخبرينا بالأجواء التي تبحثين عنها وسنرشح لك الخيار الأقرب قبل الطلب.</p>
+          </div>
           <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">
-            اطلب ترشيحًا عبر واتساب
+            احصلي على ترشيح مجاني
           </a>
         </div>
       </div>
     </section>
 
-    <section class="section" id="about">
-      <div class="container">
-        <div class="section-head center">
-          <span class="pill small">ثقة وجودة</span>
-          <h2>لماذا تختار منتجاتنا؟</h2>
-          <p>تجربة واضحة وبسيطة: روائح مدروسة، تفاصيل أنيقة، ومساعدة مباشرة قبل الطلب.</p>
-        </div>
-
-        <div class="feature-grid" id="featureGrid"></div>
-
-        <div class="stats-grid">
-          <div class="stat-card"><strong>Handmade</strong><span>شموع بتفاصيل أنيقة</span></div>
-          <div class="stat-card"><strong>Warm Glow</strong><span>أجواء دافئة وهادئة</span></div>
-          <div class="stat-card"><strong>واتساب</strong><span>طلب سريع ومباشر</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section alt" id="shipping">
+    <!-- ═══════════════════════════════ SHIPPING ═══ -->
+    <section class="section" id="shipping">
       <div class="container shipping-layout">
-        <div>
+        <div data-reveal>
           <div class="section-head">
-            <span class="pill small">الطلب والتوصيل</span>
-            <h2>كيف تطلب؟ ومتى تصلك الشموع؟</h2>
-            <p>اختر الشموع المناسبة، أضفها إلى السلة، ثم أرسل الطلب عبر واتساب ليتم تأكيد العنوان والتوصيل معك مباشرة.</p>
+            <span class="pill small">✦ الطلب والتوصيل</span>
+            <h2>ثلاث خطوات بسيطة للحصول على شمعتك</h2>
+            <p>اختاري، أضيفي للسلة، وأرسلي طلبك عبر واتساب — سنتولى الباقي.</p>
           </div>
-
           <div class="steps" id="steps"></div>
         </div>
 
-        <div class="shipping-panel">
-          <h3>معلومات مهمة قبل الطلب</h3>
+        <div class="shipping-panel" data-reveal data-reveal-delay="2">
+          <h3>تفاصيل التوصيل</h3>
           <div class="shipping-items" id="shippingItems"></div>
-
           <div class="shipping-help">
-            <strong>هل تحتاج اقتراحًا سريعًا؟</strong>
-            <p>اكتب لنا الرائحة أو المناسبة التي تبحث عنها، وسنرشح لك الخيار الأنسب عبر واتساب.</p>
+            <strong>هل تحتاجين مساعدة سريعة؟</strong>
+            <p>اكتبي لنا الرائحة أو المناسبة وسنرشح لك الخيار الأنسب.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="confidence">
+    <!-- ═══════════════════════════════ CONFIDENCE ═══ -->
+    <section class="section alt" id="confidence">
       <div class="container">
-        <div class="section-head center">
-          <span class="pill small">قبل ما تطلب</span>
-          <h2>تجربة طلب أوضح وأكثر ثقة</h2>
-          <p>هذه هي النقاط التي تجعل قرار الشراء أسرع وأسهل من غير تردد.</p>
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ قبل ما تطلبي</span>
+          <h2>تجربة شراء بلا تردد</h2>
+          <p>نقاط تجعل قرار الشراء أسرع وأكثر ثقة.</p>
         </div>
-
-        <div class="confidence-grid" id="confidenceGrid"></div>
+        <div class="confidence-grid" id="confidenceGrid" data-reveal></div>
       </div>
     </section>
 
+    <!-- ═══════════════════════════════ FAQ ═══ -->
     <section class="section" id="faq">
       <div class="container faq-wrap">
-        <div class="section-head center">
-          <span class="pill small">الأسئلة الشائعة</span>
-          <h2>أسئلة تمنع التردد قبل الشراء</h2>
-          <p>إجابات مختصرة تساعدك على اختيار الشمعة المناسبة ومعرفة طريقة الطلب والتوصيل.</p>
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ الأسئلة الشائعة</span>
+          <h2>كل ما تحتاجين معرفته</h2>
+          <p>إجابات مختصرة قبل أي قرار شراء.</p>
         </div>
-
-        <div class="faq-list" id="faqList"></div>
+        <div class="faq-list" id="faqList" data-reveal></div>
       </div>
     </section>
 
+    <!-- ═══════════════════════════════ FINAL CTA ═══ -->
     <section class="section alt cta-banner-section">
       <div class="container">
-        <div class="final-cta-card">
+        <div class="final-cta-card" data-reveal>
           <div>
-            <span class="pill small">جاهز للطلب؟</span>
-            <h2>ابدأ الآن وسنؤكد طلبك خطوة بخطوة</h2>
-            <p>أضف المنتجات إلى السلة، وأرسل الطلب عبر واتساب، وسنراجع معك التفاصيل قبل التوصيل.</p>
+            <span class="pill small">✦ جاهزة للطلب؟</span>
+            <h2>ابدئي الآن — نؤكد معك كل خطوة</h2>
+            <p>اختاري المنتجات وأرسلي الطلب عبر واتساب وسنراجع معك التفاصيل قبل التوصيل.</p>
           </div>
-
           <div class="final-cta-actions">
             <a href="#products" class="btn btn-primary">اختيار المنتجات</a>
             <a href="./cart.html" class="btn btn-ghost">مراجعة السلة</a>
@@ -239,58 +375,62 @@
         </div>
       </div>
     </section>
+
   </main>
 
+  <!-- ═══════════════════════════════ FOOTER ═══ -->
   <footer class="footer" id="footer">
     <div class="footer-cta">
       <div class="container footer-cta-inner">
         <div>
-          <h3>هل لديك استفسار؟ نحن هنا لنساعدك</h3>
-          <p>تواصل معنا مباشرة عبر واتساب للحصول على اقتراح مناسب أو متابعة سريعة لطلبك.</p>
+          <h3>لديك سؤال؟ نحن هنا دائمًا</h3>
+          <p>تواصلي معنا مباشرة عبر واتساب للحصول على اقتراح مناسب أو متابعة طلبك.</p>
         </div>
-
         <a class="btn btn-whatsapp" href="https://wa.me/201095314011" target="_blank" rel="noopener">
-          تواصل واتساب الآن
+          💬 تواصلي الآن
         </a>
       </div>
     </div>
 
     <div class="container footer-grid">
       <div>
-        <h3 class="footer-brand">Alzahraa Candles</h3>
-        <p class="footer-text">شموع يدوية مصنوعة بعناية لتمنح المكان دفئًا وأناقة ولمسة خاصة.</p>
+        <span class="footer-brand">Alzahraa Candles</span>
+        <p class="footer-text">شموع يدوية مصنوعة بعناية لتمنح كل مكان دفئًا حقيقيًا وأناقة هادئة تدوم.</p>
       </div>
 
       <div>
         <h4>روابط سريعة</h4>
         <a href="#top">الرئيسية</a>
         <a href="#products">المنتجات</a>
+        <a href="#story">قصتنا</a>
         <a href="#guide">اختيار سريع</a>
-        <a href="#about">لماذا نحن</a>
         <a href="#faq">الأسئلة الشائعة</a>
       </div>
 
       <div>
-        <h4>تواصل معنا</h4>
+        <h4>تواصلي معنا</h4>
         <a href="https://wa.me/201095314011" target="_blank" rel="noopener">واتساب: 201095314011</a>
-        <span>التواصل الإضافي سيتم تحديثه قريبًا</span>
         <span>جمهورية مصر العربية</span>
+        <span>يسعدنا مساعدتك قبل الطلب</span>
       </div>
     </div>
 
-    <div class="container footer-bottom">© 2026 Alzahraa Candles — جميع الحقوق محفوظة</div>
+    <div class="container footer-bottom">© 2026 Alzahraa Candles — جميع الحقوق محفوظة · Handcrafted with ♥</div>
   </footer>
 
+  <!-- ═══════════════════════════════ MOBILE STICKY ═══ -->
   <div class="mobile-sticky-cta">
-    <a href="#products" class="btn btn-primary">تسوّق الآن</a>
+    <a href="#products" class="btn btn-primary">تسوّقي الآن</a>
     <a href="https://wa.me/201095314011" target="_blank" rel="noopener" class="btn btn-whatsapp">واتساب</a>
   </div>
 
+  <!-- ═══════════════════════════════ FLOATING WA ═══ -->
   <button class="floating-wa" id="floatingWhatsApp" aria-label="تواصل عبر واتساب">
     <span>واتساب</span>
     <span class="wa-icon">💬</span>
   </button>
 
+  <!-- ═══════════════════════════════ MODAL ═══ -->
   <div class="overlay hidden" id="productModalOverlay">
     <div class="modal product-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button class="close-btn" id="closeProductModal" aria-label="إغلاق">×</button>
@@ -298,11 +438,88 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════ TOAST ═══ -->
   <div class="toast" id="toast" aria-live="polite"></div>
 
+  <!-- ═══════════════════════════════ SCRIPTS ═══ -->
   <script defer src="./site-config.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./auth-config.js"></script>
   <script defer src="./script.js"></script>
+
+  <!-- Scroll Reveal + Interactions -->
+  <script>
+  (function() {
+    // ── Scroll header shadow ──
+    const header = document.querySelector('.site-header');
+    window.addEventListener('scroll', () => {
+      header && header.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ── Intersection Observer reveal ──
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+    // Also observe dynamically-added content
+    const mo = new MutationObserver(() => {
+      document.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => io.observe(el));
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    // ── FAQ accordion ──
+    document.addEventListener('click', (e) => {
+      const q = e.target.closest('.faq-q');
+      if (!q) return;
+      const item = q.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    });
+
+    // ── Lifestyle drag scroll ──
+    const track = document.getElementById('lifestyleTrack');
+    if (track) {
+      let isDown = false, startX, scrollLeft;
+      track.addEventListener('mousedown', e => {
+        isDown = true;
+        startX = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+      });
+      track.addEventListener('mouseleave', () => isDown = false);
+      track.addEventListener('mouseup', () => isDown = false);
+      track.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        track.scrollLeft = scrollLeft - (x - startX);
+      });
+    }
+
+    // ── Floating WA ──
+    const floatWA = document.getElementById('floatingWhatsApp');
+    if (floatWA) {
+      floatWA.addEventListener('click', () => {
+        window.open('https://wa.me/201095314011', '_blank', 'noopener');
+      });
+    }
+
+    // ── Collections → scroll to products ──
+    document.querySelectorAll('.collection-tile').forEach(tile => {
+      tile.addEventListener('click', () => {
+        document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+  })();
+  </script>
+
 </body>
 </html>

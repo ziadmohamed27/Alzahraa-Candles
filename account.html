@@ -5,49 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حسابي | Alzahraa Candles</title>
   <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#c57b49">
+  <meta name="theme-color" content="#A07840">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header" id="top">
     <div class="container nav">
       <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
         <span></span><span></span><span></span>
       </a>
       <a class="brand" href="./index.html">
         <span class="brand-title">Alzahraa Candles</span>
-        <span class="brand-sub">ALZAHRAA CANDLES</span>
+        <span class="brand-sub">HANDMADE · LUXURY</span>
       </a>
-      <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
-        <span class="cart-emoji">🛍️</span>
-        <span class="cart-count" id="cartCount">0</span>
-      </a>
+      <div class="nav-end-group">
+        <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
+          <span class="cart-emoji">🛍️</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </a>
+      </div>
     </div>
   </header>
 
   <main class="account-page section">
     <div class="container">
-      <!-- Page head -->
-      <div class="cart-page-head" style="margin-bottom:28px">
+
+      <div class="cart-page-head">
         <div>
-          <span class="pill small">حسابي</span>
+          <span class="pill small">✦ حسابي</span>
           <h1 id="accountHeading">حسابي</h1>
           <p id="accountSubheading">مرحبًا — يمكنك مراجعة بياناتك وتحديثها من هنا.</p>
         </div>
         <div class="account-head-actions">
           <a href="./my-orders.html" class="btn btn-ghost">طلباتي</a>
-          <button id="logoutBtn" type="button" class="btn btn-ghost">تسجيل الخروج</button>
+          <button id="logoutBtn" type="button" class="btn btn-ghost" style="color:#C0524C;border-color:#efc4c4">تسجيل الخروج</button>
         </div>
       </div>
 
       <div class="account-layout">
+
         <!-- Profile form -->
-        <section class="cart-page-items-wrap account-section">
-          <h2 class="cart-page-title-row" style="margin-bottom:16px">بيانات الحساب</h2>
+        <section class="account-section">
+          <div class="account-section-head">
+            <h2>بيانات الحساب</h2>
+            <p>احتفظي ببياناتك محدّثة لتسريع عملية الطلب.</p>
+          </div>
 
           <div class="form-grid">
             <div class="field">
@@ -56,7 +62,7 @@
             </div>
             <div class="field">
               <label for="accEmail">البريد الإلكتروني</label>
-              <input type="email" id="accEmail" placeholder="بريدك الإلكتروني" autocomplete="email" disabled>
+              <input type="email" id="accEmail" placeholder="بريدك الإلكتروني" autocomplete="email" disabled style="opacity:.6;cursor:not-allowed">
             </div>
             <div class="field">
               <label for="accPhone">رقم الموبايل</label>
@@ -85,22 +91,24 @@
             </div>
           </div>
 
-          <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-            <button id="saveProfileBtn" type="button" class="admin-primary-btn" style="max-width:200px">حفظ التغييرات</button>
-            <p id="profileMsg" class="admin-login-msg" aria-live="polite" style="margin:0"></p>
+          <div class="account-save-row">
+            <button id="saveProfileBtn" type="button" class="btn btn-primary">حفظ التغييرات</button>
+            <p id="profileMsg" class="admin-login-msg" aria-live="polite"></p>
           </div>
         </section>
 
-        <!-- Quick links -->
-        <aside class="cart-page-summary-card account-sidebar">
-          <h3 style="font-family:'El Messiri',sans-serif;font-size:1.5rem;margin-bottom:16px">الحساب</h3>
+        <!-- Sidebar -->
+        <aside class="account-sidebar">
+          <h3>الحساب والتسوق</h3>
           <div class="account-quick-links">
-            <a href="./my-orders.html" class="btn btn-primary" style="width:100%;text-align:center">طلباتي</a>
-            <a href="./index.html#products" class="btn btn-ghost" style="width:100%;text-align:center">تسوق الآن</a>
-            <a href="./cart.html" class="btn btn-ghost" style="width:100%;text-align:center">السلة</a>
-            <button id="logoutBtn2" type="button" class="btn btn-ghost" style="width:100%;text-align:center;color:#c54c4c;border-color:#efc4c4">تسجيل الخروج</button>
+            <a href="./my-orders.html" class="btn btn-primary" style="width:100%;justify-content:center">📦 طلباتي</a>
+            <a href="./index.html#products" class="btn btn-ghost" style="width:100%;justify-content:center">🕯️ تسوق الآن</a>
+            <a href="./cart.html" class="btn btn-ghost" style="width:100%;justify-content:center">🛍️ السلة</a>
+            <div class="account-sidebar-divider"></div>
+            <button id="logoutBtn2" type="button" class="btn btn-ghost" style="width:100%;justify-content:center;color:#C0524C;border-color:rgba(192,82,76,.25)">تسجيل الخروج</button>
           </div>
         </aside>
+
       </div>
     </div>
   </main>
@@ -113,7 +121,6 @@
   <script>
     const sb = createAuthClient();
     let currentUser = null;
-
     const $ = (s) => document.querySelector(s);
 
     function showToast(msg) {
@@ -132,7 +139,6 @@
       el.className = `admin-login-msg ${type}`.trim();
     }
 
-    /* Update cart count from localStorage */
     function updateCartCount() {
       try {
         const raw = localStorage.getItem('candles-cart');
@@ -143,44 +149,34 @@
       } catch {}
     }
 
+    const headerEl = document.querySelector('.site-header');
+    window.addEventListener('scroll', () => headerEl && headerEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+
     async function loadProfile(userId) {
-      const { data } = await sb
-        .from('profiles')
-        .select('full_name, email, phone, governorate, address')
-        .eq('id', userId)
-        .single();
+      const { data } = await sb.from('profiles').select('full_name, email, phone, governorate, address').eq('id', userId).single();
       return data;
     }
 
     async function saveProfile(userId, payload) {
-      const { error } = await sb
-        .from('profiles')
-        .upsert({ id: userId, ...payload, updated_at: new Date().toISOString() }, { onConflict: 'id' });
+      const { error } = await sb.from('profiles').upsert({ id: userId, ...payload, updated_at: new Date().toISOString() }, { onConflict: 'id' });
       return error;
     }
 
     function fillForm(profile, userEmail) {
-      if ($('#accName'))        $('#accName').value        = profile?.full_name || '';
-      if ($('#accEmail'))       $('#accEmail').value       = userEmail || '';
-      if ($('#accPhone'))       $('#accPhone').value       = profile?.phone || '';
-      if ($('#accGovernoate'))  $('#accGovernoate').value  = profile?.governorate || '';
-      if ($('#accAddress'))     $('#accAddress').value     = profile?.address || '';
+      if ($('#accName'))       $('#accName').value       = profile?.full_name || '';
+      if ($('#accEmail'))      $('#accEmail').value      = userEmail || '';
+      if ($('#accPhone'))      $('#accPhone').value      = profile?.phone || '';
+      if ($('#accGovernoate')) $('#accGovernoate').value = profile?.governorate || '';
+      if ($('#accAddress'))    $('#accAddress').value    = profile?.address || '';
     }
 
     async function init() {
       updateCartCount();
-
       const { data: { session } } = await sb.auth.getSession();
-      if (!session) {
-        window.location.href = './login.html?redirect=' + encodeURIComponent('./account.html');
-        return;
-      }
-
+      if (!session) { window.location.href = './login.html?redirect=' + encodeURIComponent('./account.html'); return; }
       currentUser = session.user;
       const profile = await loadProfile(currentUser.id);
       fillForm(profile, currentUser.email);
-
-      /* Update heading with name */
       const displayName = profile?.full_name || currentUser.email || 'مرحبًا';
       const heading = $('#accountHeading');
       if (heading) heading.textContent = `مرحبًا، ${displayName}`;
@@ -188,59 +184,31 @@
 
     async function handleSave() {
       if (!currentUser) return;
-
-      const name       = $('#accName')?.value?.trim() || '';
-      const phone      = $('#accPhone')?.value?.trim() || '';
+      const name = $('#accName')?.value?.trim() || '';
+      const phone = $('#accPhone')?.value?.trim() || '';
       const governorate = $('#accGovernoate')?.value?.trim() || '';
-      const address    = $('#accAddress')?.value?.trim() || '';
-
-      if (phone && typeof authValidatePhone === 'function' && !authValidatePhone(phone)) {
-        setMsg('اكتب رقم موبايل مصري صحيح', 'is-error');
-        return;
-      }
-
+      const address = $('#accAddress')?.value?.trim() || '';
+      if (phone && typeof authValidatePhone === 'function' && !authValidatePhone(phone)) { setMsg('اكتب رقم موبايل مصري صحيح', 'is-error'); return; }
       const saveBtn = $('#saveProfileBtn');
       if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'جارٍ الحفظ...'; }
       setMsg('');
-
-      const error = await saveProfile(currentUser.id, {
-        full_name: name,
-        email: currentUser.email,
-        phone,
-        governorate,
-        address,
-      });
-
+      const error = await saveProfile(currentUser.id, { full_name: name, email: currentUser.email, phone, governorate, address });
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'حفظ التغييرات'; }
-
-      if (error) {
-        setMsg('تعذر الحفظ، أعد المحاولة', 'is-error');
-        showToast('تعذر حفظ التغييرات');
-      } else {
+      if (error) { setMsg('تعذر الحفظ، أعد المحاولة', 'is-error'); showToast('تعذر حفظ التغييرات'); }
+      else {
         try {
           const rawCustomer = localStorage.getItem('candles-customer-info');
           const currentCustomer = rawCustomer ? JSON.parse(rawCustomer) : {};
-          localStorage.setItem('candles-customer-info', JSON.stringify({
-            ...currentCustomer,
-            name,
-            phone,
-            city: governorate,
-            address,
-          }));
+          localStorage.setItem('candles-customer-info', JSON.stringify({ ...currentCustomer, name, phone, city: governorate, address }));
         } catch {}
-
         setMsg('تم حفظ التغييرات ✓', 'is-success');
         showToast('تم حفظ بياناتك بنجاح');
-        /* Update heading */
         const heading = $('#accountHeading');
         if (heading && name) heading.textContent = `مرحبًا، ${name}`;
       }
     }
 
-    async function handleLogout() {
-      await sb.auth.signOut();
-      window.location.href = './index.html';
-    }
+    async function handleLogout() { await sb.auth.signOut(); window.location.href = './index.html'; }
 
     $('#saveProfileBtn')?.addEventListener('click', handleSave);
     $('#logoutBtn')?.addEventListener('click', handleLogout);
