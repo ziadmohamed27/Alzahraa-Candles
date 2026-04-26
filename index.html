@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Alzahraa Candles | شموع يدوية للعناية اليومية في مصر</title>
   <meta name="description" content="Alzahraa Candles متجر عربي لبيع الشموع اليدوية بمكونات مختارة بعناية، مع طلب سريع عبر واتساب وتجربة واضحة على الموبايل واللاب داخل مصر.">
   <meta name="keywords" content="Alzahraa Candles, شموع يدوية, شموع معطرة, شموع هدايا, شموع ديكور, handmade candles egypt">
@@ -10,6 +10,10 @@
   <meta name="application-name" content="Alzahraa Candles">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#A07840">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ar_EG">
   <meta property="og:site_name" content="Alzahraa Candles">
@@ -22,24 +26,111 @@
   <meta name="twitter:description" content="متجر Alzahraa Candles للشموع اليدوية — منتجات مختارة بعناية وطلب سريع عبر واتساب داخل مصر.">
   <meta name="twitter:image" content="https://alzahraa-candles.netlify.app/og-image.png">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-
+  <link rel="apple-touch-icon" href="./icon-512.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://wihhfwdaysupjpfzshfq.supabase.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
 
   <link rel="stylesheet" href="./style.css">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://alzahraa-candles.netlify.app/">
   <link rel="canonical" href="https://alzahraa-candles.netlify.app/">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Store","name":"Alzahraa Candles","alternateName":"Alzahraa Candles","url":"https://alzahraa-candles.netlify.app/","logo":"https://alzahraa-candles.netlify.app/og-image.png","image":"https://alzahraa-candles.netlify.app/og-image.png","description":"متجر عربي لبيع الشموع اليدوية مع طلب سريع عبر واتساب داخل مصر.","telephone":"+20 109 531 4011","address":{"@type":"PostalAddress","addressCountry":"EG"},"sameAs":["https://alzahraa-candles.netlify.app/"]},{"@type":"WebSite","name":"Alzahraa Candles","url":"https://alzahraa-candles.netlify.app/","inLanguage":"ar-EG"}]}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Store",
+      "name": "Alzahraa Candles",
+      "alternateName": "الزهراء للشموع",
+      "url": "https://alzahraa-candles.netlify.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://alzahraa-candles.netlify.app/og-image.svg",
+        "width": 1200,
+        "height": 630
+      },
+      "image": "https://alzahraa-candles.netlify.app/og-image.png",
+      "description": "متجر Alzahraa Candles للشموع اليدوية — شمع طبيعي وروائح مختارة. طلب سريع عبر واتساب داخل مصر.",
+      "telephone": "+20-109-531-4011",
+      "priceRange": "££",
+      "currenciesAccepted": "EGP",
+      "paymentAccepted": "Cash, Bank Transfer",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "EG",
+        "addressRegion": "Cairo"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "telephone": "+20-109-531-4011",
+        "availableLanguage": [
+          "Arabic"
+        ]
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "مجموعة الشموع اليدوية",
+        "description": "شموع يدوية بشمع طبيعي وروائح مميزة مناسبة للهدايا والديكور"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "name": "Alzahraa Candles",
+      "url": "https://alzahraa-candles.netlify.app/",
+      "inLanguage": "ar-EG",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://alzahraa-candles.netlify.app/#products?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "كيف أختار الشمعة المناسبة؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "اعتمد على الرائحة والحجم والأجواء التي تريدها، ويمكنك التواصل معنا عبر واتساب لو كنت محتارًا بين أكثر من خيار."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "هل أحتاج إلى إنشاء حساب قبل الطلب؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "لا، لا تحتاج إلى إنشاء حساب. اختر المنتجات وأضفها للسلة ثم أرسل الطلب عبر واتساب."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "ما هي مناطق التوصيل المتاحة؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "التوصيل متاح لمعظم المحافظات داخل مصر خلال 2 إلى 5 أيام عمل."
+          }
+        }
+      ]
+    }
+  ]
+}</script>
 </head>
 <body class="storefront-body">
+  <a href="#products" class="skip-link">تخطي للمنتجات</a>
 
   <!-- ═══════════════════════════════ HEADER ═══ -->
   <header class="site-header" id="top">
     <div class="container nav">
-      <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
       </button>
 
@@ -57,7 +148,7 @@
       </div>
     </div>
 
-    <nav class="mobile-menu" id="mobileMenu">
+    <nav class="mobile-menu" id="mobileMenu" aria-label="القائمة الرئيسية">
       <a href="#products">المنتجات</a>
       <a href="#guide">اختيار سريع</a>
       <a href="#about">لماذا نحن</a>
@@ -135,7 +226,7 @@
         </div>
 
         <div class="products-search-wrap" data-reveal>
-          <label class="products-search-field" for="productSearchInput">
+          <label class="products-search-field" for="productSearchInput" role="search">
             <span class="products-search-icon" aria-hidden="true">🔎</span>
             <input type="search" id="productSearchInput" placeholder="ابحث باسم المنتج أو الرائحة أو المناسبة" autocomplete="off" />
             <button type="button" class="products-search-clear" id="productSearchClear" aria-label="مسح البحث">✕</button>
@@ -144,7 +235,46 @@
         </div>
 
         <div class="filters" id="filters" data-reveal></div>
-        <div class="product-grid" id="productGrid"></div>
+        <div aria-live="polite" aria-atomic="true" id="productAnnounce" class="sr-only"></div>
+        <div class="product-grid" id="productGrid" role="list">
+          <!-- Skeleton cards shown before Supabase loads -->
+          <div class="product-card skeleton-card" aria-hidden="true">
+            <div class="skeleton" style="aspect-ratio:4/5;width:100%"></div>
+            <div class="card-body" style="gap:10px">
+              <div class="skeleton" style="height:18px;width:55%;border-radius:999px"></div>
+              <div class="skeleton" style="height:22px;width:90%;border-radius:8px"></div>
+              <div class="skeleton" style="height:16px;width:40%;border-radius:8px"></div>
+              <div class="skeleton" style="height:42px;border-radius:12px;margin-top:6px"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card" aria-hidden="true">
+            <div class="skeleton" style="aspect-ratio:4/5;width:100%"></div>
+            <div class="card-body" style="gap:10px">
+              <div class="skeleton" style="height:18px;width:45%;border-radius:999px"></div>
+              <div class="skeleton" style="height:22px;width:85%;border-radius:8px"></div>
+              <div class="skeleton" style="height:16px;width:35%;border-radius:8px"></div>
+              <div class="skeleton" style="height:42px;border-radius:12px;margin-top:6px"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card" aria-hidden="true">
+            <div class="skeleton" style="aspect-ratio:4/5;width:100%"></div>
+            <div class="card-body" style="gap:10px">
+              <div class="skeleton" style="height:18px;width:60%;border-radius:999px"></div>
+              <div class="skeleton" style="height:22px;width:80%;border-radius:8px"></div>
+              <div class="skeleton" style="height:16px;width:42%;border-radius:8px"></div>
+              <div class="skeleton" style="height:42px;border-radius:12px;margin-top:6px"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card" aria-hidden="true">
+            <div class="skeleton" style="aspect-ratio:4/5;width:100%"></div>
+            <div class="card-body" style="gap:10px">
+              <div class="skeleton" style="height:18px;width:50%;border-radius:999px"></div>
+              <div class="skeleton" style="height:22px;width:88%;border-radius:8px"></div>
+              <div class="skeleton" style="height:16px;width:38%;border-radius:8px"></div>
+              <div class="skeleton" style="height:42px;border-radius:12px;margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -155,7 +285,7 @@
         <!-- Visual -->
         <div class="brand-story-visual" data-reveal>
           <div class="brand-story-img-wrap">
-            <img src="./candle-hero-1.svg" alt="صناعة شموع Alzahraa بالعناية">
+            <img src="./candle-story.svg" alt="شمعة فاخرة من Alzahraa Candles — مصنوعة يدويًا">
           </div>
           <div class="brand-story-accent">
             <strong>100%</strong>
@@ -378,8 +508,32 @@
 
   </main>
 
+
+
+  <!-- ═══════════════════════════════ WISHLIST ═══ -->
+  <section id="wishlistSection" style="display:none">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="pill small">✦ قائمة أمنياتكِ</span>
+        <h2>المنتجات التي حفظتِها</h2>
+      </div>
+      <div class="wl-track" id="wlTrack"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ RECENTLY VIEWED ═══ -->
+  <section id="recentlyViewedSection" style="display:none">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="pill small">✦ شاهدتِ مؤخرًا</span>
+        <h2>المنتجات التي اطّلعتِ عليها</h2>
+      </div>
+      <div class="rv-track" id="rvTrack"></div>
+    </div>
+  </section>
+
   <!-- ═══════════════════════════════ FOOTER ═══ -->
-  <footer class="footer" id="footer">
+  <footer class="footer" id="footer" role="contentinfo">
     <div class="footer-cta">
       <div class="container footer-cta-inner">
         <div>
@@ -396,6 +550,11 @@
       <div>
         <span class="footer-brand">Alzahraa Candles</span>
         <p class="footer-text">شموع يدوية مصنوعة بعناية لتمنح كل مكان دفئًا حقيقيًا وأناقة هادئة تدوم.</p>
+        <div class="footer-social">
+          <a href="https://wa.me/201095314011" target="_blank" rel="noopener" aria-label="واتساب">💬</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="إنستغرام">📷</a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="فيسبوك">📘</a>
+        </div>
       </div>
 
       <div>
@@ -410,6 +569,7 @@
       <div>
         <h4>تواصلي معنا</h4>
         <a href="https://wa.me/201095314011" target="_blank" rel="noopener">واتساب: 201095314011</a>
+        <button class="btn btn-ghost btn-sm" data-copy="01095314011" style="margin-top:8px;font-size:.8rem">📋 نسخ الرقم</button>
         <span>جمهورية مصر العربية</span>
         <span>يسعدنا مساعدتك قبل الطلب</span>
       </div>
@@ -430,6 +590,9 @@
     <span class="wa-icon">💬</span>
   </button>
 
+  <!-- ═══════════════════════════════ SCROLL TOP ═══ -->
+  <button class="scroll-top-btn" id="scrollTopBtn" aria-label="العودة لأعلى">↑</button>
+
   <!-- ═══════════════════════════════ MODAL ═══ -->
   <div class="overlay hidden" id="productModalOverlay">
     <div class="modal product-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -446,6 +609,9 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./auth-config.js"></script>
   <script defer src="./script.js"></script>
+  <script defer src="./interactions.js"></script>
+  <script defer src="./enhancements.js"></script>
+  <script defer src="./features.js"></script>
 
   <!-- Scroll Reveal + Interactions -->
   <script>
@@ -518,8 +684,45 @@
       });
     });
 
+  // ── Scroll-to-top button ──
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn && scrollTopBtn.classList.toggle('visible', window.scrollY > 600);
+    }, { passive: true });
+    scrollTopBtn && scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ── Menu hamburger toggle animation ──
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        const isOpen = mobileMenu.classList.toggle('open');
+        menuBtn.classList.toggle('is-open', isOpen);
+        menuBtn.setAttribute('aria-expanded', isOpen);
+      });
+    }
+
+    // ── Lazy image loaded fade-in ──
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      if (img.complete) { img.classList.add('loaded'); }
+      else { img.addEventListener('load', () => img.classList.add('loaded')); }
+    });
+
   })();
   </script>
 
+
+  <!-- ═══ SERVICE WORKER REGISTRATION ═══ -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => {})
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>

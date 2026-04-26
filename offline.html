@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+<meta name="description" content="لا يوجد اتصال بالإنترنت — متجر Alzahraa Candles.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>لا يوجد اتصال | Alzahraa Candles</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#A07840">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="apple-touch-icon" href="./icon-512.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .page-offline {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(240,215,175,.4) 0%, transparent 60%),
+        var(--cream);
+    }
+    .page-offline-card {
+      text-align: center;
+      max-width: 480px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      padding: 52px 40px;
+      box-shadow: var(--shadow-hover);
+    }
+    .offline-icon {
+      font-size: 4.5rem;
+      display: block;
+      margin-bottom: 6px;
+      animation: floatUp2 5s ease-in-out infinite;
+    }
+    .offline-wifi {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 20px;
+      opacity: .4;
+    }
+    .offline-title {
+      font-family: "El Messiri", serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .offline-desc {
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 32px;
+      font-size: .97rem;
+    }
+    .offline-tip {
+      background: rgba(201,164,106,.08);
+      border: 1px solid var(--gold-light);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: .88rem;
+      color: var(--gold-dark);
+      line-height: 1.7;
+    }
+    .offline-tip strong { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+    .offline-retry-btn {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page-offline" role="main">
+    <div class="page-offline-card">
+      <span class="offline-icon" aria-hidden="true">🕯️</span>
+      <span class="offline-wifi" aria-hidden="true">📡</span>
+
+      <h1 class="offline-title">لا يوجد اتصال بالإنترنت</h1>
+      <p class="offline-desc">
+        يبدو أن الاتصال منقطع حاليًا.<br>
+        تحقق من الإنترنت وأعد المحاولة — نحن هنا عند عودتك.
+      </p>
+
+      <div class="offline-tip">
+        <strong>💡 نصيحة</strong>
+        لو زرت الموقع من قبل، بعض الصفحات والمنتجات ستظل متاحة للتصفح حتى بدون إنترنت.
+      </div>
+
+      <button class="btn btn-primary offline-retry-btn" id="retryBtn" type="button">
+        🔄 إعادة المحاولة
+      </button>
+      <a class="btn btn-ghost" href="https://wa.me/201095314011"
+         target="_blank" rel="noopener" style="width:100%;justify-content:center">
+        💬 تواصل عبر واتساب
+      </a>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    // Auto-retry when connection restored
+    window.addEventListener('online', () => {
+      window.location.href = '/';
+    });
+  </script>
+</body>
+</html>

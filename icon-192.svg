@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#FAF5EE"/>
+  <rect width="192" height="192" rx="40" fill="url(#bg)"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FAF5EE"/>
+      <stop offset="1" stop-color="#F0E0C8"/>
+    </linearGradient>
+    <linearGradient id="jar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F8EAD6"/>
+      <stop offset="1" stop-color="#D4A060"/>
+    </linearGradient>
+    <linearGradient id="fl" x1=".5" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#FFF090"/>
+      <stop offset=".6" stop-color="#F0A020"/>
+      <stop offset="1" stop-color="#C05010"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Candle body -->
+  <rect x="68" y="105" width="56" height="72" rx="14" fill="url(#jar)"/>
+  <!-- Highlight -->
+  <rect x="75" y="111" width="7" height="58" rx="3.5" fill="white" opacity=".22"/>
+  <!-- Rim -->
+  <rect x="63" y="97" width="66" height="13" rx="6.5" fill="#C08848"/>
+  <!-- Wax surface -->
+  <ellipse cx="96" cy="98" rx="30" ry="6" fill="#F4DCBC"/>
+
+  <!-- Wick -->
+  <line x1="96" y1="98" x2="94" y2="76" stroke="#3A1C08" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Flame glow -->
+  <ellipse cx="94" cy="65" rx="16" ry="22" fill="#FFD060" opacity=".35"/>
+
+  <!-- Flame -->
+  <path d="M94 44 C85 53 82 64 84 72 C86 79 90 84 94 84 C98 84 102 79 104 72 C106 64 103 53 94 44Z" fill="url(#fl)"/>
+  <path d="M94 52 C89 59 87 67 89 73 C90 78 92 81 94 82 C96 81 98 78 99 73 C101 67 99 59 94 52Z" fill="#FFFCA8" opacity=".9"/>
+  <circle cx="94" cy="48" r="3" fill="white" opacity=".7"/>
+
+  <!-- Label band -->
+  <rect x="68" y="136" width="56" height="20" fill="white" opacity=".15"/>
+  <text x="96" y="149" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#7A4A20" opacity=".85" letter-spacing="1">ALZAHRAA</text>
+
+  <!-- Shadow -->
+  <ellipse cx="96" cy="182" rx="30" ry="5" fill="#B08040" opacity=".15"/>
+</svg>

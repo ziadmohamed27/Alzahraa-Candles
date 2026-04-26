@@ -1,39 +1,55 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+<meta name="description" content="دخول لوحة إدارة متجر Alzahraa Candles.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>تسجيل دخول الإدارة | Alzahraa Candles</title>
   <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#A07840">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="apple-touch-icon" href="./icon-512.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <main class="admin-login-page">
     <section class="admin-login-card">
       <div class="admin-login-head">
-        <span class="pill small">لوحة الإدارة</span>
-        <h1>تسجيل دخول الإدارة</h1>
-        <p>لوحة داخلية لمتابعة طلبات Alzahraa Candles وتحديث الحالة وتصدير البيانات.</p>
+        <a class="brand auth-brand" href="./index.html">
+          <span class="brand-title">Alzahraa Candles</span>
+          <span class="brand-sub">HANDMADE · LUXURY</span>
+        </a>
+        <span class="pill small" style="margin-top:8px">✦ لوحة الإدارة</span>
+        <h1>دخول الإدارة</h1>
+        <p>لوحة داخلية لمتابعة الطلبات وتحديث الحالة وتصدير البيانات.</p>
       </div>
-
 
       <label class="admin-field">
         <span>البريد الإلكتروني</span>
-        <input type="email" id="adminEmail" placeholder="name@example.com" autocomplete="email" />
+        <input type="email" id="adminEmail" placeholder="name@example.com" autocomplete="email">
       </label>
 
       <label class="admin-field">
         <span>كلمة المرور</span>
-        <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password" />
+        <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password">
       </label>
 
-      <button id="adminLoginBtn" type="button" class="admin-primary-btn">دخول</button>
+      <button id="adminLoginBtn" type="button" class="admin-primary-btn">دخول لوحة الإدارة</button>
       <p id="adminLoginMsg" class="admin-login-msg" aria-live="polite"></p>
 
-      <a href="./index.html" class="btn btn-ghost admin-back-btn">العودة للموقع</a>
+      <a href="./index.html" class="btn btn-ghost admin-back-btn">العودة للمتجر</a>
     </section>
   </main>
 
@@ -42,14 +58,13 @@
   <script>
     const SITE_CONFIG = window.__SITE_CONFIG__ || {};
     const SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
-        const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
-
+    const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const emailInput = document.getElementById('adminEmail');
+    const emailInput    = document.getElementById('adminEmail');
     const passwordInput = document.getElementById('adminPassword');
-    const loginBtn = document.getElementById('adminLoginBtn');
-    const msg = document.getElementById('adminLoginMsg');
+    const loginBtn      = document.getElementById('adminLoginBtn');
+    const msg           = document.getElementById('adminLoginMsg');
 
     function setMessage(text, type = '') {
       msg.textContent = text;
@@ -58,45 +73,29 @@
 
     async function redirectIfAuthenticated() {
       const { data } = await supabaseClient.auth.getUser();
-      if (data.user) {
-        window.location.href = './admin-orders.html';
-      }
+      if (data.user) window.location.href = './admin-orders.html';
     }
 
     async function handleLogin() {
-      const email = emailInput.value.trim();
+      const email    = emailInput.value.trim();
       const password = passwordInput.value.trim();
-
-      if (!email || !password) {
-        setMessage('اكتب البريد الإلكتروني وكلمة المرور.', 'is-error');
-        return;
-      }
-
+      if (!email || !password) { setMessage('اكتب البريد الإلكتروني وكلمة المرور.', 'is-error'); return; }
       loginBtn.disabled = true;
       loginBtn.textContent = 'جارٍ تسجيل الدخول...';
       setMessage('');
-
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
       if (error) {
         setMessage('فشل تسجيل الدخول. تأكد من الإيميل والباسورد.', 'is-error');
         loginBtn.disabled = false;
-        loginBtn.textContent = 'دخول';
+        loginBtn.textContent = 'دخول لوحة الإدارة';
         return;
       }
-
-      setMessage('تم تسجيل الدخول بنجاح.', 'is-success');
-      window.location.href = './admin-orders.html';
+      setMessage('تم تسجيل الدخول بنجاح ✓', 'is-success');
+      setTimeout(() => { window.location.href = './admin-orders.html'; }, 500);
     }
 
     loginBtn.addEventListener('click', handleLogin);
-    passwordInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
-    emailInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
-
+    [passwordInput, emailInput].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); }));
     redirectIfAuthenticated();
   </script>
 </body>

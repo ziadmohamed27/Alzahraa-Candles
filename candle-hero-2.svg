@@ -1,7 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
-<rect width="800" height="800" fill="#fbefe4"/><circle cx="180" cy="170" r="90" fill="#ffe1b5"/><circle cx="640" cy="620" r="120" fill="#edc9ac" opacity=".45"/>
-<rect x="180" y="340" width="170" height="240" rx="28" fill="#f2d5bf" stroke="#b07a54" stroke-width="6"/>
-<rect x="450" y="280" width="170" height="300" rx="28" fill="#e8c0a0" stroke="#a56a43" stroke-width="6"/>
-<rect x="258" y="280" width="14" height="70" rx="7" fill="#5a3a28"/><rect x="528" y="220" width="14" height="70" rx="7" fill="#5a3a28"/>
-<path d="M265 205 C230 250 236 295 265 310 C294 295 300 250 265 205Z" fill="#ffb65c"/><path d="M535 145 C500 190 506 235 535 250 C564 235 570 190 535 145Z" fill="#ffb65c"/>
-<text x="400" y="700" text-anchor="middle" font-size="42" font-family="Arial" fill="#7c4c2f">Handmade • Gift Ready</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDF5EB"/>
+      <stop offset="1" stop-color="#EED5B4"/>
+    </linearGradient>
+    <linearGradient id="pillar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F4E0C8"/>
+      <stop offset=".4" stop-color="#FAEEDD"/>
+      <stop offset="1" stop-color="#DDB888"/>
+    </linearGradient>
+    <linearGradient id="flame2" x1=".5" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#FFEEAA"/>
+      <stop offset=".6" stop-color="#F09020"/>
+      <stop offset="1" stop-color="#C05010"/>
+    </linearGradient>
+    <filter id="b2"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="sb2"><feGaussianBlur stdDeviation="2.5"/></filter>
+  </defs>
+
+  <rect width="500" height="600" fill="url(#bg2)" rx="0"/>
+
+  <!-- Decorative background shapes -->
+  <circle cx="420" cy="100" r="90" fill="#F0C890" opacity=".35"/>
+  <circle cx="60"  cy="480" r="100" fill="#DEB890" opacity=".25"/>
+
+  <!-- Two candles scene -->
+
+  <!-- Left candle — tall pillar -->
+  <rect x="120" y="200" width="100" height="280" rx="20" fill="url(#pillar)"/>
+  <rect x="134" y="212" width="10" height="240" rx="5" fill="white" opacity=".18"/>
+  <rect x="110" y="188" width="120" height="20" rx="10" fill="#C89860"/>
+  <ellipse cx="170" cy="190" rx="52" ry="10" fill="#F0D8B8"/>
+  <!-- left wick -->
+  <line x1="170" y1="190" x2="167" y2="148" stroke="#3A1C08" stroke-width="3" stroke-linecap="round"/>
+  <!-- left flame glow -->
+  <ellipse cx="167" cy="132" rx="26" ry="36" fill="#FFD060" opacity=".38" filter="url(#sb2)"/>
+  <!-- left flame -->
+  <path d="M167 100 C155 114 150 130 152 144 C154 156 160 163 167 164 C174 163 180 156 182 144 C184 130 179 114 167 100Z" fill="url(#flame2)"/>
+  <path d="M167 112 C161 122 158 132 160 141 C161 149 164 153 167 154 C170 153 173 149 174 141 C176 132 173 122 167 112Z" fill="#FFFAB0" opacity=".9"/>
+  <circle cx="167" cy="105" r="4" fill="white" opacity=".65"/>
+
+  <!-- Right candle — shorter squat jar -->
+  <rect x="280" y="290" width="130" height="190" rx="30" fill="#EBCFA8" stroke="#C08850" stroke-width="3"/>
+  <rect x="293" y="300" width="12" height="160" rx="6" fill="white" opacity=".2"/>
+  <rect x="270" y="278" width="150" height="22" rx="11" fill="#C08850"/>
+  <ellipse cx="345" cy="280" rx="67" ry="11" fill="#F4DCB8"/>
+  <!-- right wick -->
+  <line x1="345" y1="280" x2="342" y2="240" stroke="#3A1C08" stroke-width="3" stroke-linecap="round"/>
+  <!-- right flame glow -->
+  <ellipse cx="342" cy="224" rx="22" ry="30" fill="#FFD060" opacity=".38" filter="url(#sb2)"/>
+  <!-- right flame -->
+  <path d="M342 196 C332 208 328 222 330 233 C332 243 337 249 342 250 C347 249 352 243 354 233 C356 222 352 208 342 196Z" fill="url(#flame2)"/>
+  <path d="M342 206 C337 216 334 226 336 233 C337 240 340 244 342 245 C344 244 347 240 348 233 C350 226 347 216 342 206Z" fill="#FFFAB0" opacity=".88"/>
+
+  <!-- Gift ribbon on right candle -->
+  <line x1="345" y1="278" x2="345" y2="480" stroke="#C9A46A" stroke-width="2" opacity=".5"/>
+  <line x1="270" y1="370" x2="410" y2="370" stroke="#C9A46A" stroke-width="2" opacity=".5"/>
+
+  <!-- Shadows -->
+  <ellipse cx="170" cy="488" rx="55" ry="9" fill="#B89060" opacity=".2" filter="url(#b2)"/>
+  <ellipse cx="345" cy="488" rx="68" ry="9" fill="#B89060" opacity=".2" filter="url(#b2)"/>
+
+  <!-- Shared surface line -->
+  <line x1="60" y1="492" x2="440" y2="492" stroke="#C9A46A" stroke-width="1" opacity=".3"/>
+</svg>

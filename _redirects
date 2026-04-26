@@ -1,0 +1,3 @@
+# Alzahraa Candles — Netlify _redirects
+# Fallback for any unmatched route → custom 404
+/*    /404.html    404
