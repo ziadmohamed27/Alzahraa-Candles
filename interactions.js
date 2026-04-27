@@ -315,6 +315,7 @@
       });
     });
     mo.observe(productGrid, { childList: true });
+    window.__staggerObs = mo;
   }
 
   /* ─────────────────────────────────────────────────────────────
@@ -619,10 +620,60 @@
     }
   }
 
+  // Disconnect observers on page hide to free memory
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      window.__staggerObs?.disconnect();
+      window.__filterObs?.disconnect();
+      window.__wlObs?.disconnect();
+      window.__spObs?.disconnect();
+      window.__priceFilterObs?.disconnect();
+    }
+  });
+
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
+})();
+
+/* ════════════════════════════════════════════════════════
+   PREMIUM CARD QUICK ACTIONS
+   Injects quick-action overlay into product cards
+   ════════════════════════════════════════════════════════ */
+(function initQuickActions() {
+  const grid = document.getElementById('productGrid');
+  if (!grid) return;
+
+  function injectActions(card) {
+    if (card.querySelector('.card-quick-actions')) return;
+    if (card.classList.contains('skeleton-card')) return;
+
+    const id = card.dataset.id;
+    if (!id) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'card-quick-actions';
+    wrap.innerHTML = `
+      <button class="card-quick-btn cqb-cart add-to-cart" data-id="${id}" type="button" aria-label="أضف للسلة">
+        🛍️ أضف للسلة
+      </button>
+      <button class="card-quick-btn cqb-view view-product" data-id="${id}" type="button" aria-label="عرض المنتج">
+        👁 عرض
+      </button>`;
+
+    // Insert inside card, after image
+    const img = card.querySelector('.product-image');
+    if (img) img.parentNode.insertBefore(wrap, img.nextSibling);
+    else card.insertBefore(wrap, card.firstChild);
+  }
+
+  const mo = new MutationObserver(() => {
+    grid.querySelectorAll('.product-card:not(.skeleton-card)').forEach(injectActions);
+  });
+  mo.observe(grid, { childList: true, subtree: false });
+  grid.querySelectorAll('.product-card:not(.skeleton-card)').forEach(injectActions);
 })();

@@ -405,11 +405,29 @@
     renderRecentlyViewed();
     const prodGrid = document.getElementById('productGrid');
     if (prodGrid) {
-      const rvObs = new MutationObserver(() => renderRecentlyViewed());
+      let rvRendered = false;
+      const rvObs = new MutationObserver(() => {
+        renderRecentlyViewed();
+        // Disconnect after first real render (skeletons replaced)
+        if (!prodGrid.querySelector('.skeleton-card') && prodGrid.children.length > 0) {
+          if (!rvRendered) { rvRendered = true; }
+        }
+      });
       rvObs.observe(prodGrid, { childList: true });
       window.__rvGridObs = rvObs;
     }
   }
+
+
+  // Clean up observers when page hidden to save memory
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      window.__mqObserver?.disconnect();
+      window.__viewObserver?.disconnect();
+      window.__shareObserver?.disconnect();
+      window.__rvGridObs?.disconnect();
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

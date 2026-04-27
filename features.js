@@ -7,7 +7,6 @@
    4. Price Range Slider    (min/max price filter)
    5. Gift Wrap Option      (checkbox in cart with +15 EGP)
    6. Sticky "Back to products" button when scrolled past
-   7. Social Proof ticker   ("X شخص اشترى هذه الشمعة اليوم")
    8. WhatsApp Chat bubble  (pre-filled smart messages)
    9. Recently Searched      (saves last 5 searches)
    ================================================================ */
@@ -620,40 +619,6 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     6. SOCIAL PROOF TICKER (simulated — no real backend needed)
-  ═══════════════════════════════════════════════════════════ */
-  const socialProofMsgs = [
-    '🔥 شخصان يشاهدان هذه الصفحة الآن',
-    '✅ آخر طلب قبل 12 دقيقة',
-    '🛍️ 4 عملاء طلبوا اليوم',
-    '❤️ مضاف للمفضلة 7 مرات الأسبوع الماضي',
-    '🚚 التوصيل عادةً خلال 2-3 أيام',
-  ];
-
-  function initSocialProof() {
-    // Only inject on product cards after they render
-    const grid = document.getElementById('productGrid');
-    if (!grid) return;
-
-    const mo = new MutationObserver(() => {
-      const cards = $$('.product-card:not(.skeleton-card)', grid);
-      cards.forEach((card, i) => {
-        if (card.querySelector('.sp-badge')) return;
-        // Only show on ~every 3rd card randomly
-        if (i % 3 !== 1) return;
-        const msg = socialProofMsgs[i % socialProofMsgs.length];
-        const badge = document.createElement('div');
-        badge.className = 'sp-badge';
-        badge.textContent = msg;
-        card.querySelector('.card-body')?.prepend(badge);
-      });
-    });
-
-    mo.observe(grid, { childList: true });
-    window.__spObs = mo;
-  }
-
-  /* ═══════════════════════════════════════════════════════════
      QUIZ TRIGGER — add to guide section
   ═══════════════════════════════════════════════════════════ */
   function injectQuizTrigger() {
@@ -684,7 +649,6 @@
     injectPriceFilter();
     hookPriceFilter();
     initBackToProducts();
-    initSocialProof();
 
     // Inject quiz trigger when guide section is ready
     const guideWatcher = new MutationObserver(() => {
