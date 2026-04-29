@@ -44,10 +44,10 @@ window.__alzahraaFeaturesInit = true;
     const numId = Number(id);
     if (wl.has(numId)) {
       wl.delete(numId);
-      toast('تم إزالته من المفضلة 💔');
+      toast('تمت إزالة المنتج من المفضلة');
     } else {
       wl.add(numId);
-      toast('تمت الإضافة للمفضلة ❤️');
+      toast('تمت إضافة المنتج إلى المفضلة');
     }
     saveWishlist(wl);
     updateHearts();
@@ -63,6 +63,19 @@ window.__alzahraaFeaturesInit = true;
       btn.title = active ? 'إزالة من المفضلة' : 'إضافة للمفضلة';
       btn.innerHTML = active ? '❤️' : '🤍';
     });
+    updateWishlistNav(wl.size);
+  }
+
+  function updateWishlistNav(count) {
+    const navBtn = document.getElementById('wishlistNavBtn');
+    const countEl = document.getElementById('wishlistCount');
+    if (!navBtn || !countEl) return;
+    const size = Number(count) || 0;
+    countEl.textContent = size;
+    navBtn.classList.toggle('is-empty', size === 0);
+    navBtn.setAttribute('href', size ? '#wishlistSection' : '#products');
+    navBtn.setAttribute('title', size ? `المفضلة (${size})` : 'المفضلة');
+    navBtn.setAttribute('aria-label', size ? `المفضلة، ${size} عناصر` : 'المفضلة');
   }
 
   function injectHeartButtons() {
@@ -108,8 +121,10 @@ window.__alzahraaFeaturesInit = true;
     const wl = getWishlist();
     const prods = getProds().filter(p => wl.has(Number(p.id)));
 
-    if (!prods.length) { section.style.display = 'none'; return; }
+    if (!prods.length) { section.style.display = 'none'; updateWishlistNav(0); return; }
     section.style.display = '';
+
+    updateWishlistNav(prods.length);
 
     const track = section.querySelector('.wl-track');
     if (!track) return;
@@ -253,7 +268,7 @@ window.__alzahraaFeaturesInit = true;
     if (!rs.length) { dropdown.classList.remove('open'); return; }
 
     dropdown.innerHTML = `
-      <div class="sd-section-label">🕐 بحثتِ مؤخرًا</div>
+      <div class="sd-section-label">🕐 بحثت مؤخرًا</div>
       ${rs.map(s => `
         <button class="sd-item sd-recent" data-value="${escH(s)}" type="button">
           <span class="sd-icon">🔍</span>

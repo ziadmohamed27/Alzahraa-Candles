@@ -1,0 +1,161 @@
+/* Deep fixes: toast, creative home button, wishlist nav, profile location */
+.toast,
+.undo-toast {
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 16px)) !important;
+  width: min(92vw, 420px) !important;
+  max-width: 420px !important;
+  min-width: min(240px, 92vw) !important;
+  padding: 12px 16px !important;
+  white-space: normal !important;
+  text-align: center;
+  line-height: 1.6;
+  border-radius: 24px !important;
+  transform: translateX(-50%) translateY(20px) !important;
+}
+.toast.show,
+.undo-toast.show {
+  transform: translateX(-50%) translateY(0) !important;
+}
+.toast {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.toast .toast-copy {
+  display: inline-block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.menu-btn.home-candle-btn {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.home-candle-btn .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.home-candle-btn .candle-home {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: inline-block;
+}
+.home-candle-btn .candle-roof {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--gold-dark);
+  border-right: 2px solid var(--gold-dark);
+  transform: translateX(-50%) rotate(-45deg);
+  border-radius: 2px;
+}
+.home-candle-btn .candle-body {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 12px;
+  height: 11px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #fff7e8, #e9d7b8);
+  border: 1px solid rgba(160, 120, 64, .45);
+  border-radius: 4px 4px 6px 6px;
+  box-shadow: inset 0 -3px 0 rgba(160,120,64,.10);
+}
+.home-candle-btn .candle-body::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 1.5px;
+  height: 4px;
+  background: rgba(90, 54, 32, .65);
+  transform: translateX(-50%);
+  border-radius: 999px;
+}
+.home-candle-btn .candle-flame {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 8px;
+  height: 11px;
+  transform: translateX(-50%) rotate(12deg);
+  background: radial-gradient(circle at 45% 35%, #fff7cd 0%, #f8d87d 34%, #d7942b 78%, rgba(215,148,43,.25) 100%);
+  border-radius: 60% 60% 65% 65% / 70% 70% 40% 40%;
+  box-shadow: 0 0 10px rgba(244, 188, 93, .45);
+}
+.home-candle-btn:hover .candle-flame {
+  transform: translateX(-50%) rotate(4deg) scale(1.05);
+}
+
+.wishlist-btn {
+  text-decoration: none;
+}
+.wishlist-btn .wishlist-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.wishlist-count {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: #bf5a5a;
+  color: #fff;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: .7rem;
+  font-weight: 700;
+  padding-inline: 4px;
+}
+.wishlist-btn.is-empty .wishlist-count {
+  background: var(--gold-dark);
+}
+.wishlist-btn.is-empty .wishlist-emoji {
+  opacity: .8;
+}
+.wishlist-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.wishlist-anchor-btn {
+  white-space: nowrap;
+}
+.account-location-note {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.7;
+}
+.profile-location-actions {
+  margin-top: 10px;
+}
+@media (max-width: 640px) {
+  .toast,
+  .undo-toast {
+    width: min(94vw, 360px) !important;
+    padding: 11px 14px !important;
+    font-size: .9rem;
+  }
+  .wishlist-count {
+    min-width: 18px;
+    height: 18px;
+    font-size: .65rem;
+  }
+}

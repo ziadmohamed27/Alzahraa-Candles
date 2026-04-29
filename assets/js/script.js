@@ -270,9 +270,8 @@ async function loadProducts() {
 function showToast(message, type = 'default') {
   const toast = $('#toast');
   if (!toast) return;
-  // Rich toast: icon + message + cart link
   if (type === 'added') {
-    toast.innerHTML = `<span class="toast-icon">✓</span><span>${message}</span><a href="./cart.html" class="toast-cta">عرض السلة →</a>`;
+    toast.innerHTML = `<span class="toast-icon">✓</span><span class="toast-copy">${escHtml(message)}</span>`;
   } else {
     toast.textContent = message;
   }
@@ -282,7 +281,9 @@ function showToast(message, type = 'default') {
 }
 
 function addToCartToast(productName) {
-  showToast(`تمت إضافة ${productName}`, 'added');
+  const safeName = String(productName || '').trim();
+  const label = safeName ? `تمت إضافة ${safeName} إلى السلة` : 'تمت إضافة المنتج إلى السلة';
+  showToast(label, 'added');
 }
 
 function saveCart() {

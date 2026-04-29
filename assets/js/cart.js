@@ -681,6 +681,7 @@ function getAuthClient() {
 }
 
 const CUSTOMER_STORAGE_KEY = 'candles-customer-info';
+const PROFILE_LOCATION_KEY = 'candles-profile-location';
 
 function saveCustomerInfo() {
   const payload = {
@@ -734,6 +735,71 @@ function loadCustomerInfo() {
 
     renderDeliveryLocationUi();
   } catch {}
+}
+
+function readStoredCustomerInfo() {
+  try {
+    const raw = localStorage.getItem(CUSTOMER_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function readStoredProfileLocation() {
+  try {
+    const raw = localStorage.getItem(PROFILE_LOCATION_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function hydrateOrderFormFromSources() {
+  const storedCustomer = readStoredCustomerInfo();
+  const profile = authState.profile || {};
+
+  const ensureValue = (selector, value) => {
+    const el = $(selector);
+    if (el && !String(el.value || '').trim() && value) el.value = String(value).trim();
+  };
+
+  ensureValue('#customerName', storedCustomer.name || profile.full_name || authState.session?.user?.user_metadata?.full_name || authState.session?.user?.user_metadata?.name);
+  ensureValue('#customerPhone', storedCustomer.phone || profile.phone);
+  ensureValue('#customerAddress', storedCustomer.address || profile.address);
+
+  const cityEl = $('#customerCity');
+  if (cityEl && !String(cityEl.value || '').trim()) {
+    const cityValue = storedCustomer.city || profile.governorate;
+    if (cityValue) cityEl.value = cityValue;
+  }
+
+  if (!hasDeliveryLocation()) {
+    const savedMapsLink = String(storedCustomer.deliveryMapsLink || '').trim();
+    const profileLocation = readStoredProfileLocation();
+    const fallbackLink = String(profileLocation.mapsLink || '').trim();
+    const lat = storedCustomer.deliveryLat ?? profileLocation.lat;
+    const lng = storedCustomer.deliveryLng ?? profileLocation.lng;
+    const source = String(storedCustomer.deliveryLocationSource || profileLocation.source || '').trim();
+    if (Number.isFinite(Number(lat)) && Number.isFinite(Number(lng))) {
+      setDeliveryLocation({ lat, lng, source: source || 'google_maps_link', mapsLink: savedMapsLink || fallbackLink || buildMapsLink(lat, lng) });
+    } else if (savedMapsLink || fallbackLink) {
+      const link = savedMapsLink || fallbackLink;
+      const coords = extractGoogleMapsCoordinates(link);
+      setDeliveryLocation({ lat: coords.lat, lng: coords.lng, source: source || 'google_maps_link', mapsLink: link });
+    }
+  }
+
+  saveCustomerInfo();
+}
+
+function getMissingOrderFields(data) {
+  const missing = [];
+  if (!data.customerName) missing.push('الاسم');
+  if (!data.customerPhone) missing.push('رقم الموبايل');
+  if (!data.customerCity) missing.push('المحافظة');
+  if (!data.customerAddress && !data.deliveryMapsLink) missing.push('العنوان أو موقع التسليم');
+  return missing;
 }
 
 function clearCustomerInfo() {
@@ -1196,6 +1262,7 @@ function buildWhatsAppMessage(orderNumber, customerName, customerPhone, customer
 }
 
 async function checkout() {
+  hydrateOrderFormFromSources();
   if (!state.cart.length) {
     showToast('السلة فارغة');
     return;
@@ -1204,9 +1271,10 @@ async function checkout() {
   if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
   const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryLat, deliveryLng, deliveryMapsLink, deliveryLocationSource } = getOrderFormData();
+  const missingFields = getMissingOrderFields({ customerName, customerPhone, customerCity, customerAddress, deliveryMapsLink });
 
-  if (!customerName || !customerPhone || !customerCity || !customerAddress) {
-    showToast('من فضلك املأ الاسم والموبايل والمحافظة والعنوان بالتفصيل');
+  if (missingFields.length) {
+    showToast(`من فضلك أكمل: ${missingFields.join('، ')}`);
     return;
   }
 
@@ -1310,7 +1378,7 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  if (e.target.id === 'checkoutBtn') {
+  if (e.target.closest('#checkoutBtn')) {
     checkout();
     return;
   }
@@ -1359,7 +1427,7 @@ document.addEventListener('click', (e) => {
   }
 
   /* Direct order button (logged-in users) */
-  if (e.target.id === 'directOrderBtn') {
+  if (e.target.closest('#directOrderBtn')) {
     directCheckout();
   }
 });
@@ -1375,6 +1443,7 @@ document.addEventListener('keydown', (event) => {
  * Direct order for logged-in users — saves to Supabase, no WhatsApp required.
  */
 async function directCheckout() {
+  hydrateOrderFormFromSources();
   if (!state.cart.length) {
     showToast('السلة فارغة');
     return;
@@ -1383,9 +1452,10 @@ async function directCheckout() {
   if (isSubmittingOrder || orderSubmittedSuccessfully) return;
 
   const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryLat, deliveryLng, deliveryMapsLink, deliveryLocationSource } = getOrderFormData();
+  const missingFields = getMissingOrderFields({ customerName, customerPhone, customerCity, customerAddress, deliveryMapsLink });
 
-  if (!customerName || !customerPhone || !customerCity || !customerAddress) {
-    showToast('من فضلك املأ الاسم والموبايل والمحافظة والعنوان بالتفصيل');
+  if (missingFields.length) {
+    showToast(`من فضلك أكمل: ${missingFields.join('، ')}`);
     return;
   }
 
@@ -1435,11 +1505,13 @@ function prefillFromProfile(profile) {
     govEl.value = profile.governorate;
   }
   set('#customerAddress', profile.address);
+  saveCustomerInfo();
 }
 
 function init() {
   updateCartCount();
   loadCustomerInfo();
+  hydrateOrderFormFromSources();
   const mapsInput = $('#googleMapsLinkInput');
   if (mapsInput && deliveryLocationState.mapsLink) mapsInput.value = deliveryLocationState.mapsLink;
   renderDeliveryLocationUi();
@@ -1480,6 +1552,7 @@ function init() {
     }
 
     prefillFromProfile(authState.profile);
+    hydrateOrderFormFromSources();
     renderSummary(); /* Re-render to show logged-in notice + direct order button */
   })();
 }

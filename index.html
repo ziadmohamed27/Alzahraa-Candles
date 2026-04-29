@@ -39,6 +39,7 @@
   <link rel="stylesheet" href="./assets/css/premium.css">
   <link rel="stylesheet" href="./assets/css/luxury-polish.css">
   <link rel="stylesheet" href="./assets/css/candle-fx.css">
+  <link rel="stylesheet" href="./assets/css/deep-fixes.css">
   <link rel="stylesheet" href="./assets/css/ux-improvements.css">
   <link rel="stylesheet" href="./assets/css/ux-v09.css">
   <meta property="og:image:width" content="1200">
@@ -144,6 +145,10 @@
 
       <div class="nav-end-group">
         <span id="accountNavWrap"></span>
+        <a class="icon-btn wishlist-btn is-empty" id="wishlistNavBtn" href="#products" aria-label="المفضلة" title="المفضلة">
+          <span class="wishlist-emoji">❤</span>
+          <span class="wishlist-count" id="wishlistCount">0</span>
+        </a>
         <a class="icon-btn cart-btn" id="cartToggle" href="./cart.html" aria-label="فتح السلة">
           <span class="cart-emoji">🛍️</span>
           <span class="cart-count" id="cartCount">0</span>
@@ -508,9 +513,13 @@
   <!-- ═══════════════════════════════ WISHLIST ═══ -->
   <section id="wishlistSection" style="display:none">
     <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="pill small">✦ قائمة المفضلة</span>
-        <h2>المنتجات المحفوظة</h2>
+      <div class="wishlist-section-head">
+        <div class="section-head" data-reveal>
+          <span class="pill small">✦ قائمة المفضلة</span>
+          <h2>المنتجات المحفوظة</h2>
+          <p>ستجد هنا المنتجات التي حفظتها لوقت لاحق.</p>
+        </div>
+        <a href="#products" class="btn btn-ghost wishlist-anchor-btn">العودة للمنتجات</a>
       </div>
       <div class="wl-track" id="wlTrack"></div>
     </div>

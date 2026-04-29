@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="./assets/css/premium.css">
   <link rel="stylesheet" href="./assets/css/luxury-polish.css">
   <link rel="stylesheet" href="./assets/css/candle-fx.css">
+  <link rel="stylesheet" href="./assets/css/deep-fixes.css">
   <link rel="stylesheet" href="./assets/css/ux-improvements.css">
   <link rel="stylesheet" href="./assets/css/ux-v09.css">
   <meta property="og:image:width" content="1200">
@@ -41,8 +42,13 @@
 <body>
   <header class="site-header" id="top">
     <div class="container nav">
-      <a class="icon-btn menu-btn" href="./index.html" aria-label="العودة للرئيسية">
-        <span></span><span></span><span></span>
+      <a class="icon-btn menu-btn home-candle-btn" href="./index.html" aria-label="العودة للصفحة الرئيسية" title="الصفحة الرئيسية">
+        <span class="sr-only">الصفحة الرئيسية</span>
+        <span class="candle-home" aria-hidden="true">
+          <span class="candle-roof"></span>
+          <span class="candle-flame"></span>
+          <span class="candle-body"></span>
+        </span>
       </a>
       <a class="brand" href="./index.html">
         <span class="brand-title">Alzahraa Candles</span>
@@ -64,7 +70,7 @@
         <div class="cart-page-head">
           <div>
             <span class="pill small">✦ سلة التسوق</span>
-            <h1>راجعي طلبك قبل الإرسال</h1>
+            <h1>راجع طلبك قبل الإرسال</h1>
             <p>عدّل الكميات، أضف بياناتك، ثم أرسل الطلب عبر واتساب وسيتم تسجيله تلقائيًا.</p>
           </div>
           <a href="./index.html#products" class="btn btn-ghost" id="backToProductsTopBtn">العودة للمنتجات</a>
