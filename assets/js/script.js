@@ -911,7 +911,7 @@ document.addEventListener('click', (e) => {
 
   const faqQ = e.target.closest('.faq-q');
   if (faqQ) {
-    faqQ.parentElement.classList.toggle('open');
+    if (!e.__faqHandled) faqQ.parentElement.classList.toggle('open');
     return;
   }
 

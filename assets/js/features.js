@@ -51,6 +51,7 @@ window.__alzahraaFeaturesInit = true;
     }
     saveWishlist(wl);
     updateHearts();
+    if (typeof window.renderAccountNav === 'function') window.renderAccountNav({ wrapSelector: '#accountNavWrap' });
   }
 
   function updateHearts() {
