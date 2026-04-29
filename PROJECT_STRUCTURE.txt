@@ -1,0 +1,17 @@
+Alzahraa Candles - Organized static project
+
+Upload the CONTENTS of this folder/zip to Netlify.
+
+Important root files:
+- index.html and the other .html pages stay in the root so links keep working.
+- site-config.js stays in the root intentionally. Do not move it unless you also update every HTML page.
+- netlify.toml stays in the root.
+- scripts/generate-site-config.js stays in scripts/ for Netlify build.
+
+Folders:
+- assets/css/       visual styles
+- assets/js/        frontend scripts
+- assets/images/    local SVG/icon assets
+- scripts/          build helper scripts
+
+Supabase product photos are still loaded from Supabase Storage, not from assets/images.
