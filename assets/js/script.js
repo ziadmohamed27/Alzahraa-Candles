@@ -774,6 +774,7 @@ function closeProduct() {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.add('hidden');
   document.body.style.overflow = '';
+  if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
 }
 
 function guardMedia() {

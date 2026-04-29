@@ -383,6 +383,7 @@ window.__alzahraaFeaturesInit = true;
     const modal = document.getElementById('quizModal');
     modal?.classList.remove('open');
     document.body.style.overflow = '';
+    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
 
   function renderQuizStep() {

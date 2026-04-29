@@ -223,6 +223,7 @@ window.__alzahraaEnhancementsInit = true;
     const lb = document.getElementById('imageLightbox');
     lb?.classList.remove('open');
     document.body.style.overflow = '';
+    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
 
   /* ─────────────────────────────────────────────────────────────

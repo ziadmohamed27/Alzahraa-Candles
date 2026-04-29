@@ -216,7 +216,7 @@ else { window.__alzahraaInteractionsInit = true;
     renderCartDrawer();
     drawer.classList.add('open');
     document.body.classList.add('drawer-open');
-    // iOS: prevent body scroll without locking position
+    // Keep the lock only while the drawer is visibly open.
     document.body.style.overflow = 'hidden';
     setTimeout(() => $('#cdClose')?.focus(), 150);
   }
@@ -227,19 +227,19 @@ else { window.__alzahraaInteractionsInit = true;
     drawer.classList.remove('open');
     document.body.classList.remove('drawer-open');
     document.body.style.overflow = '';
+    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
 
   window.closeCartDrawer = closeDrawer;
 
-  // Intercept cart icon clicks to open drawer instead of navigating
+  // Cart icon should navigate to cart.html by default.
+  // Mini-drawer is only enabled for elements that explicitly request it.
   document.addEventListener('click', e => {
-    const cartBtn = e.target.closest('.cart-btn');
-    if (cartBtn && window.location.pathname.endsWith('index.html') || 
-        cartBtn && window.location.pathname === '/') {
-      if (cartBtn.closest('.site-header')) {
-        e.preventDefault();
-        openDrawer();
-      }
+    const cartBtn = e.target.closest('.cart-btn[data-drawer="true"]');
+    if (!cartBtn) return;
+    if (cartBtn.closest('.site-header')) {
+      e.preventDefault();
+      openDrawer();
     }
   });
 

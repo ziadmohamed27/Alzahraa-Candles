@@ -366,3 +366,16 @@ body {
     right: auto;
   }
 }
+
+/* Scroll emergency guard — fixes stale body locks after navigation/back-forward cache. */
+html {
+  overflow-y: auto;
+}
+body:not(.drawer-open):not(.modal-open) {
+  overflow-y: auto !important;
+  position: static !important;
+}
+body.drawer-open,
+body.modal-open {
+  overflow-y: hidden;
+}
