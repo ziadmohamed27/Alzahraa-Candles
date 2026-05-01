@@ -1,0 +1,926 @@
+/* ================================================================
+   mobile-polish.css — Alzahraa Candles
+   Mobile-first UX layer. Loaded LAST to override everything.
+   Target: 360px · 375px · 390px · 412px · 430px · 768px
+   ================================================================ */
+
+/* ──────────────────────────────────────────────────────────────
+   1. SAFE BASE — prevent horizontal scroll & zoom
+   ────────────────────────────────────────────────────────────── */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  overscroll-behavior-x: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Prevent any absolute/fixed element from punching past viewport */
+@media (max-width: 768px) {
+  html {
+    overflow-y: scroll;
+  }
+
+  /* Hero decorative ring — overflow-hidden on .hero handles it, but be safe */
+  .hero::after {
+    left: auto;
+    right: -40%;
+    width: min(680px, 150vw);
+    height: min(680px, 150vw);
+  }
+
+  /* Brand-story pseudo decorations — parent already has overflow:hidden */
+  .brand-story::before,
+  .brand-story::after {
+    display: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   2. CONTAINER — consistent horizontal padding on every breakpoint
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   3. HEADER — compact, clean, no overflow
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .site-header {
+    /* ensure header never causes horizontal scroll */
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .nav {
+    /* 3-column: [home-icon] [logo-center] [actions] */
+    display: grid;
+    grid-template-columns: 44px 1fr 44px; /* exact symmetry */
+    align-items: center;
+    min-height: 58px;
+    gap: 0;
+    padding: 0;
+  }
+
+  /* Brand — centered */
+  .brand {
+    text-align: center;
+    justify-self: center;
+    overflow: hidden;
+  }
+
+  .brand-title {
+    font-size: 1.18rem !important;
+    letter-spacing: .04em !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 52vw;
+    display: block;
+  }
+
+  .brand-sub {
+    font-size: .50rem !important;
+    letter-spacing: .18em !important;
+    display: block;
+  }
+
+  /* Home candle button — left side */
+  .home-candle-btn,
+  .menu-btn {
+    width: 44px;
+    height: 44px;
+    padding: 8px !important;
+    justify-content: center;
+  }
+
+  /* Nav-end-group — right side, tight */
+  .nav-end-group {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px !important;
+    min-width: 0;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  /* Individual icon buttons — small touch targets */
+  .icon-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 6px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0;
+  }
+
+  /* Account toggle — icon only on mobile, hide text label */
+  .account-menu-toggle {
+    min-width: 36px !important;
+    padding-inline: 6px !important;
+    width: 36px !important;
+  }
+
+  .account-nav-label,
+  .account-nav-chevron {
+    display: none !important;
+  }
+
+  /* Cart button */
+  .cart-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 6px !important;
+  }
+
+  /* Notification button */
+  .notification-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 6px !important;
+  }
+
+  /* Wishlist nav button */
+  .wishlist-btn.icon-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 6px !important;
+  }
+
+  /* Account/notification dropdown — open from right edge */
+  .account-dropdown,
+  .notification-panel {
+    inset-inline-end: -8px;
+    min-width: min(240px, 80vw);
+    max-width: min(280px, 90vw);
+  }
+}
+
+/* Extra small: 360px — even more compact */
+@media (max-width: 390px) {
+  .nav {
+    grid-template-columns: 40px 1fr 40px;
+    min-height: 54px;
+  }
+
+  .brand-title {
+    font-size: 1.05rem !important;
+    max-width: 48vw;
+  }
+
+  .nav-end-group {
+    gap: 2px !important;
+  }
+
+  .icon-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+  }
+
+  .account-menu-toggle {
+    min-width: 34px !important;
+    width: 34px !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   4. PRODUCT GRID + CARDS — 2-column, no overflow, no clipping
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .product-grid {
+    /* Override minmax(260px,1fr) which was causing overflow */
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    width: 100%;
+  }
+
+  /* Card — full containment */
+  .product-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    border-radius: 18px !important;
+  }
+
+  /* Image: responsive aspect ratio */
+  .card-img-wrap {
+    width: 100%;
+  }
+
+  .card-img-wrap .product-image,
+  .product-image {
+    width: 100% !important;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Card body — breathable but compact */
+  .card-body {
+    padding: 10px 10px 12px !important;
+    gap: 5px !important;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* Product name — max 2 lines, stable height */
+  .card-name,
+  .product-title {
+    font-size: .90rem !important;
+    line-height: 1.3 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.3em;  /* reserve space for 2 lines */
+    margin-bottom: 2px;
+  }
+
+  /* Scent hint — hide to save space */
+  .card-scent {
+    display: none !important;
+  }
+
+  /* Price + CTA row — never overlap */
+  .card-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    margin-top: auto;
+    padding-top: 6px !important;
+    border-top: 1px solid rgba(215, 195, 165, .30);
+  }
+
+  /* Price — clear and readable */
+  .card-price,
+  .price {
+    font-size: .88rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  /* Add-to-cart — compact text on mobile */
+  .card-atc,
+  .compact-actions .btn-primary,
+  [data-atc] {
+    padding: 7px 10px !important;
+    font-size: .72rem !important;
+    font-weight: 700 !important;
+    border-radius: 9px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    /* Ensure it doesn't overflow */
+    max-width: 50% !important;
+  }
+
+  /* Favorite/wishlist heart on card — don't cover badge */
+  .card-fav-btn,
+  .card-wish-btn,
+  .fav-btn {
+    width: 30px !important;
+    height: 30px !important;
+    top: 8px !important;
+    right: 8px !important;
+    left: auto !important;
+    padding: 4px !important;
+  }
+}
+
+/* 360px — keep cards intact */
+@media (max-width: 380px) {
+  .product-grid {
+    gap: 8px !important;
+  }
+
+  .card-body {
+    padding: 8px 9px 10px !important;
+  }
+
+  .card-name,
+  .product-title {
+    font-size: .84rem !important;
+  }
+
+  .card-price,
+  .price {
+    font-size: .82rem !important;
+  }
+
+  .card-atc,
+  [data-atc] {
+    padding: 6px 8px !important;
+    font-size: .68rem !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   5. SEARCH + FILTERS — full-width, no overflow
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .products-search-wrap,
+  .search-wrap,
+  .products-search {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .products-search-input,
+  .search-input,
+  input[type="search"],
+  input[type="text"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important; /* prevent iOS zoom on focus */
+    box-sizing: border-box;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .filter-btn {
+    flex-shrink: 0;
+    font-size: .80rem !important;
+    padding: 7px 12px !important;
+    min-height: 36px !important;
+    white-space: nowrap;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   6. LIFESTYLE STRIP — contain horizontal scroll to its track
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .lifestyle {
+    overflow: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  .lifestyle-track {
+    /* horizontal scroll is intentional here, but don't bleed out */
+    max-width: 100%;
+    padding-bottom: 8px;
+  }
+
+  .lifestyle-frame:nth-child(odd) {
+    width: 220px;
+    height: 300px;
+  }
+
+  .lifestyle-frame:nth-child(even) {
+    width: 170px;
+    height: 240px;
+    margin-top: 30px;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   7. BOTTOM NAV — content never hidden beneath it
+      Hide mobile-sticky-cta: bottom nav already covers cart + WA
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* The mobile bottom nav replaces the sticky-cta strip.
+     Hiding it removes the duplicate UI and layout conflict. */
+  .mobile-sticky-cta {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  /* body padding — clear bottom nav + safe area */
+  body {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* mobile-sticky-cta: if shown, must sit ABOVE the bottom nav */
+  .mobile-sticky-cta {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 79 !important;
+  }
+
+  /* Scroll-to-top button — above everything */
+  .scroll-top-btn {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 85 !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   8. WHATSAPP FLOATING BUTTON — above bottom nav, not overlapping
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .floating-wa,
+  .sticky-wa-btn,
+  a[href*="wa.me"].btn-whatsapp:not(.consult-banner *):not(.footer *):not(.hero *):not(.section *) {
+    position: fixed !important;
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 16px !important;
+    right: auto !important;
+    z-index: 88 !important;
+  }
+
+  /* If sticky-cart-btn is alongside WA, position it too */
+  .sticky-cart-btn {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 87 !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   9. TOAST — clear bottom nav
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .toast,
+  .undo-toast {
+    bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   10. HERO SECTION — mobile-friendly, no overflow
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 80vh;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .hero-inner {
+    padding: 48px 0 36px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.9rem, 8vw, 2.6rem) !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .hero-cta-group {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hero-cta-primary,
+  .hero-cta-secondary {
+    width: 100%;
+    justify-content: center;
+    max-width: 320px;
+  }
+
+  /* Hero images — reposition safely */
+  .hero-visual {
+    height: 260px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-img-main {
+    width: 50%;
+    max-width: 160px;
+    right: 10%;
+  }
+
+  .hero-img-sm-1 {
+    width: 32%;
+    max-width: 110px;
+    left: 2%;
+    top: 6%;
+  }
+
+  .hero-img-sm-2 {
+    width: 30%;
+    max-width: 100px;
+    left: 5%;
+    bottom: 4%;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   11. SECTIONS — tight padding on mobile
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .section {
+    padding: 48px 0 !important;
+  }
+
+  .section-tight {
+    padding: 28px 0 !important;
+  }
+
+  .section-head {
+    margin-bottom: 28px;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+    word-break: break-word;
+  }
+
+  .section-head p {
+    font-size: .93rem;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   12. TRUST / STATS / COLLECTIONS — stacked on small screens
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .trust-strip {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 14px 10px;
+  }
+
+  .stat-card strong {
+    font-size: 1.15rem;
+  }
+
+  .collections-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+
+  .trust-card {
+    padding: 14px 12px;
+  }
+
+  .trust-card h3 {
+    font-size: .88rem;
+  }
+
+  .trust-card p {
+    font-size: .78rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .trust-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   13. CART PAGE — mobile-friendly layout
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cart-page-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  .cart-page-head h1 {
+    font-size: 1.6rem !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   14. INPUT / FORM — prevent iOS zoom (font-size must be ≥ 16px)
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   15. FOOTER — prevent overflow
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px;
+  }
+
+  footer {
+    overflow: hidden;
+    max-width: 100%;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   16. MODAL — full-screen feel on mobile
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .modal {
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: 28px 28px 0 0;
+    margin: auto 0 0;
+    max-height: 94vh;
+  }
+
+  .modal-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   17. PILL BADGE — legible but compact on mobile
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pill {
+    font-size: .78rem !important;
+    padding: 6px 14px !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   18. CONSULT BANNER — stack on mobile
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .consult-banner {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 16px;
+    padding: 20px 16px;
+  }
+
+  .consult-banner .btn {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   19. FEATURE GRID — 2 columns on mobile
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   20. OVERFLOW AUDIT — catch any rogue wide elements
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Any element that could accidentally exceed viewport */
+  .site-header,
+  main,
+  footer,
+  .hero,
+  .container,
+  .product-grid,
+  .trust-strip,
+  .feature-grid,
+  .collections-grid,
+  .stats-grid {
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+}
+
+/* ================================================================
+   FINAL MOBILE APP-LIKE HOTFIX — header + product cards
+   Keeps mobile compact without horizontal overflow.
+   ================================================================ */
+@media (max-width: 768px) {
+  .site-header {
+    overflow: visible !important;
+  }
+
+  .site-header .container.nav,
+  .nav {
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    gap: 6px !important;
+    padding-inline: 10px !important;
+    min-height: 58px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .home-candle-btn,
+  .menu-btn.home-candle-btn {
+    justify-self: end !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+  }
+
+  .brand {
+    min-width: 0 !important;
+    justify-self: center !important;
+  }
+
+  .brand-title {
+    max-width: 40vw !important;
+    font-size: clamp(1.02rem, 5vw, 1.32rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .brand-sub {
+    margin-top: 3px !important;
+    font-size: .48rem !important;
+    letter-spacing: .16em !important;
+  }
+
+  .nav-end-group {
+    justify-self: start !important;
+    display: flex !important;
+    flex-direction: row-reverse !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    width: auto !important;
+    max-width: none !important;
+    overflow: visible !important;
+    min-width: 0 !important;
+  }
+
+  .nav-end-group > span {
+    flex: 0 0 auto !important;
+  }
+
+  .cart-btn,
+  .notification-btn,
+  .account-menu-toggle,
+  .icon-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    padding: 6px !important;
+  }
+
+  .cart-count,
+  .notification-count,
+  .wishlist-count {
+    top: -6px !important;
+    right: -6px !important;
+    left: auto !important;
+    min-width: 17px !important;
+    height: 17px !important;
+    font-size: .58rem !important;
+    padding-inline: 3px !important;
+  }
+
+  .account-menu-toggle .account-nav-label,
+  .account-menu-toggle .account-nav-chevron {
+    display: none !important;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    padding-inline: 0 !important;
+  }
+
+  .product-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .card-body {
+    padding: 9px 9px 10px !important;
+  }
+
+  .card-name {
+    font-size: clamp(.82rem, 3.6vw, .95rem) !important;
+    min-height: 2.45em !important;
+    text-align: center !important;
+  }
+
+  .card-footer {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  .card-price {
+    min-width: 0 !important;
+    font-size: clamp(.78rem, 3.4vw, .9rem) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    text-align: start !important;
+  }
+
+  .card-atc {
+    max-width: none !important;
+    width: auto !important;
+    min-width: 58px !important;
+    padding: 7px 9px !important;
+    font-size: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .card-atc::after {
+    content: '+ أضف';
+    font-size: .72rem;
+    line-height: 1;
+  }
+
+  .card-atc:disabled::after {
+    content: '✓ تم';
+  }
+
+  .wl-btn {
+    width: 30px !important;
+    height: 30px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header .container.nav,
+  .nav {
+    gap: 4px !important;
+    padding-inline: 8px !important;
+  }
+
+  .cart-btn,
+  .notification-btn,
+  .account-menu-toggle,
+  .icon-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+  }
+
+  .brand-title {
+    max-width: 38vw !important;
+    font-size: 1rem !important;
+  }
+
+  .product-grid {
+    gap: 8px !important;
+  }
+
+  .card-body {
+    padding: 8px !important;
+  }
+
+  .card-atc {
+    min-width: 52px !important;
+    padding: 6px 7px !important;
+  }
+
+  .card-atc::after {
+    font-size: .66rem;
+  }
+}
