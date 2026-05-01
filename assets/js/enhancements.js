@@ -215,14 +215,15 @@ window.__alzahraaEnhancementsInit = true;
       if (lbImg) { lbImg.src = img.src; lbImg.alt = img.alt; }
       if (lbCap) lbCap.textContent = img.alt;
       lb.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
     });
   }
 
   function closeLb() {
     const lb = document.getElementById('imageLightbox');
     lb?.classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
+    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
 

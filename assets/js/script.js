@@ -764,7 +764,7 @@ function openProduct(id) {
 
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-open');
 
   // Focus the add button for a11y
   setTimeout(() => content.querySelector('.modal-add-main')?.focus(), 80);
@@ -773,7 +773,8 @@ function openProduct(id) {
 function closeProduct() {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.add('hidden');
-  document.body.style.overflow = '';
+  document.body.classList.remove('modal-open');
+  if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
 }
 

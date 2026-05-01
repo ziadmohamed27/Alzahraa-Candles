@@ -428,6 +428,7 @@ function clearDeliveryLocation() {
 
 function setBodyModalState(isOpen) {
   document.body.classList.toggle('modal-open', isOpen);
+  if (!isOpen && typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
 }
 
 function isDeliveryModalOpen() {

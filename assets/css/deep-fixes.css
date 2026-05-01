@@ -367,15 +367,54 @@ body {
   }
 }
 
-/* Scroll emergency guard — fixes stale body locks after navigation/back-forward cache. */
+/* ── Scroll base ──
+   html: overflow-y:scroll يضمن التمرير دائمًا ويمنع layout shift بسبب scrollbar.
+   body: visible يرث الـ scroll من html بشكل طبيعي.
+   القفل يُطبَّق فقط أثناء فتح modal أو drawer فعلًا عبر JS. */
 html {
-  overflow-y: auto;
+  overflow-y: scroll;
 }
-body:not(.drawer-open):not(.modal-open) {
-  overflow-y: auto !important;
-  position: static !important;
+body {
+  overflow-y: visible;
 }
 body.drawer-open,
 body.modal-open {
-  overflow-y: hidden;
+  overflow: hidden;
+}
+
+/* === FINAL SCROLL FIX: keep pages scrollable by default === */
+html,
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: static !important;
+}
+main,
+.storefront-body,
+.cart-page,
+.account-page {
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+/* Do not globally lock the page for legacy drawer/modal classes. */
+body.drawer-open,
+body.modal-open,
+body.no-scroll,
+body.lock-scroll {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  position: static !important;
+}
+/* Individual panels/modals keep their own inner scrolling. */
+.modal,
+.modal-info-scroll,
+.cd-body,
+.delivery-location-dialog,
+.notification-panel,
+.account-dropdown {
+  -webkit-overflow-scrolling: touch;
 }

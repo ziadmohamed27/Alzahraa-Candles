@@ -4119,7 +4119,7 @@ html {
 }
 
 body {
-  overscroll-behavior-y: none; /* prevent iOS bounce on body */
+  overscroll-behavior-x: none; /* منع الـ horizontal swipe فقط */
 }
 
 /* Allow natural scroll on drawer and modal */

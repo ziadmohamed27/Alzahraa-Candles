@@ -216,8 +216,6 @@ else { window.__alzahraaInteractionsInit = true;
     renderCartDrawer();
     drawer.classList.add('open');
     document.body.classList.add('drawer-open');
-    // Keep the lock only while the drawer is visibly open.
-    document.body.style.overflow = 'hidden';
     setTimeout(() => $('#cdClose')?.focus(), 150);
   }
 
@@ -226,7 +224,6 @@ else { window.__alzahraaInteractionsInit = true;
     if (!drawer) return;
     drawer.classList.remove('open');
     document.body.classList.remove('drawer-open');
-    document.body.style.overflow = '';
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
 

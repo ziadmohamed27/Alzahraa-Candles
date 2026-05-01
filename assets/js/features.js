@@ -375,14 +375,15 @@ window.__alzahraaFeaturesInit = true;
     const modal = document.getElementById('quizModal');
     if (!modal) return;
     modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
     renderQuizStep();
   }
 
   function closeQuiz() {
     const modal = document.getElementById('quizModal');
     modal?.classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
+    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
 
