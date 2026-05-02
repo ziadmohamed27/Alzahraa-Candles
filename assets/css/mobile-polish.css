@@ -730,197 +730,84 @@ html, body {
   }
 }
 
+
 /* ================================================================
-   FINAL MOBILE APP-LIKE HOTFIX — header + product cards
-   Keeps mobile compact without horizontal overflow.
+   FINAL MOBILE FIXES — header simplification + product card CTA
    ================================================================ */
 @media (max-width: 768px) {
-  .site-header {
-    overflow: visible !important;
-  }
-
-  .site-header .container.nav,
-  .nav {
-    grid-template-columns: auto minmax(0, 1fr) auto !important;
-    gap: 6px !important;
-    padding-inline: 10px !important;
-    min-height: 58px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-  }
-
-  .home-candle-btn,
-  .menu-btn.home-candle-btn {
-    justify-self: end !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-  }
-
-  .brand {
-    min-width: 0 !important;
-    justify-self: center !important;
-  }
-
-  .brand-title {
-    max-width: 40vw !important;
-    font-size: clamp(1.02rem, 5vw, 1.32rem) !important;
-    line-height: 1.05 !important;
-  }
-
-  .brand-sub {
-    margin-top: 3px !important;
-    font-size: .48rem !important;
-    letter-spacing: .16em !important;
-  }
-
-  .nav-end-group {
-    justify-self: start !important;
-    display: flex !important;
-    flex-direction: row-reverse !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 5px !important;
-    width: auto !important;
-    max-width: none !important;
-    overflow: visible !important;
-    min-width: 0 !important;
-  }
-
-  .nav-end-group > span {
-    flex: 0 0 auto !important;
-  }
-
-  .cart-btn,
-  .notification-btn,
-  .account-menu-toggle,
-  .icon-btn {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    max-width: 36px !important;
-    padding: 6px !important;
-  }
-
-  .cart-count,
-  .notification-count,
-  .wishlist-count {
-    top: -6px !important;
-    right: -6px !important;
-    left: auto !important;
-    min-width: 17px !important;
-    height: 17px !important;
-    font-size: .58rem !important;
-    padding-inline: 3px !important;
-  }
-
-  .account-menu-toggle .account-nav-label,
-  .account-menu-toggle .account-nav-chevron {
+  /* Bottom nav already contains account/orders/cart shortcuts.
+     Keep the top header calm: brand + home candle icon only. */
+  .site-header .nav-end-group {
     display: none !important;
   }
 
-  .product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-    padding-inline: 0 !important;
-  }
-
-  .product-card {
-    min-width: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .card-body {
-    padding: 9px 9px 10px !important;
-  }
-
-  .card-name {
-    font-size: clamp(.82rem, 3.6vw, .95rem) !important;
-    min-height: 2.45em !important;
-    text-align: center !important;
-  }
-
-  .card-footer {
+  .site-header .nav {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-columns: 44px minmax(0, 1fr) 44px !important;
     align-items: center !important;
-    gap: 6px !important;
+    min-height: 58px !important;
+    gap: 0 !important;
+  }
+
+  .site-header .brand {
+    justify-self: center !important;
+    max-width: 68vw !important;
+  }
+
+  .site-header .brand-title {
+    max-width: 68vw !important;
+    font-size: clamp(1.25rem, 5.2vw, 1.65rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .site-header .brand-sub {
+    font-size: .55rem !important;
+    letter-spacing: .22em !important;
+  }
+
+  /* Product card footer should never show a blank brown square. */
+  .product-card .card-footer {
+    display: grid !important;
+    grid-template-columns: minmax(64px, auto) minmax(68px, 1fr) !important;
+    align-items: center !important;
+    gap: 8px !important;
+    direction: ltr !important;
+  }
+
+  .product-card .card-price {
+    direction: rtl !important;
+    justify-self: start !important;
+    min-width: 64px !important;
+    max-width: 100% !important;
+    font-size: clamp(.84rem, 3.7vw, 1rem) !important;
+    white-space: nowrap !important;
+  }
+
+  .product-card .card-atc {
+    direction: rtl !important;
+    justify-self: end !important;
     width: 100% !important;
-  }
-
-  .card-price {
-    min-width: 0 !important;
-    font-size: clamp(.78rem, 3.4vw, .9rem) !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: clip !important;
-    text-align: start !important;
-  }
-
-  .card-atc {
+    min-width: 68px !important;
     max-width: none !important;
-    width: auto !important;
-    min-width: 58px !important;
-    padding: 7px 9px !important;
-    font-size: 0 !important;
-    white-space: nowrap !important;
-  }
-
-  .card-atc::after {
-    content: '+ أضف';
-    font-size: .72rem;
-    line-height: 1;
-  }
-
-  .card-atc:disabled::after {
-    content: '✓ تم';
-  }
-
-  .wl-btn {
-    width: 30px !important;
-    height: 30px !important;
-    top: 8px !important;
-    right: 8px !important;
+    min-height: 38px !important;
+    padding: 8px 9px !important;
+    color: #fff !important;
+    font-size: clamp(.68rem, 3vw, .78rem) !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    overflow: visible !important;
+    text-indent: 0 !important;
+    opacity: 1 !important;
   }
 }
 
 @media (max-width: 380px) {
-  .site-header .container.nav,
-  .nav {
-    gap: 4px !important;
-    padding-inline: 8px !important;
+  .product-card .card-footer {
+    grid-template-columns: minmax(58px, auto) minmax(62px, 1fr) !important;
+    gap: 6px !important;
   }
-
-  .cart-btn,
-  .notification-btn,
-  .account-menu-toggle,
-  .icon-btn {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    max-width: 34px !important;
-  }
-
-  .brand-title {
-    max-width: 38vw !important;
-    font-size: 1rem !important;
-  }
-
-  .product-grid {
-    gap: 8px !important;
-  }
-
-  .card-body {
-    padding: 8px !important;
-  }
-
-  .card-atc {
-    min-width: 52px !important;
-    padding: 6px 7px !important;
-  }
-
-  .card-atc::after {
-    font-size: .66rem;
+  .product-card .card-atc {
+    min-width: 62px !important;
+    padding-inline: 7px !important;
   }
 }

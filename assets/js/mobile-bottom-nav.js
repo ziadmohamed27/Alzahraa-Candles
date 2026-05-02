@@ -126,6 +126,25 @@
 
   document.body.appendChild(nav);
 
+
+  // Products shortcut: on the homepage, scroll without reloading.
+  function bindProductsShortcut() {
+    var productLinks = nav.querySelectorAll('a[href$="#products"]');
+    for (var i = 0; i < productLinks.length; i++) {
+      productLinks[i].addEventListener('click', function (event) {
+        var section = document.getElementById('products');
+        var path = window.location.pathname || '';
+        var isHome = path === '/' || /\/index\.html$/i.test(path) || path === '';
+        if (!section || !isHome) return;
+        event.preventDefault();
+        try { history.replaceState(null, '', '#products'); } catch (e) {}
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }
+
+  bindProductsShortcut();
+
   // ── Initial cart count ──────────────────────────────────────
   var badge = document.getElementById('mbn-cart-badge');
   updateBadge(badge, getCartCount());

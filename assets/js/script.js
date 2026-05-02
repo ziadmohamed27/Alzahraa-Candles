@@ -408,7 +408,7 @@ function renderProducts() {
           <span class="card-price">${money(p.price)}</span>
           <button class="btn btn-primary btn-sm card-atc" data-id="${p.id}" type="button"
             aria-label="أضف ${escHtml(p.name)} للسلة">
-            + أضف للسلة
+            + أضف
           </button>
         </div>
       </div>
