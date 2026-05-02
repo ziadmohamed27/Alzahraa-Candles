@@ -282,6 +282,11 @@ function showToast(message, type = 'default') {
 
 function addToCartToast(productName) {
   const safeName = String(productName || '').trim();
+  // On mobile: show the sticky mini cart bar (defined in mobile-bottom-nav.js)
+  if (window.innerWidth <= 900 && typeof window.alzahraaShowMiniCart === 'function') {
+    window.alzahraaShowMiniCart(safeName);
+    return; // skip the regular toast on mobile
+  }
   const label = safeName ? `تمت إضافة ${safeName} إلى السلة` : 'تمت إضافة المنتج إلى السلة';
   showToast(label, 'added');
 }

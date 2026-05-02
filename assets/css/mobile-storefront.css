@@ -1,0 +1,603 @@
+/* ================================================================
+   mobile-storefront.css — Alzahraa Candles
+   Mobile-first storefront layer — loaded LAST for highest priority.
+   Covers: product cards · bottom sheet modal · mini cart bar · checkout
+   ================================================================ */
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 0 — SAFE BASE: no horizontal overflow on any screen
+   ────────────────────────────────────────────────────────────── */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 1 — PRODUCT CARDS: mobile fixes
+   Works for 360px · 375px · 390px · 412px · 430px
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Grid: 2 columns, contained fully */
+  .product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Card: hard containment, no overflow */
+  .product-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Image wrapper */
+  .card-img-wrap {
+    width: 100% !important;
+    overflow: hidden !important;
+    position: relative;
+  }
+
+  .card-img-wrap .product-image,
+  .product-card .product-image {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  /* Card body */
+  .product-card .card-body {
+    padding: 9px 10px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1;
+    gap: 4px !important;
+  }
+
+  /* Product name: max 2 lines */
+  .product-card .card-name {
+    font-size: clamp(.80rem, 3.5vw, .92rem) !important;
+    line-height: 1.28 !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    min-height: 2.3em;
+    margin: 0 !important;
+  }
+
+  /* Scent hint — hidden on mobile to save vertical space */
+  .product-card .card-scent,
+  .product-card .card-mood-row {
+    display: none !important;
+  }
+
+  /* ── FOOTER ROW: price + button — NEVER overlap ── */
+  .product-card .card-footer {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    padding: 7px 0 0 !important;
+    margin-top: auto !important;
+    border-top: 1px solid rgba(200, 175, 135, .22) !important;
+    min-height: 42px;
+  }
+
+  /* Price: readable, no overflow */
+  .product-card .card-price {
+    font-size: clamp(.78rem, 3.4vw, .92rem) !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: 0 !important;
+    color: var(--gold-dark, #9c7340) !important;
+    line-height: 1 !important;
+  }
+
+  /* ── ADD BUTTON: "+ أضف" — compact & always visible ── */
+  .product-card .card-atc,
+  .product-card [data-atc],
+  .product-card .add-to-cart {
+    /* Reset any conflicting rules */
+    all: unset !important;
+    box-sizing: border-box !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+
+    /* Visual */
+    background: var(--gold-dark, #9c7340) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: 7px 11px !important;
+    font-size: clamp(.68rem, 2.8vw, .78rem) !important;
+    font-weight: 700 !important;
+    font-family: 'Tajawal', 'Segoe UI', Arial, sans-serif !important;
+    line-height: 1.1 !important;
+    min-height: 34px !important;
+    cursor: pointer !important;
+    border: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+
+    /* Prevent overflow */
+    max-width: 52% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .product-card .card-atc:active,
+  .product-card [data-atc]:active {
+    opacity: .82 !important;
+    transform: scale(.96) !important;
+  }
+
+  /* Wishlist heart: stay visible, don't cover badge badly */
+  .product-card .wl-btn,
+  .product-card .fav-btn,
+  .product-card .card-fav-btn,
+  .product-card .card-wish-btn {
+    width: 30px !important;
+    height: 30px !important;
+    top: 7px !important;
+    right: 7px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 248, 235, .85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+  }
+
+  /* Badge: don't cover full image */
+  .product-card .card-badge,
+  .product-card .badge {
+    font-size: .62rem !important;
+    padding: 3px 7px !important;
+    border-radius: 6px !important;
+    max-width: 70% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* Extra tight: 360px */
+@media (max-width: 380px) {
+  .product-grid {
+    gap: 8px !important;
+  }
+  .product-card .card-body {
+    padding: 7px 8px 9px !important;
+  }
+  .product-card .card-footer {
+    gap: 4px !important;
+  }
+  .product-card .card-atc,
+  .product-card [data-atc] {
+    padding: 6px 8px !important;
+    font-size: .66rem !important;
+    min-height: 32px !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 2 — BOTTOM SHEET MODAL (mobile product preview)
+   Replaces centered modal with a bottom sheet on mobile
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Overlay: darken with slight blur */
+  #productModalOverlay.overlay {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: stretch !important;
+    padding: 0 !important;
+    background: rgba(30, 18, 8, .55) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    /* Transition overlay in */
+    transition: opacity .28s ease !important;
+  }
+
+  #productModalOverlay.overlay.hidden {
+    display: none !important;
+  }
+
+  /* Modal itself: full-width bottom sheet */
+  #productModalOverlay .product-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 22px 22px 0 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+
+    /* Drag handle decoration */
+    border-top: none !important;
+    box-shadow: 0 -8px 40px rgba(100, 65, 20, .22) !important;
+    background: var(--cream, #fff8eb) !important;
+
+    /* Slide-up animation */
+    animation: msBottomSheetIn .32s cubic-bezier(.22, 1, .36, 1) both !important;
+  }
+
+  /* Drag handle pill at top */
+  #productModalOverlay .product-modal::before {
+    content: '';
+    display: block !important;
+    width: 40px;
+    height: 4px;
+    background: rgba(160, 120, 60, .30);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+
+  /* Close button repositioned for bottom sheet */
+  #productModalOverlay .close-btn,
+  #closeProductModal {
+    position: absolute !important;
+    top: 6px !important;
+    left: 12px !important;   /* LTR — on RTL pages "left" = visual right */
+    right: auto !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    background: rgba(200, 175, 135, .18) !important;
+    border: none !important;
+    font-size: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    line-height: 1 !important;
+    color: var(--text, #2c1a0e) !important;
+  }
+
+  /* Content scroll area */
+  #productModalContent {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex: 1;
+    padding: 0 !important;
+  }
+
+  /* Modal layout: stack image on top, info below */
+  .modal-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  .modal-layout img,
+  .modal-img-wrap {
+    width: 100% !important;
+    max-height: 280px !important;
+    aspect-ratio: 4 / 3 !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+    display: block !important;
+  }
+
+  .modal-info {
+    padding: 16px 18px 0 !important;
+  }
+
+  /* Scrollable content area inside modal-info */
+  .modal-info-scroll {
+    overflow: visible !important;
+  }
+
+  /* ── Sticky CTA footer inside bottom sheet ── */
+  .modal-cta-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: var(--cream, #fff8eb) !important;
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    border-top: 1px solid rgba(200, 175, 135, .3) !important;
+    z-index: 5 !important;
+    margin-top: 8px !important;
+  }
+
+  /* CTA buttons row */
+  .modal-cta-row {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .modal-cta-row .btn {
+    flex: 1 !important;
+    min-height: 48px !important;
+    font-size: .88rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* Micro trust line */
+  .modal-micro-trust {
+    font-size: .72rem !important;
+    text-align: center !important;
+    margin-bottom: 8px !important;
+    opacity: .7 !important;
+  }
+
+  /* Details sections inside sheet */
+  .modal-details {
+    margin-bottom: 8px !important;
+  }
+
+  /* Bottom sheet entrance animation */
+  @keyframes msBottomSheetIn {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 3 — STICKY MINI CART BAR (above bottom nav)
+   ────────────────────────────────────────────────────────────── */
+#ms-mini-cart {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  #ms-mini-cart {
+    display: flex;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    /* sits just above the bottom nav */
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 8px);
+    z-index: 9990; /* below bottom nav (9999) but above content */
+
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    background: #2c1a0e;
+    color: #fff;
+    border-radius: 14px;
+    padding: 11px 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.28);
+
+    font-family: 'Tajawal', 'Segoe UI', Arial, sans-serif;
+    font-size: .84rem;
+    font-weight: 600;
+
+    /* Hidden state */
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s cubic-bezier(.22, 1, .36, 1);
+  }
+
+  #ms-mini-cart.ms-mini-cart--visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  #ms-mini-cart .ms-mini-cart__msg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .82rem;
+  }
+
+  #ms-mini-cart .ms-mini-cart__check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4caf50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  #ms-mini-cart .ms-mini-cart__cta {
+    all: unset;
+    box-sizing: border-box;
+    background: var(--gold-dark, #9c7340);
+    color: #fff;
+    border-radius: 9px;
+    padding: 6px 13px;
+    font-size: .78rem;
+    font-weight: 700;
+    font-family: 'Tajawal', Arial, sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #ms-mini-cart .ms-mini-cart__cta:active {
+    opacity: .82;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 4 — MOBILE CHECKOUT (cart.html)
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Cart page: compact product list */
+  .cart-page-item,
+  .cd-item {
+    padding: 10px 0 !important;
+    gap: 10px !important;
+  }
+
+  .cart-page-item-img,
+  .cd-item-img {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+    object-fit: cover !important;
+  }
+
+  /* Checkout form: clear, single-column */
+  .checkout-form,
+  .cart-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  /* Form fields: large tap targets */
+  .checkout-form input,
+  .checkout-form select,
+  .checkout-form textarea,
+  .cart-form input,
+  .cart-form select,
+  .cart-form textarea,
+  #customerName,
+  #customerPhone,
+  #customerCity,
+  #customerAddress,
+  #customerNotes {
+    width: 100% !important;
+    min-height: 48px !important;
+    font-size: 1rem !important;
+    border-radius: 10px !important;
+    padding: 12px 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Field-level inline errors */
+  .ms-field-error {
+    display: block;
+    font-size: .75rem;
+    color: #c0392b;
+    margin-top: 4px;
+    padding-right: 4px;
+    font-family: 'Tajawal', Arial, sans-serif;
+    font-weight: 600;
+  }
+
+  /* Highlight invalid field */
+  .ms-field-invalid {
+    border-color: #c0392b !important;
+    background: #fff5f5 !important;
+  }
+
+  /* Order total: prominent */
+  .cart-total,
+  .cart-summary-total,
+  .summary-total {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    color: var(--gold-dark, #9c7340) !important;
+    padding: 14px 0 !important;
+    border-top: 2px solid rgba(200, 175, 135, .3) !important;
+    text-align: center !important;
+  }
+
+  /* Submit button: full width, high visibility */
+  .cart-page-submit,
+  #checkoutBtn,
+  .btn-whatsapp {
+    width: 100% !important;
+    min-height: 54px !important;
+    font-size: 1rem !important;
+    border-radius: 14px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Ensure submit button is NOT hidden under bottom nav */
+  .cart-actions,
+  .checkout-actions,
+  .cart-submit-wrap {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Empty cart state */
+  .cart-empty {
+    padding: 40px 20px !important;
+    text-align: center !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 5 — GLOBAL MOBILE SAFE GUARDS
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* No element should punch past viewport width */
+  img, video, canvas, iframe, table {
+    max-width: 100% !important;
+  }
+
+  /* Prevent fixed/absolute elements from causing horizontal scroll */
+  .site-header,
+  .mobile-bottom-nav,
+  #ms-mini-cart,
+  .toast,
+  .undo-toast {
+    left: 0 !important;
+    right: 0 !important;
+    max-width: 100vw !important;
+  }
+
+  /* Toast: above mini cart, above bottom nav */
+  .toast,
+  .undo-toast {
+    bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(10px) !important;
+  }
+  .toast.show,
+  .undo-toast.show {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  /* WhatsApp FAB: clear the bottom nav */
+  .whatsapp-float,
+  .whatsapp-btn,
+  a[href*="wa.me"],
+  a[href*="whatsapp"] {
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}

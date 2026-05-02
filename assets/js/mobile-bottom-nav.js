@@ -1,29 +1,36 @@
 /* ═══════════════════════════════════════════════════════════════
    Mobile Bottom Navigation — Alzahraa Candles
-   Handles: cart count sync, auth state, active page detection
+   v2 — Smart Products button · Mini Cart bar · Cart sync · Auth
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  // ── Only run on mobile ──────────────────────────────────────
-  if (window.innerWidth > 768) return;
+  /* ── Only run on mobile ──────────────────────────────────────── */
+  if (window.innerWidth > 900) return;
 
-  // ── Prevent double-init ────────────────────────────────────
+  /* ── Prevent double-init ─────────────────────────────────────── */
   if (document.getElementById('mbn-root')) return;
 
-  // ── Detect current page ────────────────────────────────────
-  var path = window.location.pathname;
-  function isPage(name) {
-    return path.endsWith(name) || path.endsWith(name.replace('.html', ''));
+  /* ── Page detection ──────────────────────────────────────────── */
+  var path = (window.location.pathname || '').toLowerCase();
+
+  function isHomePage() {
+    return (
+      path === '/' ||
+      path === '' ||
+      path.endsWith('/index.html') ||
+      path.endsWith('/index')
+    );
   }
 
-  var IS_HOME    = isPage('index.html') || path === '/' || path.endsWith('/');
-  var IS_CART    = isPage('cart.html');
-  var IS_ACCOUNT = isPage('account.html');
-  var IS_ORDERS  = isPage('my-orders.html');
-  var IS_LOGIN   = isPage('login.html') || isPage('signup.html');
+  var IS_HOME    = isHomePage();
+  var IS_CART    = path.endsWith('cart.html')      || path.endsWith('/cart');
+  var IS_ACCOUNT = path.endsWith('account.html')   || path.endsWith('/account');
+  var IS_ORDERS  = path.endsWith('my-orders.html') || path.endsWith('/my-orders');
+  var IS_LOGIN   = path.endsWith('login.html')  || path.endsWith('signup.html') ||
+                   path.endsWith('/login')      || path.endsWith('/signup');
 
-  // ── Cart count helpers ──────────────────────────────────────
+  /* ── Cart count helpers ──────────────────────────────────────── */
   function getCartCount() {
     try {
       var raw = localStorage.getItem('candles-cart');
@@ -33,36 +40,30 @@
       return items.reduce(function (sum, item) {
         return sum + (parseInt(item.qty, 10) || 0);
       }, 0);
-    } catch (e) {
-      return 0;
-    }
+    } catch (e) { return 0; }
   }
 
   function updateBadge(badge, count) {
     if (!badge) return;
     var prev = badge.getAttribute('data-count');
     badge.setAttribute('data-count', count);
-    badge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
-    // Pop animation on change
+    badge.textContent = count > 0 ? (count > 99 ? '99+' : String(count)) : '';
     if (prev !== String(count) && count > 0) {
       badge.classList.remove('mbn-badge-pop');
-      void badge.offsetWidth; // reflow
+      void badge.offsetWidth;
       badge.classList.add('mbn-badge-pop');
     }
   }
 
-  // ── Build HTML ──────────────────────────────────────────────
+  /* ── Build Nav HTML ──────────────────────────────────────────── */
   var nav = document.createElement('nav');
   nav.id = 'mbn-root';
   nav.className = 'mobile-bottom-nav';
   nav.setAttribute('aria-label', 'التنقل السريع');
   nav.setAttribute('role', 'navigation');
 
-  // Determine account href (will be updated after auth check)
-  var accountHref = './login.html';
-
   nav.innerHTML =
-    // 1. Home
+    /* 1. Home */
     '<a href="./index.html" class="mbn-item' + (IS_HOME ? ' mbn-active' : '') + '" aria-label="الرئيسية">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -73,8 +74,8 @@
       '<span class="mbn-label">الرئيسية</span>' +
     '</a>' +
 
-    // 2. Products
-    '<a href="./index.html#products" class="mbn-item" aria-label="المنتجات">' +
+    /* 2. Products — data-bottom-nav="products" drives event delegation */
+    '<a href="./index.html#products" class="mbn-item" data-bottom-nav="products" aria-label="المنتجات">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
           '<rect x="2" y="7" width="20" height="14" rx="2"/>' +
@@ -86,7 +87,7 @@
       '<span class="mbn-label">المنتجات</span>' +
     '</a>' +
 
-    // 3. Cart
+    /* 3. Cart */
     '<a href="./cart.html" class="mbn-item' + (IS_CART ? ' mbn-active' : '') + '" aria-label="السلة" id="mbn-cart-link">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -99,7 +100,20 @@
       '<span class="mbn-label">السلة</span>' +
     '</a>' +
 
-    // 4. Account
+    /* 4. My Orders */
+    '<a href="./my-orders.html" class="mbn-item' + (IS_ORDERS ? ' mbn-active' : '') + '" aria-label="طلباتي">' +
+      '<span class="mbn-icon-wrap">' +
+        '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
+          '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>' +
+          '<polyline points="14 2 14 8 20 8"/>' +
+          '<line x1="16" y1="13" x2="8" y2="13"/>' +
+          '<line x1="16" y1="17" x2="8" y2="17"/>' +
+        '</svg>' +
+      '</span>' +
+      '<span class="mbn-label">طلباتي</span>' +
+    '</a>' +
+
+    /* 5. Account */
     '<a href="./login.html" class="mbn-item' + (IS_ACCOUNT || IS_LOGIN ? ' mbn-active' : '') + '" aria-label="حسابي" id="mbn-account-link">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -108,48 +122,91 @@
         '</svg>' +
       '</span>' +
       '<span class="mbn-label" id="mbn-account-label">حسابي</span>' +
-    '</a>' +
-
-    // 5. My Orders
-    '<a href="./my-orders.html" class="mbn-item' + (IS_ORDERS ? ' mbn-active' : '') + '" aria-label="طلباتي">' +
-      '<span class="mbn-icon-wrap">' +
-        '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
-          '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>' +
-          '<polyline points="14 2 14 8 20 8"/>' +
-          '<line x1="16" y1="13" x2="8" y2="13"/>' +
-          '<line x1="16" y1="17" x2="8" y2="17"/>' +
-          '<polyline points="10 9 9 9 8 9"/>' +
-        '</svg>' +
-      '</span>' +
-      '<span class="mbn-label">طلباتي</span>' +
     '</a>';
 
   document.body.appendChild(nav);
 
-
-  // Products shortcut: on the homepage, scroll without reloading.
-  function bindProductsShortcut() {
-    var productLinks = nav.querySelectorAll('a[href$="#products"]');
-    for (var i = 0; i < productLinks.length; i++) {
-      productLinks[i].addEventListener('click', function (event) {
-        var section = document.getElementById('products');
-        var path = window.location.pathname || '';
-        var isHome = path === '/' || /\/index\.html$/i.test(path) || path === '';
-        if (!section || !isHome) return;
-        event.preventDefault();
-        try { history.replaceState(null, '', '#products'); } catch (e) {}
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
+  /* ═══════════════════════════════════════════════════════════════
+     PRODUCTS BUTTON — Smart scroll / navigate
+     ═══════════════════════════════════════════════════════════════ */
+  function scrollToProducts() {
+    var target = document.getElementById('products');
+    if (!target) return false;
+    var headerOffset = 90;
+    var top = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+    return true;
   }
 
-  bindProductsShortcut();
+  /* Event delegation on the nav */
+  nav.addEventListener('click', function (event) {
+    var el = event.target.closest('[data-bottom-nav="products"]');
+    if (!el) return;
+    event.preventDefault();
+    event.stopPropagation();
 
-  // ── Initial cart count ──────────────────────────────────────
+    if (isHomePage()) {
+      try { history.replaceState(null, '', '#products'); } catch (e) {}
+      scrollToProducts();
+    } else {
+      window.location.href = './index.html#products';
+    }
+  });
+
+  /* On page load: if URL hash is #products, scroll there */
+  window.addEventListener('load', function () {
+    if (window.location.hash === '#products') {
+      setTimeout(function () {
+        if (!scrollToProducts()) {
+          setTimeout(scrollToProducts, 700);
+        }
+      }, 250);
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     MINI CART BAR — sits above bottom nav, shown after add-to-cart
+     ═══════════════════════════════════════════════════════════════ */
+  var miniCart = document.createElement('div');
+  miniCart.id = 'ms-mini-cart';
+  miniCart.setAttribute('role', 'status');
+  miniCart.setAttribute('aria-live', 'polite');
+  miniCart.innerHTML =
+    '<span class="ms-mini-cart__msg">' +
+      '<span class="ms-mini-cart__check" aria-hidden="true">✓</span>' +
+      '<span id="ms-mini-cart-text">تمت الإضافة للسلة</span>' +
+    '</span>' +
+    '<button class="ms-mini-cart__cta" id="ms-mini-cart-btn" type="button">عرض السلة</button>';
+  document.body.appendChild(miniCart);
+
+  var _miniTimer = null;
+
+  document.getElementById('ms-mini-cart-btn').addEventListener('click', function () {
+    window.location.href = './cart.html';
+  });
+
+  /* Exposed globally — called by script.js after addToCart */
+  window.alzahraaShowMiniCart = function (productName) {
+    var textEl = document.getElementById('ms-mini-cart-text');
+    if (textEl) {
+      textEl.textContent = productName
+        ? ('تمت إضافة ' + productName)
+        : 'تمت الإضافة للسلة';
+    }
+    miniCart.classList.add('ms-mini-cart--visible');
+    clearTimeout(_miniTimer);
+    _miniTimer = setTimeout(function () {
+      miniCart.classList.remove('ms-mini-cart--visible');
+    }, 3200);
+    updateBadge(document.getElementById('mbn-cart-badge'), getCartCount());
+  };
+
+  /* ═══════════════════════════════════════════════════════════════
+     CART BADGE SYNC
+     ═══════════════════════════════════════════════════════════════ */
   var badge = document.getElementById('mbn-cart-badge');
   updateBadge(badge, getCartCount());
 
-  // ── Sync with header #cartCount via MutationObserver ───────
   function attachHeaderObserver() {
     var headerCount = document.getElementById('cartCount');
     if (!headerCount) return;
@@ -160,24 +217,22 @@
     obs.observe(headerCount, { childList: true, characterData: true, subtree: true });
   }
 
-  // Also listen for localStorage changes (cross-page, same origin)
   window.addEventListener('storage', function (e) {
     if (e.key === 'candles-cart') {
       updateBadge(badge, getCartCount());
     }
   });
 
-  // ── Auth state: update account link ────────────────────────
+  /* ═══════════════════════════════════════════════════════════════
+     AUTH STATE
+     ═══════════════════════════════════════════════════════════════ */
   function applyAuthState(loggedIn, name) {
     var link  = document.getElementById('mbn-account-link');
     var label = document.getElementById('mbn-account-label');
     if (!link) return;
     if (loggedIn) {
       link.href = './account.html';
-      if (label) {
-        var short = name ? name.split(' ')[0].substring(0, 6) : 'حسابي';
-        label.textContent = short;
-      }
+      if (label) label.textContent = name ? name.split(' ')[0].substring(0, 6) : 'حسابي';
     } else {
       link.href = './login.html';
       if (label) label.textContent = 'تسجيل';
@@ -185,7 +240,6 @@
   }
 
   function checkAuth() {
-    // Strategy 1: use Supabase if already initialised
     if (window.authGetSupabaseClient) {
       try {
         var sb = window.authGetSupabaseClient();
@@ -193,9 +247,8 @@
           sb.auth.getSession().then(function (res) {
             var session = res && res.data && res.data.session;
             if (session) {
-              var name = (session.user && session.user.user_metadata &&
-                (session.user.user_metadata.full_name || session.user.user_metadata.name)) || '';
-              applyAuthState(true, name);
+              var meta = session.user && session.user.user_metadata;
+              applyAuthState(true, (meta && (meta.full_name || meta.name)) || '');
             } else {
               applyAuthState(false);
             }
@@ -204,8 +257,6 @@
         }
       } catch (e) {}
     }
-
-    // Strategy 2: check a known Supabase session key in localStorage
     try {
       var keys = Object.keys(localStorage);
       for (var i = 0; i < keys.length; i++) {
@@ -215,24 +266,19 @@
             var parsed = JSON.parse(raw);
             var token = parsed && (parsed.access_token || (parsed.currentSession && parsed.currentSession.access_token));
             if (token) {
-              var name = '';
-              try {
-                var ud = parsed.user && parsed.user.user_metadata;
-                if (!ud && parsed.currentSession) ud = parsed.currentSession.user && parsed.currentSession.user.user_metadata;
-                name = (ud && (ud.full_name || ud.name)) || '';
-              } catch (e2) {}
-              applyAuthState(true, name);
+              var ud = (parsed.user && parsed.user.user_metadata) ||
+                       (parsed.currentSession && parsed.currentSession.user && parsed.currentSession.user.user_metadata) || {};
+              applyAuthState(true, (ud.full_name || ud.name) || '');
               return;
             }
           }
         }
       }
     } catch (e) {}
-
     applyAuthState(false);
   }
 
-  // ── Run after DOM ready ────────────────────────────────────
+  /* ── DOM / Load hooks ── */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       attachHeaderObserver();
@@ -245,7 +291,6 @@
     checkAuth();
   }
 
-  // ── Re-check auth after Supabase scripts load ──────────────
   window.addEventListener('load', function () {
     checkAuth();
     updateBadge(badge, getCartCount());

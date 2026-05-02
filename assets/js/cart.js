@@ -1274,12 +1274,53 @@ async function checkout() {
   const { customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryLat, deliveryLng, deliveryMapsLink, deliveryLocationSource } = getOrderFormData();
   const missingFields = getMissingOrderFields({ customerName, customerPhone, customerCity, customerAddress, deliveryMapsLink });
 
+  // Clear previous inline errors
+  document.querySelectorAll('.ms-field-error').forEach(el => el.remove());
+  document.querySelectorAll('.ms-field-invalid').forEach(el => el.classList.remove('ms-field-invalid'));
+
   if (missingFields.length) {
+    if (window.innerWidth <= 900) {
+      const fieldMap = {
+        'الاسم': '#customerName',
+        'رقم الموبايل': '#customerPhone',
+        'المحافظة': '#customerCity',
+        'العنوان أو موقع التسليم': '#customerAddress'
+      };
+      let firstInvalid = null;
+      missingFields.forEach(function(fieldLabel) {
+        const sel = fieldMap[fieldLabel];
+        if (sel) {
+          const el = document.querySelector(sel);
+          if (el) {
+            el.classList.add('ms-field-invalid');
+            const err = document.createElement('span');
+            err.className = 'ms-field-error';
+            err.textContent = 'هذا الحقل مطلوب';
+            el.insertAdjacentElement('afterend', err);
+            if (!firstInvalid) firstInvalid = el;
+          }
+        }
+      });
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     showToast(`من فضلك أكمل: ${missingFields.join('، ')}`);
     return;
   }
 
   if (!validatePhone(customerPhone)) {
+    if (window.innerWidth <= 900) {
+      const phoneEl = document.querySelector('#customerPhone');
+      if (phoneEl) {
+        phoneEl.classList.add('ms-field-invalid');
+        const err = document.createElement('span');
+        err.className = 'ms-field-error';
+        err.textContent = 'رقم موبايل مصري غير صحيح';
+        phoneEl.insertAdjacentElement('afterend', err);
+        phoneEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
     showToast('اكتب رقم موبايل مصري صحيح');
     return;
   }
