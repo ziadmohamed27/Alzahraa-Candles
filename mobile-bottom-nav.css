@@ -1,0 +1,420 @@
+/* Deep fixes: toast, creative home button, wishlist nav, profile location */
+.toast,
+.undo-toast {
+  left: 50% !important;
+  right: auto !important;
+  bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 16px)) !important;
+  width: min(92vw, 420px) !important;
+  max-width: 420px !important;
+  min-width: min(240px, 92vw) !important;
+  padding: 12px 16px !important;
+  white-space: normal !important;
+  text-align: center;
+  line-height: 1.6;
+  border-radius: 24px !important;
+  transform: translateX(-50%) translateY(20px) !important;
+}
+.toast.show,
+.undo-toast.show {
+  transform: translateX(-50%) translateY(0) !important;
+}
+.toast {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.toast .toast-copy {
+  display: inline-block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.menu-btn.home-candle-btn {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.home-candle-btn .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.home-candle-btn .candle-home {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: inline-block;
+}
+.home-candle-btn .candle-roof {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--gold-dark);
+  border-right: 2px solid var(--gold-dark);
+  transform: translateX(-50%) rotate(-45deg);
+  border-radius: 2px;
+}
+.home-candle-btn .candle-body {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 12px;
+  height: 11px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #fff7e8, #e9d7b8);
+  border: 1px solid rgba(160, 120, 64, .45);
+  border-radius: 4px 4px 6px 6px;
+  box-shadow: inset 0 -3px 0 rgba(160,120,64,.10);
+}
+.home-candle-btn .candle-body::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 1.5px;
+  height: 4px;
+  background: rgba(90, 54, 32, .65);
+  transform: translateX(-50%);
+  border-radius: 999px;
+}
+.home-candle-btn .candle-flame {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 8px;
+  height: 11px;
+  transform: translateX(-50%) rotate(12deg);
+  background: radial-gradient(circle at 45% 35%, #fff7cd 0%, #f8d87d 34%, #d7942b 78%, rgba(215,148,43,.25) 100%);
+  border-radius: 60% 60% 65% 65% / 70% 70% 40% 40%;
+  box-shadow: 0 0 10px rgba(244, 188, 93, .45);
+}
+.home-candle-btn:hover .candle-flame {
+  transform: translateX(-50%) rotate(4deg) scale(1.05);
+}
+
+.wishlist-btn {
+  text-decoration: none;
+}
+.wishlist-btn .wishlist-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.wishlist-count {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: #bf5a5a;
+  color: #fff;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: .7rem;
+  font-weight: 700;
+  padding-inline: 4px;
+}
+.wishlist-btn.is-empty .wishlist-count {
+  background: var(--gold-dark);
+}
+.wishlist-btn.is-empty .wishlist-emoji {
+  opacity: .8;
+}
+.wishlist-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.wishlist-anchor-btn {
+  white-space: nowrap;
+}
+.account-location-note {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.7;
+}
+.profile-location-actions {
+  margin-top: 10px;
+}
+@media (max-width: 640px) {
+  .toast,
+  .undo-toast {
+    width: min(94vw, 360px) !important;
+    padding: 11px 14px !important;
+    font-size: .9rem;
+  }
+  .wishlist-count {
+    min-width: 18px;
+    height: 18px;
+    font-size: .65rem;
+  }
+}
+
+
+/* Header stability pass */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+body {
+  overscroll-behavior-x: none;
+}
+.nav-end-group {
+  display: flex;
+  align-items: center;
+  gap: 12px !important;
+  min-width: 0;
+}
+.nav-end-group > span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+.cart-count,
+.wishlist-count,
+.notification-count {
+  z-index: 6;
+  min-width: 19px;
+  height: 19px;
+  font-size: .66rem;
+  line-height: 1;
+  padding: 0 4px;
+  box-shadow: 0 4px 10px rgba(44, 24, 16, .16), 0 0 0 2px rgba(255, 251, 245, .95);
+}
+.cart-btn .cart-count {
+  top: -8px !important;
+  right: -8px !important;
+  left: auto !important;
+}
+.notification-btn .notification-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  left: auto;
+  background: #bf5a5a;
+  color: #fff;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+.notification-btn .notification-count.is-zero {
+  background: var(--gold-dark);
+}
+.notification-emoji {
+  font-size: 1.1rem;
+}
+.account-menu-wrap,
+.notification-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.account-menu-toggle {
+  min-width: 94px;
+}
+.account-dropdown,
+.notification-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  inset-inline-end: 0;
+  min-width: 220px;
+  border: 1px solid var(--line);
+  background: rgba(255, 251, 245, .98);
+  box-shadow: 0 18px 45px rgba(44, 24, 16, .14);
+  border-radius: 18px;
+  padding: 10px;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(.98);
+  transition: opacity .18s ease, transform .18s ease;
+  backdrop-filter: blur(12px);
+}
+.account-menu-wrap.is-open .account-dropdown,
+.notification-wrap.is-open .notification-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+.account-dropdown a,
+.account-dropdown button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: start;
+}
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: var(--cream-mid);
+  color: var(--gold-dark);
+}
+.account-dropdown button[data-account-logout] {
+  color: #b34b45;
+}
+.menu-count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(160, 120, 64, .12);
+  color: var(--gold-dark);
+  font-size: .75rem;
+}
+.notification-panel {
+  min-width: 290px;
+  max-width: min(88vw, 340px);
+}
+.notification-title {
+  font-family: "El Messiri", serif;
+  font-weight: 800;
+  padding: 8px 10px 10px;
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+.notification-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: 12px;
+  color: var(--text);
+  text-decoration: none;
+}
+.notification-item:hover {
+  background: var(--cream-mid);
+}
+.notification-item.is-new {
+  background: rgba(191, 90, 90, .08);
+}
+.notification-item strong,
+.notification-item small {
+  display: block;
+}
+.notification-item small {
+  margin-top: 2px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.notification-empty {
+  padding: 16px 10px;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: center;
+}
+.notification-all {
+  display: block;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(160, 120, 64, .10);
+  color: var(--gold-dark);
+  text-decoration: none;
+  font-weight: 800;
+}
+.faq-q {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: start;
+}
+.faq-item.open .faq-a {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+@media (max-width: 760px) {
+  .nav-end-group {
+    gap: 8px !important;
+  }
+  .account-menu-toggle {
+    min-width: 52px;
+    padding-inline: 10px;
+  }
+  .account-menu-toggle .account-nav-label {
+    max-width: 64px;
+  }
+  .notification-panel,
+  .account-dropdown {
+    inset-inline-end: auto;
+    left: 0;
+    right: auto;
+  }
+}
+
+/* ── Scroll base ──
+   html: overflow-y:scroll يضمن التمرير دائمًا ويمنع layout shift بسبب scrollbar.
+   body: visible يرث الـ scroll من html بشكل طبيعي.
+   القفل يُطبَّق فقط أثناء فتح modal أو drawer فعلًا عبر JS. */
+html {
+  overflow-y: scroll;
+}
+body {
+  overflow-y: visible;
+}
+body.drawer-open,
+body.modal-open {
+  overflow: hidden;
+}
+
+/* === FINAL SCROLL FIX: keep pages scrollable by default === */
+html,
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: static !important;
+}
+main,
+.storefront-body,
+.cart-page,
+.account-page {
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+/* Do not globally lock the page for legacy drawer/modal classes. */
+body.drawer-open,
+body.modal-open,
+body.no-scroll,
+body.lock-scroll {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  position: static !important;
+}
+/* Individual panels/modals keep their own inner scrolling. */
+.modal,
+.modal-info-scroll,
+.cd-body,
+.delivery-location-dialog,
+.notification-panel,
+.account-dropdown {
+  -webkit-overflow-scrolling: touch;
+}

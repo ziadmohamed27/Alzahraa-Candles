@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
+  <defs>
+    <linearGradient id="sbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2C1810"/>
+      <stop offset="1" stop-color="#4A2E1A"/>
+    </linearGradient>
+    <linearGradient id="sjar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D4A86A"/>
+      <stop offset="1" stop-color="#8A5020"/>
+    </linearGradient>
+    <linearGradient id="sfl" x1=".5" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#FFF4A0"/>
+      <stop offset=".55" stop-color="#F0A830"/>
+      <stop offset="1" stop-color="#D06820"/>
+    </linearGradient>
+    <radialGradient id="sglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFD060" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#FFD060" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="sblur"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="ssb"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+
+  <!-- Deep dark background -->
+  <rect width="600" height="800" fill="url(#sbg)"/>
+
+  <!-- Atmospheric radial glow -->
+  <ellipse cx="300" cy="320" rx="200" ry="200" fill="url(#sglow)" filter="url(#sblur)"/>
+
+  <!-- Subtle texture rings -->
+  <circle cx="300" cy="400" r="260" fill="none" stroke="rgba(201,164,106,.08)" stroke-width="1"/>
+  <circle cx="300" cy="400" r="180" fill="none" stroke="rgba(201,164,106,.06)" stroke-width="1"/>
+
+  <!-- Candle — wide luxury jar on dark bg -->
+  <!-- Jar body -->
+  <rect x="175" y="390" width="250" height="300" rx="48" fill="url(#sjar)"/>
+  <!-- Jar highlight -->
+  <rect x="196" y="405" width="16" height="258" rx="8" fill="white" opacity=".18"/>
+  <!-- Rim -->
+  <rect x="163" y="374" width="274" height="28" rx="14" fill="#A07840"/>
+  <!-- Wax surface -->
+  <ellipse cx="300" cy="376" rx="126" ry="14" fill="#E8C898"/>
+  <!-- Inner pool glow -->
+  <ellipse cx="300" cy="374" rx="80" ry="8" fill="#FFE8A8" opacity=".35"/>
+
+  <!-- Two wicks -->
+  <line x1="272" y1="376" x2="269" y2="318" stroke="#3A1C08" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="328" y1="376" x2="325" y2="322" stroke="#3A1C08" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Flame glow left -->
+  <ellipse cx="269" cy="298" rx="28" ry="38" fill="#FFD060" opacity=".45" filter="url(#ssb)"/>
+  <!-- Flame left -->
+  <path d="M269 260 C257 274 252 290 255 304 C257 316 263 323 269 324 C275 323 281 316 283 304 C286 290 281 274 269 260Z" fill="url(#sfl)"/>
+  <path d="M269 272 C262 282 259 293 261 303 C263 310 266 315 269 316 C272 315 275 310 277 303 C279 293 276 282 269 272Z" fill="#FFFAB0" opacity=".9"/>
+  <circle cx="269" cy="264" r="4.5" fill="white" opacity=".75"/>
+
+  <!-- Flame glow right -->
+  <ellipse cx="325" cy="302" rx="28" ry="38" fill="#FFD060" opacity=".45" filter="url(#ssb)"/>
+  <!-- Flame right -->
+  <path d="M325 264 C313 278 308 294 311 308 C313 320 319 327 325 328 C331 327 337 320 339 308 C342 294 337 278 325 264Z" fill="url(#sfl)"/>
+  <path d="M325 276 C318 286 315 297 317 307 C319 314 322 319 325 320 C328 319 331 314 333 307 C335 297 332 286 325 276Z" fill="#FFFAB0" opacity=".9"/>
+  <circle cx="325" cy="268" r="4.5" fill="white" opacity=".75"/>
+
+  <!-- Label on jar -->
+  <rect x="175" y="510" width="250" height="80" fill="rgba(255,255,255,.07)"/>
+  <line x1="175" y1="510" x2="425" y2="510" stroke="#C9A46A" stroke-width="1" opacity=".4"/>
+  <line x1="175" y1="590" x2="425" y2="590" stroke="#C9A46A" stroke-width="1" opacity=".4"/>
+  <text x="300" y="540" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#F4DCB8" opacity=".9" letter-spacing="4">ALZAHRAA</text>
+  <text x="300" y="564" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#C9A46A" opacity=".8" letter-spacing="3">CANDLES</text>
+  <text x="300" y="581" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#9A7040" opacity=".7" letter-spacing="2">HANDMADE · LUXURY</text>
+
+  <!-- Shadow -->
+  <ellipse cx="300" cy="697" rx="108" ry="12" fill="#000" opacity=".3" filter="url(#ssb)"/>
+
+  <!-- Small decorative gold dots -->
+  <circle cx="142" cy="400" r="3" fill="#C9A46A" opacity=".5"/>
+  <circle cx="128" cy="420" r="2" fill="#C9A46A" opacity=".3"/>
+  <circle cx="458" cy="395" r="3" fill="#C9A46A" opacity=".5"/>
+  <circle cx="472" cy="416" r="2" fill="#C9A46A" opacity=".3"/>
+
+  <!-- Gold rule at bottom -->
+  <line x1="80" y1="740" x2="520" y2="740" stroke="#C9A46A" stroke-width="1" opacity=".25"/>
+</svg>

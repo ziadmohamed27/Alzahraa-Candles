@@ -1,0 +1,402 @@
+/* ================================================================
+   mobile-conversion.css — Alzahraa Candles
+   Bottom Sheet Fixes · Quick Chips · Recently Viewed · Trust Strip
+   Loaded LAST — highest priority on mobile
+   ================================================================ */
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 1 — BOTTOM SHEET: Header, Close, WA button, CTA
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* ── Hide the old close button (replaced by sheet-header btn) ── */
+  #productModalOverlay #closeProductModal {
+    display: none !important;
+  }
+
+  /* ── Sheet header: product name + close ── */
+  .ms-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 10px;
+    border-bottom: 1px solid rgba(200, 175, 135, .22);
+    flex-shrink: 0;
+    min-height: 44px;
+    position: sticky;
+    top: 0;
+    background: var(--cream, #fff8eb);
+    z-index: 20;
+    border-radius: 22px 22px 0 0;
+  }
+
+  /* drag handle above header */
+  .ms-sheet-header::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(160, 120, 60, .28);
+  }
+
+  .ms-sheet-title {
+    font-family: 'El Messiri', 'Tajawal', serif;
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--text, #2c1a0e);
+    line-height: 1.2;
+    max-width: calc(100% - 52px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: rtl;
+  }
+
+  /* Close button — touch-friendly 40×40 */
+  .ms-sheet-close {
+    all: unset;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(200, 175, 135, .20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--text, #2c1a0e);
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    border: 1px solid rgba(200, 175, 135, .30);
+    transition: background .15s;
+  }
+
+  .ms-sheet-close:active {
+    background: rgba(200, 175, 135, .45);
+  }
+
+  /* Remove the ::before drag handle from product-modal (now in sheet-header) */
+  #productModalOverlay .product-modal::before {
+    display: none !important;
+  }
+
+  /* ── Sheet top padding: header is sticky so no need for extra padding ── */
+  #productModalContent {
+    padding-top: 0 !important;
+  }
+
+  /* ── Main CTA button: prominent, full width ── */
+  .ms-cta-main {
+    display: block !important;
+    width: 100% !important;
+    min-height: 52px !important;
+    font-size: .96rem !important;
+    font-weight: 800 !important;
+    border-radius: 14px !important;
+    text-align: center !important;
+    margin-bottom: 10px !important;
+    letter-spacing: .01em !important;
+  }
+
+  /* ── WhatsApp secondary button: clear text, not just emoji ── */
+  .ms-btn-wa {
+    all: unset;
+    box-sizing: border-box;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    gap: 6px !important;
+    border-radius: 12px !important;
+    border: 1.5px solid rgba(37, 211, 102, .45) !important;
+    color: #075e54 !important;
+    font-size: .84rem !important;
+    font-weight: 700 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    cursor: pointer !important;
+    background: rgba(37, 211, 102, .07) !important;
+    -webkit-tap-highlight-color: transparent !important;
+    text-decoration: none !important;
+  }
+
+  .ms-btn-wa:active {
+    background: rgba(37, 211, 102, .15) !important;
+  }
+
+  /* ── Trust strip: mini chips ── */
+  .ms-trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 0 10px;
+    justify-content: flex-start;
+  }
+
+  .ms-trust-strip span {
+    font-size: .68rem;
+    color: var(--text-muted, #7c5a30);
+    background: rgba(200, 175, 135, .15);
+    border: 1px solid rgba(200, 175, 135, .25);
+    border-radius: 20px;
+    padding: 4px 9px;
+    white-space: nowrap;
+    font-family: 'Tajawal', Arial, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  /* ── Modal CTA footer: clean stack ── */
+  .modal-cta-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    background: var(--cream, #fff8eb) !important;
+    border-top: 1px solid rgba(200, 175, 135, .28) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 10 !important;
+  }
+
+  /* Remove old micro-trust paragraph (replaced by trust strip) */
+  .modal-micro-trust {
+    display: none !important;
+  }
+
+  /* ── Old cta-row: hidden (replaced by column layout) ── */
+  .modal-cta-row {
+    display: contents !important;
+  }
+
+  /* Old btn-wa-compact: hidden on mobile */
+  .btn-wa-compact {
+    display: none !important;
+  }
+
+  /* Modal info padding */
+  .modal-info {
+    padding: 12px 16px 0 !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 2 — QUICK FILTER CHIPS
+   ────────────────────────────────────────────────────────────── */
+#qs-chips {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  #qs-chips {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 10px;
+    /* Prevent page horizontal scroll */
+    position: relative;
+  }
+
+  #qs-chips-inner {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 0 10px;
+    /* Smooth momentum scrolling */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* Ensure children don't cause page overflow */
+    width: 100%;
+  }
+
+  #qs-chips-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .qs-chip {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 22px;
+    font-size: .78rem;
+    font-weight: 600;
+    font-family: 'Tajawal', 'Segoe UI', Arial, sans-serif;
+    cursor: pointer;
+    border: 1.5px solid rgba(200, 175, 135, .40);
+    background: rgba(255, 248, 235, .90);
+    color: #7c5a30;
+    transition: background .15s, border-color .15s, color .15s, transform .1s;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.2;
+  }
+
+  .qs-chip:active {
+    transform: scale(.95);
+  }
+
+  .qs-chip--active {
+    background: var(--gold-dark, #9c7340) !important;
+    border-color: var(--gold-dark, #9c7340) !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 3 — RECENTLY VIEWED
+   ────────────────────────────────────────────────────────────── */
+#recently-viewed-section {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  #recently-viewed-section {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding: 0 0 16px;
+    margin-top: 24px;
+  }
+
+  .rv-heading {
+    font-family: 'El Messiri', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text, #2c1a0e);
+    margin: 0 0 10px;
+    direction: rtl;
+  }
+
+  .rv-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+    width: 100%;
+  }
+
+  .rv-track::-webkit-scrollbar { display: none; }
+
+  .rv-card {
+    flex-shrink: 0;
+    width: 110px;
+    background: var(--cream, #fff8eb);
+    border: 1px solid rgba(200, 175, 135, .28);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .15s, box-shadow .15s;
+  }
+
+  .rv-card:active {
+    transform: scale(.97);
+  }
+
+  .rv-img-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: rgba(200, 175, 135, .15);
+  }
+
+  .rv-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .rv-body {
+    padding: 6px 8px 8px;
+  }
+
+  .rv-name {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--text, #2c1a0e);
+    line-height: 1.3;
+    margin: 0 0 3px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    overflow: hidden;
+    font-family: 'Tajawal', Arial, sans-serif;
+  }
+
+  .rv-price {
+    font-size: .68rem;
+    font-weight: 800;
+    color: var(--gold-dark, #9c7340);
+    font-family: 'El Messiri', serif;
+    white-space: nowrap;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 4 — TRUST STRIP in cart.html
+   ────────────────────────────────────────────────────────────── */
+.cart-trust-strip {
+  display: none; /* shown only on mobile via below */
+}
+
+@media (max-width: 768px) {
+  .cart-trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 0 4px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .cart-trust-strip span {
+    font-size: .7rem;
+    color: #7c5a30;
+    background: rgba(200, 175, 135, .14);
+    border: 1px solid rgba(200, 175, 135, .25);
+    border-radius: 20px;
+    padding: 5px 10px;
+    white-space: nowrap;
+    font-family: 'Tajawal', Arial, sans-serif;
+    font-weight: 600;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 5 — OVERFLOW GUARDS (supplement mobile-storefront.css)
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Quick chips and recently viewed must NOT cause horizontal page scroll */
+  #qs-chips,
+  #recently-viewed-section {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Ensure inner scrollers don't leak */
+  #qs-chips-inner,
+  .rv-track {
+    max-width: 100%;
+  }
+}

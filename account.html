@@ -1,467 +1,769 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-<meta name="description" content="إدارة حسابك وبياناتك الشخصية في متجر Alzahraa Candles للشموع اليدوية.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>حسابي | Alzahraa Candles</title>
-  <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#A07840">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="حسابي | Alzahraa Candles">
-  <meta property="og:description" content="إدارة بياناتك ومتابعة طلباتك في Alzahraa Candles.">
-  <meta property="og:url" content="https://alzahraa-candles.netlify.app/account.html">
-  <meta property="og:image" content="https://alzahraa-candles.netlify.app/og-image.png">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="حسابي | Alzahraa Candles">
-  <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="preconnect" href="https://wihhfwdaysupjpfzshfq.supabase.co">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <link rel="stylesheet" href="./assets/css/premium.css">
-  <link rel="stylesheet" href="./assets/css/luxury-polish.css">
-  <link rel="stylesheet" href="./assets/css/candle-fx.css">
-  <link rel="stylesheet" href="./assets/css/ux-improvements.css">
-  <link rel="stylesheet" href="./assets/css/ux-v09.css">
-  <link rel="stylesheet" href="./assets/css/deep-fixes.css">
-  <link rel="stylesheet" href="./assets/css/mobile-bottom-nav.css">
-  <link rel="stylesheet" href="./assets/css/mobile-polish.css">
-  <link rel="stylesheet" href="./assets/css/mobile-storefront.css">
-  <link rel="canonical" href="https://alzahraa-candles.netlify.app/account.html">
-</head>
-<body>
-  <header class="site-header" id="top">
-    <div class="container nav">
-      <a class="icon-btn menu-btn home-candle-btn" href="./index.html" aria-label="العودة للصفحة الرئيسية" title="الصفحة الرئيسية">
-        <span class="sr-only">الصفحة الرئيسية</span>
-        <span class="candle-home" aria-hidden="true">
-          <span class="candle-roof"></span>
-          <span class="candle-flame"></span>
-          <span class="candle-body"></span>
-        </span>
-      </a>
-      <a class="brand" href="./index.html">
-        <span class="brand-title">Alzahraa Candles</span>
-        <span class="brand-sub">HANDMADE · LUXURY</span>
-      </a>
-      <div class="nav-end-group">
-        <span id="accountNavWrap"></span>
-        <span id="notificationNavWrap"></span>
-        <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
-          <span class="cart-emoji">🛍️</span>
-          <span class="cart-count" id="cartCount">0</span>
-        </a>
-      </div>
-    </div>
-  </header>
+/* ================================================================
+   Alzahraa Candles — interactions.js
+   Dynamic layer: progress bar, cart drawer, sparkles, counters,
+   stagger reveals, sticky filters, search highlights, typewriter.
+   Zero modifications to script.js or cart.js.
+   ================================================================ */
 
-  <main class="account-page section">
-    <div class="container">
+// GUARD: prevent double-initialization
+if (window.__alzahraaInteractionsInit) { /* already run */ }
+else { window.__alzahraaInteractionsInit = true;
 
-      <div class="cart-page-head">
-        <div>
-          <span class="pill small">✦ حسابي</span>
-          <h1 id="accountHeading">حسابي</h1>
-          <p id="accountSubheading">مرحبًا — يمكنك مراجعة بياناتك وتحديثها من هنا.</p>
+(function () {
+  'use strict';
+
+  /* ── Helpers ─────────────────────────────────────────────── */
+  const $ = (s, ctx = document) => ctx.querySelector(s);
+  const $$ = (s, ctx = document) => [...ctx.querySelectorAll(s)];
+  const raf = requestAnimationFrame;
+
+  /* ─────────────────────────────────────────────────────────────
+     1. SCROLL PROGRESS BAR — gold line at very top
+  ───────────────────────────────────────────────────────────── */
+  function initScrollProgress() {
+    const bar = document.createElement('div');
+    bar.id = 'scrollProgressBar';
+    bar.style.cssText = `
+      position:fixed;top:0;left:0;height:3px;width:0%;
+      background:linear-gradient(90deg,#C9A46A,#A07840,#C9A46A);
+      background-size:200% auto;
+      z-index:9999;transition:width .1s linear;
+      animation:shimmer 2s linear infinite;
+    `;
+    document.body.prepend(bar);
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const total = document.body.scrollHeight - window.innerHeight;
+      bar.style.width = total > 0 ? `${(scrolled / total) * 100}%` : '0%';
+    }, { passive: true });
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     2. CART MINI-DRAWER — slide-in panel from right
+  ───────────────────────────────────────────────────────────── */
+  /* Check if mobile — drawer slides from bottom */
+  function isMobile() { return window.innerWidth <= 480; }
+
+  function buildCartDrawer() {
+    const drawer = document.createElement('div');
+    drawer.id = 'cartDrawer';
+    drawer.setAttribute('role', 'dialog');
+    drawer.setAttribute('aria-label', 'سلة التسوق');
+    drawer.setAttribute('aria-modal', 'true');
+    drawer.innerHTML = `
+      <div id="cartDrawerBackdrop"></div>
+      <div id="cartDrawerPanel">
+        <div class="cd-header">
+          <h2 class="cd-title">🛍️ سلة التسوق</h2>
+          <button class="cd-close" id="cdClose" aria-label="إغلاق السلة">×</button>
         </div>
-        <div class="account-head-actions">
-          <a href="./my-orders.html" class="btn btn-ghost">طلباتي</a>
-          <button id="logoutBtn" type="button" class="btn btn-ghost" style="color:#C0524C;border-color:#efc4c4">تسجيل الخروج</button>
+        <div class="cd-body" id="cdBody"></div>
+        <div class="cd-footer" id="cdFooter"></div>
+      </div>
+    `;
+    document.body.appendChild(drawer);
+
+    // Bind close
+    $('#cartDrawerBackdrop').addEventListener('click', closeDrawer);
+    $('#cdClose').addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+    });
+  }
+
+  function readCart() {
+    try {
+      const raw = localStorage.getItem('candles-cart');
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  }
+
+  function money(v) {
+    return `${Number(v || 0).toFixed(0)} ج.م`;
+  }
+
+  function escH(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderCartDrawer() {
+    const cart = readCart();
+    const body = $('#cdBody');
+    const footer = $('#cdFooter');
+    if (!body || !footer) return;
+
+    if (!cart.length) {
+      body.innerHTML = `
+        <div class="cd-empty">
+          <span class="cd-empty-icon">🕯️</span>
+          <p>سلتك فارغة حالياً</p>
+          <a href="./index.html#products" class="btn btn-primary btn-sm" onclick="closeCartDrawer()">تصفح المنتجات</a>
+        </div>`;
+      footer.innerHTML = '';
+      return;
+    }
+
+    const total = cart.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+    const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
+
+    body.innerHTML = cart.map(item => `
+      <div class="cd-item" data-id="${escH(String(item.id))}">
+        <div class="cd-item-img">
+          ${item.image ? `<img src="${escH(item.image)}" alt="${escH(item.name)}" loading="lazy">` : '<span class="cd-img-fallback">🕯️</span>'}
         </div>
+        <div class="cd-item-info">
+          <p class="cd-item-name">${escH(item.name)}</p>
+          <p class="cd-item-weight">${escH(item.weight || '')}</p>
+          <div class="cd-item-controls">
+            <button class="cd-qty-btn cd-minus" data-id="${escH(String(item.id))}" aria-label="تقليل الكمية">−</button>
+            <span class="cd-qty-val">${item.qty || 1}</span>
+            <button class="cd-qty-btn cd-plus" data-id="${escH(String(item.id))}" aria-label="زيادة الكمية">+</button>
+            <button class="cd-remove" data-id="${escH(String(item.id))}" aria-label="إزالة من السلة">🗑️</button>
+          </div>
+        </div>
+        <div class="cd-item-price">${money((item.price || 0) * (item.qty || 1))}</div>
+      </div>`).join('');
+
+    footer.innerHTML = `
+      <div class="cd-total-row">
+        <span>الإجمالي (${count} منتج)</span>
+        <strong class="cd-total-price">${money(total)}</strong>
       </div>
+      <a href="./cart.html" class="btn btn-primary cd-checkout-btn">متابعة الطلب →</a>
+      <button class="btn btn-ghost cd-continue-btn" id="cdContinue">متابعة التسوق</button>`;
 
-      <div class="account-layout">
+    $('#cdContinue')?.addEventListener('click', closeDrawer);
 
-        <!-- Profile form -->
-        <section class="account-section">
-          <div class="account-section-head">
-            <h2>بيانات الحساب</h2>
-            <p>احتفظ ببياناتك محدّثة لتسريع عملية الطلب.</p>
-          </div>
+    // Qty controls — bind ONCE, not on every render
+    if (!body._drawerClickBound) {
+      body._drawerClickBound = true;
+      body.addEventListener('click', handleDrawerCartClick);
+    }
+  }
 
-          <div class="form-grid">
-            <div class="field">
-              <label for="accName">الاسم الكامل</label>
-              <input type="text" id="accName" placeholder="اسمك الكامل" autocomplete="name">
-            </div>
-            <div class="field">
-              <label for="accEmail">البريد الإلكتروني</label>
-              <input type="email" id="accEmail" placeholder="بريدك الإلكتروني" autocomplete="email" disabled style="opacity:.6;cursor:not-allowed">
-            </div>
-            <div class="field">
-              <label for="accPhone">رقم الموبايل</label>
-              <input type="tel" id="accPhone" placeholder="01xxxxxxxxx" inputmode="tel" autocomplete="tel">
-            </div>
-            <div class="field">
-              <label for="accGovernoate">المحافظة</label>
-              <div class="select-wrap">
-                <select id="accGovernoate" autocomplete="address-level1">
-                  <option value="">اختر المحافظة</option>
-                  <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option>
-                  <option>الدقهلية</option><option>البحر الأحمر</option><option>البحيرة</option>
-                  <option>الفيوم</option><option>الغربية</option><option>الإسماعيلية</option>
-                  <option>المنوفية</option><option>المنيا</option><option>القليوبية</option>
-                  <option>الوادي الجديد</option><option>السويس</option><option>أسوان</option>
-                  <option>أسيوط</option><option>بني سويف</option><option>بورسعيد</option>
-                  <option>دمياط</option><option>الشرقية</option><option>جنوب سيناء</option>
-                  <option>كفر الشيخ</option><option>مطروح</option><option>الأقصر</option>
-                  <option>قنا</option><option>شمال سيناء</option><option>سوهاج</option>
-                </select>
-              </div>
-            </div>
-            <div class="field field-full">
-              <label for="accAddress">العنوان بالتفصيل</label>
-              <textarea id="accAddress" rows="3" placeholder="المنطقة، الشارع، العمارة، الدور، الشقة..."></textarea>
-            </div>
-            <div class="field field-full">
-              <label>موقعك على الخريطة <span class="field-label-note">(اختياري)</span></label>
-              <div class="delivery-location-card">
-                <p class="delivery-location-copy">احفظ موقعك مرة واحدة ليتم استخدامه تلقائيًا لاحقًا أثناء الطلب.</p>
-                <div class="delivery-location-actions profile-location-actions">
-                  <button type="button" class="btn btn-ghost btn-sm" id="accUseCurrentLocationBtn">استخدم موقعي الحالي</button>
-                  <button type="button" class="btn btn-ghost btn-sm" id="accOpenGoogleMapsBtn">افتح خرائط Google</button>
-                  <button type="button" class="btn btn-ghost btn-sm hidden" id="accClearLocationBtn">مسح الموقع</button>
-                </div>
-                <div class="delivery-google-link-row">
-                  <input type="url" id="accGoogleMapsLinkInput" class="delivery-google-link-input" placeholder="الصق رابط الموقع من خرائط Google هنا" dir="ltr" inputmode="url" autocomplete="off">
-                  <button type="button" class="btn btn-primary btn-sm" id="accApplyGoogleMapsLinkBtn">تأكيد الرابط</button>
-                </div>
-                <div class="delivery-picker-helper"><span>يمكنك استخدام موقعك الحالي أو لصق رابط من خرائط Google.</span></div>
-                <div class="delivery-location-status" id="accLocationStatus">لم يتم حفظ موقع على الخريطة بعد.</div>
-                <a id="accLocationLink" class="delivery-location-link hidden" href="#" target="_blank" rel="noopener">فتح الموقع المحفوظ</a>
-              </div>
-              <p class="account-location-note">إذا كان العنوان النصي غير كافٍ، سيساعد هذا الموقع في تسهيل التسليم لاحقًا.</p>
-            </div>
-          </div>
+  function handleDrawerCartClick(e) {
+    const btn = e.target.closest('[data-id]');
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+    if (!id) return;
 
-          <div class="account-save-row">
-            <button id="saveProfileBtn" type="button" class="btn btn-primary">حفظ التغييرات</button>
-            <p id="profileMsg" class="admin-login-msg" aria-live="polite"></p>
-          </div>
-        </section>
+    let cart = readCart();
+    const idx = cart.findIndex(i => Number(i.id) === id);
+    if (idx === -1) return;
 
-        <!-- Sidebar -->
-        <aside class="account-sidebar">
-          <h3>الحساب والتسوق</h3>
-          <div class="account-quick-links">
-            <a href="./my-orders.html" class="btn btn-primary" style="width:100%;justify-content:center">📦 طلباتي</a>
-            <a href="./index.html#products" class="btn btn-ghost" style="width:100%;justify-content:center">🕯️ تسوق الآن</a>
-            <a href="./cart.html" class="btn btn-ghost" style="width:100%;justify-content:center">🛍️ السلة</a>
-            <div class="account-sidebar-divider"></div>
-            <button id="logoutBtn2" type="button" class="btn btn-ghost" style="width:100%;justify-content:center;color:#C0524C;border-color:rgba(192,82,76,.25)">تسجيل الخروج</button>
-          </div>
-        </aside>
-
-      </div>
-    </div>
-  </main>
-
-  <div class="toast" id="toast" aria-live="polite"></div>
-
-  <script src="./assets/js/cache-cleanup.js"></script>
-  <script src="./site-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./assets/js/auth-config.js"></script>
-  <script>
-    const sb = createAuthClient();
-    let currentUser = null;
-    const $ = (s) => document.querySelector(s);
-    const CUSTOMER_STORAGE_KEY = 'candles-customer-info';
-    const PROFILE_LOCATION_KEY = 'candles-profile-location';
-    const profileLocationState = { lat: null, lng: null, mapsLink: '', source: '' };
-
-    function showToast(msg) {
-      const t = $('#toast');
-      if (!t) return;
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
+    if (btn.classList.contains('cd-minus')) {
+      cart[idx].qty = Math.max(1, (cart[idx].qty || 1) - 1);
+    } else if (btn.classList.contains('cd-plus')) {
+      cart[idx].qty = (cart[idx].qty || 1) + 1;
+    } else if (btn.classList.contains('cd-remove')) {
+      const removed = cart.splice(idx, 1)[0];
+      showUndoToast(removed, cart, idx);
     }
 
-    function setMsg(text, type = '') {
-      const el = $('#profileMsg');
-      if (!el) return;
-      el.textContent = text;
-      el.className = `admin-login-msg ${type}`.trim();
+    localStorage.setItem('candles-cart', JSON.stringify(cart));
+    renderCartDrawer();
+    syncCartCount(cart);
+  }
+
+  // Undo toast for remove
+  let undoTimer = null;
+  function showUndoToast(removed, cart, idx) {
+    clearTimeout(undoTimer);
+    const existing = $('#undoToast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'undoToast';
+    toast.className = 'undo-toast';
+    toast.innerHTML = `
+      <span>تم إزالة «${escH(removed.name)}»</span>
+      <button class="undo-toast-btn" id="undoRemoveBtn">تراجع</button>`;
+    document.body.appendChild(toast);
+
+    raf(() => toast.classList.add('show'));
+
+    $('#undoRemoveBtn')?.addEventListener('click', () => {
+      cart.splice(idx, 0, removed);
+      localStorage.setItem('candles-cart', JSON.stringify(cart));
+      renderCartDrawer();
+      syncCartCount(cart);
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+      clearTimeout(undoTimer);
+    });
+
+    undoTimer = setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 4000);
+  }
+
+  function syncCartCount(cart) {
+    const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
+    $$('#cartCount').forEach(el => el.textContent = count);
+  }
+
+  function openDrawer() {
+    const drawer = $('#cartDrawer');
+    if (!drawer) return;
+    const panel = $('#cartDrawerPanel');
+    if (isMobile() && panel) {
+      panel.classList.add('slide-from-bottom');
+    } else {
+      panel?.classList.remove('slide-from-bottom');
     }
+    renderCartDrawer();
+    drawer.classList.add('open');
+    document.body.classList.add('drawer-open');
+    setTimeout(() => $('#cdClose')?.focus(), 150);
+  }
 
-    function updateCartCount() {
-      try {
-        const raw = localStorage.getItem('candles-cart');
-        const cart = raw ? JSON.parse(raw) : [];
-        const count = Array.isArray(cart) ? cart.reduce((s, i) => s + (Number(i.qty) || 0), 0) : 0;
-        const el = $('#cartCount');
-        if (el) el.textContent = count;
-      } catch {}
+  function closeDrawer() {
+    const drawer = $('#cartDrawer');
+    if (!drawer) return;
+    drawer.classList.remove('open');
+    document.body.classList.remove('drawer-open');
+    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
+  }
+
+  window.closeCartDrawer = closeDrawer;
+
+  // Cart icon should navigate to cart.html by default.
+  // Mini-drawer is only enabled for elements that explicitly request it.
+  document.addEventListener('click', e => {
+    const cartBtn = e.target.closest('.cart-btn[data-drawer="true"]');
+    if (!cartBtn) return;
+    if (cartBtn.closest('.site-header')) {
+      e.preventDefault();
+      openDrawer();
     }
+  });
 
-    const headerEl = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => headerEl && headerEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
-
-    function normalizeCoordinate(value) {
-      const n = Number(value);
-      return Number.isFinite(n) ? Number(n.toFixed(6)) : null;
+  // Also re-render drawer when cart changes (other tabs)
+  window.addEventListener('storage', e => {
+    if (e.key === 'candles-cart') {
+      renderCartDrawer();
+      syncCartCount(readCart());
     }
+  });
 
-    function buildMapsLink(lat, lng) {
-      const safeLat = normalizeCoordinate(lat);
-      const safeLng = normalizeCoordinate(lng);
-      if (!Number.isFinite(safeLat) || !Number.isFinite(safeLng)) return '';
-      return `https://www.google.com/maps?q=${safeLat},${safeLng}`;
+  /* ─────────────────────────────────────────────────────────────
+     3. ADD-TO-CART SPARKLE BURST
+  ───────────────────────────────────────────────────────────── */
+  function spawnSparkles(originEl) {
+    if (!originEl) return;
+    const rect = originEl.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2 + window.scrollX;
+    const cy = rect.top + rect.height / 2 + window.scrollY;
+
+    const colors = ['#C9A46A','#F5D78E','#A07840','#FFE4A0','#D4A86A'];
+    for (let i = 0; i < 12; i++) {
+      const s = document.createElement('span');
+      s.className = 'sparkle-particle';
+      const angle = (360 / 12) * i;
+      const dist = 40 + Math.random() * 50;
+      const dx = Math.cos(angle * Math.PI / 180) * dist;
+      const dy = Math.sin(angle * Math.PI / 180) * dist;
+      const size = 6 + Math.random() * 6;
+      s.style.cssText = `
+        left:${cx}px; top:${cy}px; width:${size}px; height:${size}px;
+        background:${colors[i % colors.length]};
+        --dx:${dx}px; --dy:${dy}px;
+      `;
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 800);
     }
+  }
 
-    function extractGoogleMapsCoordinates(link) {
-      const value = String(link || '').trim();
-      if (!value) return { lat: null, lng: null };
-      const patterns = [
-        /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-        /[?&]q=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-        /[?&]query=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
-        /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-      ];
-      for (const pattern of patterns) {
-        const match = value.match(pattern);
+  // Observe add-to-cart clicks (after script.js fires)
+  document.addEventListener('click', e => {
+    const addBtn = e.target.closest('.add-to-cart, .modal-add, .card-atc');
+    if (!addBtn) return;
+    // Skip if button is in disabled/success state
+    if (addBtn.disabled || addBtn.classList.contains('btn--added') || addBtn.classList.contains('btn--go-cart')) return;
+    // Flash the button
+    addBtn.classList.add('btn-success-flash');
+    setTimeout(() => addBtn.classList.remove('btn-success-flash'), 500);
+    // Sparkles from the button
+    spawnSparkles(addBtn);
+    // Bounce the cart count badge
+    $$('#cartCount').forEach(el => {
+      el.classList.add('cart-bounce');
+      setTimeout(() => el.classList.remove('cart-bounce'), 500);
+    });
+  }, true); // capture phase — cosmetic only, script.js handles logic
+
+  /* ─────────────────────────────────────────────────────────────
+     4. PRODUCT CARD STAGGER — animate cards as they appear
+  ───────────────────────────────────────────────────────────── */
+  function staggerCards(container) {
+    const cards = $$('.product-card:not(.skeleton-card)', container);
+    cards.forEach((card, i) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = `opacity .45s ease ${i * 0.06}s, transform .45s ease ${i * 0.06}s`;
+      raf(() => raf(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }));
+    });
+  }
+
+  // Watch for script.js to render products
+  const productGrid = document.getElementById('productGrid');
+  if (productGrid) {
+    const mo = new MutationObserver(mutations => {
+      mutations.forEach(m => {
+        if (m.addedNodes.length && !$$('.skeleton-card', productGrid).length) {
+          staggerCards(productGrid);
+        }
+      });
+    });
+    mo.observe(productGrid, { childList: true });
+    window.__staggerObs = mo;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     5. STICKY FILTER BAR with active indicator pill
+  ───────────────────────────────────────────────────────────── */
+  function initStickyFilters() {
+    const filtersEl = document.getElementById('filters');
+    if (!filtersEl) return;
+
+    const sentinel = document.createElement('div');
+    sentinel.id = 'filtersSentinel';
+    sentinel.style.cssText = 'position:absolute;top:0;height:1px;width:100%;pointer-events:none';
+    const section = filtersEl.closest('section');
+    if (section) section.style.position = 'relative';
+    filtersEl.parentElement?.insertBefore(sentinel, filtersEl);
+
+    const io = new IntersectionObserver(
+      ([entry]) => filtersEl.classList.toggle('filters-sticky', !entry.isIntersecting),
+      { threshold: 0 }
+    );
+    io.observe(sentinel);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     6. ANIMATED STAT COUNTERS — count up when in view
+  ───────────────────────────────────────────────────────────── */
+  function animateCounter(el, target, suffix, duration = 1200) {
+    const start = performance.now();
+    const update = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = Math.floor(eased * target);
+      el.textContent = current.toLocaleString('ar-EG') + suffix;
+      if (progress < 1) raf(update);
+    };
+    raf(update);
+  }
+
+  function initCounters() {
+    const statCards = $$('.stat-card');
+    if (!statCards.length) return;
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        io.unobserve(entry.target);
+        const strong = $('strong', entry.target);
+        if (!strong) return;
+        const text = strong.textContent.trim();
+        const match = text.match(/^(\d+)(.*)$/);
         if (match) {
-          const lat = normalizeCoordinate(match[1]);
-          const lng = normalizeCoordinate(match[2]);
-          if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+          animateCounter(strong, parseInt(match[1]), match[2]);
+        }
+      });
+    }, { threshold: 0.6 });
+
+    statCards.forEach(card => io.observe(card));
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     7. PRODUCT COUNT DISPLAY — live "عرض X منتج"
+  ───────────────────────────────────────────────────────────── */
+  function initProductCounter() {
+    const grid = document.getElementById('productGrid');
+    const hint = document.getElementById('productAnnounce');
+    if (!grid || !hint) return;
+
+    const mo = new MutationObserver(() => {
+      const cards = $$('.product-card:not(.skeleton-card)', grid);
+      if (cards.length) {
+        hint.textContent = `يتم عرض ${cards.length} منتج`;
+      }
+    });
+    mo.observe(grid, { childList: true, subtree: false });
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     8. SEARCH HIGHLIGHT — highlight matching text in product titles
+  ───────────────────────────────────────────────────────────── */
+  function highlightSearch() {
+    const input = document.getElementById('productSearchInput');
+    if (!input) return;
+    const grid = document.getElementById('productGrid');
+
+    input.addEventListener('input', () => {
+      const query = input.value.trim();
+      $$('.product-title', grid).forEach(title => {
+        if (!query) {
+          title.innerHTML = escH(title.textContent);
+          return;
+        }
+        const text = title.textContent;
+        const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        title.innerHTML = text.replace(regex, '<mark class="search-highlight">$1</mark>');
+      });
+    });
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     9. TYPEWRITER HERO SUBTITLE — cycling scent descriptions
+  ───────────────────────────────────────────────────────────── */
+  function initTypewriter() {
+    const target = document.querySelector('.hero-copy .subtitle');
+    if (!target) return;
+
+    const phrases = [
+      'شمع طبيعي وروائح مختارة — لمسات ديكور تُضيء المكان.',
+      'كل شمعة مصبوبة يدويًا بعناية لأجواء أكثر دفئًا.',
+      'روائح فانيلا، عود، لافندر — اختر ما يناسب لحظتك.',
+      'هدايا أنيقة أو ديكور هادئ — لكل مناسبة شمعتها.',
+    ];
+
+    const originalText = target.textContent.trim();
+    let currentPhrase = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isPaused = false;
+
+    // Don't run if user prefers reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Don't run on mobile — saves CPU, users scroll past hero quickly
+    if (window.innerWidth < 768) return;
+
+    // Wait 3 seconds before starting
+    setTimeout(() => {
+      target.setAttribute('data-typewriter', 'true');
+      tick();
+    }, 3000);
+
+    function tick() {
+      const phrase = phrases[currentPhrase];
+
+      if (!isDeleting) {
+        target.textContent = phrase.slice(0, ++charIndex);
+        if (charIndex === phrase.length) {
+          isPaused = true;
+          setTimeout(() => { isPaused = false; isDeleting = true; tick(); }, 2200);
+          return;
+        }
+      } else {
+        target.textContent = phrase.slice(0, --charIndex);
+        if (charIndex === 0) {
+          isDeleting = false;
+          currentPhrase = (currentPhrase + 1) % phrases.length;
         }
       }
-      return { lat: null, lng: null };
+
+      const speed = isDeleting ? 28 : 42;
+      setTimeout(tick, speed);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     10. WHATSAPP BUTTON — attention pulse after idle
+  ───────────────────────────────────────────────────────────── */
+  function initWAPulse() {
+    const waBtn = document.getElementById('floatingWhatsApp');
+    if (!waBtn) return;
+
+    // Pulse after 18 seconds of no interaction
+    let timer = setTimeout(pulse, 18000);
+
+    function pulse() {
+      waBtn.classList.add('wa-pulse');
+      setTimeout(() => waBtn.classList.remove('wa-pulse'), 2000);
+      timer = setTimeout(pulse, 30000);
     }
 
-    function isGoogleMapsUrl(link) {
-      const value = String(link || '').trim();
-      return /^(https?:\/\/)?(www\.)?(google\.[^/]+\/maps|maps\.app\.goo\.gl)\//i.test(value);
+    // Reset timer on first interaction only — then rebind with once:true pattern
+    function resetPulseTimer() {
+      clearTimeout(timer);
+      timer = setTimeout(pulse, 25000);
     }
+    ['click','scroll','keydown','mousemove','touchstart'].forEach(ev => {
+      document.addEventListener(ev, resetPulseTimer, { once: false, passive: true, capture: false });
+    });
+  }
 
-    function normalizeGoogleMapsUrl(link) {
-      const value = String(link || '').trim();
-      if (!value) return '';
-      return /^https?:\/\//i.test(value) ? value : `https://${value}`;
-    }
+  /* ─────────────────────────────────────────────────────────────
+     11. IMAGE HOVER ZOOM CURSOR
+  ───────────────────────────────────────────────────────────── */
+  function initImageZoomCursor() {
+    // Throttle with RAF — mousemove fires 60-300x/sec
+    let rafPending = false;
+    document.addEventListener('mousemove', e => {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(() => {
+        rafPending = false;
+        const img = e.target.closest('.product-card .product-image');
+        if (!img) return;
+        const rect = img.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        img.style.transformOrigin = `${x}% ${y}%`;
+      });
+    }, { passive: true });
+  }
 
-    function getLocationSourceLabel(source) {
-      const map = {
-        current_gps: 'الموقع الحالي',
-        google_maps_link: 'رابط من خرائط Google',
-      };
-      return map[source] || 'موقع محفوظ';
-    }
+  /* ─────────────────────────────────────────────────────────────
+     12. LIFESTYLE TRACK — auto-scroll on desktop
+  ───────────────────────────────────────────────────────────── */
+  function initLifestyleAutoScroll() {
+    const track = document.getElementById('lifestyleTrack');
+    if (!track) return;
 
-    function hasProfileLocation() {
-      return (Number.isFinite(profileLocationState.lat) && Number.isFinite(profileLocationState.lng)) || !!String(profileLocationState.mapsLink || '').trim();
-    }
+    let paused = false;
+    let scrollPos = 0;
+    const speed = 0.6;
 
-    function renderProfileLocationUi() {
-      const statusEl = $('#accLocationStatus');
-      const linkEl = $('#accLocationLink');
-      const clearBtn = $('#accClearLocationBtn');
-      const input = $('#accGoogleMapsLinkInput');
-      if (input && profileLocationState.mapsLink) input.value = profileLocationState.mapsLink;
-      if (!hasProfileLocation()) {
-        if (statusEl) {
-          statusEl.classList.remove('is-selected');
-          statusEl.textContent = 'لم يتم حفظ موقع على الخريطة بعد.';
+    function autoScroll() {
+      if (!paused) {
+        scrollPos += speed;
+        if (scrollPos >= track.scrollWidth - track.clientWidth) {
+          scrollPos = 0;
         }
-        if (linkEl) {
-          linkEl.classList.add('hidden');
-          linkEl.removeAttribute('href');
+        track.scrollLeft = scrollPos;
+      }
+      raf(autoScroll);
+    }
+
+    // Pause on hover / touch
+    track.addEventListener('mouseenter', () => paused = true);
+    track.addEventListener('mouseleave', () => paused = false);
+    track.addEventListener('touchstart', () => paused = true, { passive: true });
+
+    // Only on pointer devices — never on touch (let users swipe naturally)
+    const noTouch = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const noReduce = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (noTouch && noReduce) {
+      raf(autoScroll);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     13. SMOOTH SECTION NUMBERS — animated entrance for stats
+  ───────────────────────────────────────────────────────────── */
+  function initTrustHoverTip() {
+    $$('.trust-card').forEach(card => {
+      card.setAttribute('tabindex', '0');
+    });
+    $$('.feature').forEach(f => f.setAttribute('tabindex', '0'));
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     INIT — wait for DOM
+  ───────────────────────────────────────────────────────────── */
+
+  /* ── Swipe-to-close cart drawer on mobile ── */
+  function initDrawerSwipe() {
+    const panel = document.getElementById('cartDrawerPanel');
+    if (!panel) return;
+    let startX = 0, startY = 0, isDragging = false;
+    const SWIPE_THRESHOLD = 80;
+
+    panel.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isDragging = true;
+    }, { passive: true });
+
+    panel.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      const isHorizontal = Math.abs(dx) > Math.abs(dy);
+      if (isMobile()) {
+        // Bottom-sheet: swipe down to close
+        if (dy > 0 && !isHorizontal) {
+          panel.style.transform = `translateY(${dy}px)`;
         }
-        if (clearBtn) clearBtn.classList.add('hidden');
-        return;
+      } else {
+        // Side panel: swipe left to close
+        if (dx < 0 && isHorizontal) {
+          panel.style.transform = `translateX(${dx}px)`;
+        }
       }
-      const link = profileLocationState.mapsLink || buildMapsLink(profileLocationState.lat, profileLocationState.lng);
-      const coords = Number.isFinite(profileLocationState.lat) && Number.isFinite(profileLocationState.lng)
-        ? ` (${profileLocationState.lat.toFixed(5)}, ${profileLocationState.lng.toFixed(5)})`
-        : '';
-      if (statusEl) {
-        statusEl.classList.add('is-selected');
-        statusEl.textContent = `تم حفظ الموقع — ${getLocationSourceLabel(profileLocationState.source)}${coords}`;
+    }, { passive: true });
+
+    panel.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      panel.style.transform = '';
+      panel.style.transition = '';
+      if (isMobile() ? dy > SWIPE_THRESHOLD : dx < -SWIPE_THRESHOLD) {
+        closeDrawer();
       }
-      if (linkEl && link) {
-        linkEl.href = link;
-        linkEl.classList.remove('hidden');
-      }
-      if (clearBtn) clearBtn.classList.remove('hidden');
-    }
+    }, { passive: true });
+  }
 
-    function saveProfileLocationToStorage() {
-      const payload = {
-        lat: profileLocationState.lat,
-        lng: profileLocationState.lng,
-        mapsLink: profileLocationState.mapsLink || '',
-        source: profileLocationState.source || '',
-      };
-      localStorage.setItem(PROFILE_LOCATION_KEY, JSON.stringify(payload));
-    }
+  function init() {
+    initScrollProgress();
+    buildCartDrawer();
+    initStickyFilters();
+    initCounters();
+    initProductCounter();
+    highlightSearch();
+    initWAPulse();
+    initImageZoomCursor();
+    initLifestyleAutoScroll();
+    initTrustHoverTip();
 
-    function loadProfileLocationFromStorage() {
-      try {
-        const raw = localStorage.getItem(PROFILE_LOCATION_KEY);
-        const data = raw ? JSON.parse(raw) : null;
-        if (!data) { renderProfileLocationUi(); return; }
-        profileLocationState.lat = normalizeCoordinate(data.lat);
-        profileLocationState.lng = normalizeCoordinate(data.lng);
-        profileLocationState.mapsLink = String(data.mapsLink || '').trim();
-        profileLocationState.source = String(data.source || '').trim();
-      } catch {}
-      renderProfileLocationUi();
+    // Typewriter: delay to avoid competing with page load
+    if (document.readyState === 'complete') {
+      initTypewriter();
+    } else {
+      window.addEventListener('load', initTypewriter);
     }
+  }
 
-    function setProfileLocation(payload = {}) {
-      profileLocationState.lat = normalizeCoordinate(payload.lat);
-      profileLocationState.lng = normalizeCoordinate(payload.lng);
-      profileLocationState.mapsLink = String(payload.mapsLink || buildMapsLink(payload.lat, payload.lng) || '').trim();
-      profileLocationState.source = String(payload.source || '').trim();
-      saveProfileLocationToStorage();
-      renderProfileLocationUi();
+  // Disconnect observers on page hide to free memory
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      window.__staggerObs?.disconnect();
+      window.__filterObs?.disconnect();
+      window.__wlObs?.disconnect();
+      window.__spObs?.disconnect();
+      window.__priceFilterObs?.disconnect();
     }
+  });
 
-    function clearProfileLocation() {
-      profileLocationState.lat = null;
-      profileLocationState.lng = null;
-      profileLocationState.mapsLink = '';
-      profileLocationState.source = '';
-      localStorage.removeItem(PROFILE_LOCATION_KEY);
-      const input = $('#accGoogleMapsLinkInput');
-      if (input) input.value = '';
-      renderProfileLocationUi();
-    }
 
-    function applyProfileGoogleMapsLink() {
-      const input = $('#accGoogleMapsLinkInput');
-      const url = normalizeGoogleMapsUrl(input?.value || '');
-      if (!url) { showToast('الصق رابط الموقع أولًا'); return; }
-      if (!isGoogleMapsUrl(url)) { showToast('ألصق رابطًا صحيحًا من خرائط Google'); return; }
-      const coords = extractGoogleMapsCoordinates(url);
-      setProfileLocation({ lat: coords.lat, lng: coords.lng, mapsLink: url, source: 'google_maps_link' });
-      if (input) input.value = url;
-      showToast('تم حفظ موقعك على الخريطة');
-    }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
-    function useCurrentProfileLocation() {
-      if (!navigator.geolocation) { showToast('المتصفح لا يدعم تحديد الموقع'); return; }
-      showToast('جارٍ تحديد موقعك...');
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setProfileLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            source: 'current_gps',
-          });
-          showToast('تم حفظ موقعك الحالي');
-        },
-        () => showToast('تعذر الوصول إلى موقعك الحالي'),
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    }
+})();
 
-    function syncCustomerStorage({ name = '', phone = '', city = '', address = '' } = {}) {
-      try {
-        const raw = localStorage.getItem(CUSTOMER_STORAGE_KEY);
-        const currentCustomer = raw ? JSON.parse(raw) : {};
-        const merged = {
-          ...currentCustomer,
-          name,
-          phone,
-          city,
-          address,
-          deliveryLat: hasProfileLocation() ? profileLocationState.lat : null,
-          deliveryLng: hasProfileLocation() ? profileLocationState.lng : null,
-          deliveryMapsLink: hasProfileLocation() ? (profileLocationState.mapsLink || buildMapsLink(profileLocationState.lat, profileLocationState.lng)) : '',
-          deliveryLocationSource: hasProfileLocation() ? (profileLocationState.source || 'google_maps_link') : '',
-        };
-        localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(merged));
-      } catch {}
-    }
+/* ════════════════════════════════════════════════════════
+   PREMIUM CARD QUICK ACTIONS
+   Injects quick-action overlay into product cards
+   ════════════════════════════════════════════════════════ */
+(function initQuickActions() {
+  const grid = document.getElementById('productGrid');
+  if (!grid) return;
 
-    async function loadProfile(userId) {
-      const { data } = await sb.from('profiles').select('full_name, email, phone, governorate, address').eq('id', userId).single();
-      return data;
-    }
+  function injectActions(card) {
+    if (card.querySelector('.card-quick-actions')) return;
+    if (card.classList.contains('skeleton-card')) return;
 
-    async function saveProfile(userId, payload) {
-      const { error } = await sb.from('profiles').upsert({ id: userId, ...payload, updated_at: new Date().toISOString() }, { onConflict: 'id' });
-      return error;
-    }
+    const id = card.dataset.id;
+    if (!id) return;
 
-    function fillForm(profile, userEmail) {
-      if ($('#accName'))       $('#accName').value       = profile?.full_name || '';
-      if ($('#accEmail'))      $('#accEmail').value      = userEmail || '';
-      if ($('#accPhone'))      $('#accPhone').value      = profile?.phone || '';
-      if ($('#accGovernoate')) $('#accGovernoate').value = profile?.governorate || '';
-      if ($('#accAddress'))    $('#accAddress').value    = profile?.address || '';
-      loadProfileLocationFromStorage();
-      syncCustomerStorage({
-        name: profile?.full_name || '',
-        phone: profile?.phone || '',
-        city: profile?.governorate || '',
-        address: profile?.address || '',
+    const wrap = document.createElement('div');
+    wrap.className = 'card-quick-actions';
+    // Only inject "view" overlay — ATC is already on the card to avoid double-fire
+    wrap.innerHTML = `
+      <button class="card-quick-btn cqb-view" data-id="${id}" type="button" aria-label="عرض المنتج">
+        👁 عرض التفاصيل
+      </button>`;
+
+    // Insert inside card, after image
+    const img = card.querySelector('.product-image');
+    if (img) img.parentNode.insertBefore(wrap, img.nextSibling);
+    else card.insertBefore(wrap, card.firstChild);
+  }
+
+  const mo = new MutationObserver(() => {
+    grid.querySelectorAll('.product-card:not(.skeleton-card)').forEach(injectActions);
+  });
+  mo.observe(grid, { childList: true, subtree: false });
+  grid.querySelectorAll('.product-card:not(.skeleton-card)').forEach(injectActions);
+  /* ═══════════════════════════════════════════════════════════
+     CANDLE RIPPLE — warm amber burst on product card click
+  ═══════════════════════════════════════════════════════════ */
+  (function initCandleRipple() {
+    document.addEventListener('pointerdown', function (e) {
+      var card = e.target.closest('.product-card:not(.skeleton-card)');
+      if (!card) return;
+
+      var existing = card.querySelector('.card-ripple');
+      if (existing) existing.remove();
+
+      var rect   = card.getBoundingClientRect();
+      var ripple = document.createElement('span');
+      ripple.className = 'card-ripple';
+      ripple.style.top  = (e.clientY - rect.top)  + 'px';
+      ripple.style.left = (e.clientX - rect.left) + 'px';
+      card.appendChild(ripple);
+
+      ripple.addEventListener('animationend', function() { ripple.remove(); }, { once: true });
+    }, { passive: true });
+  })();
+
+
+  /* ═══════════════════════════════════════════════════════════
+     UX ENHANCEMENTS — card feedback · search hint · scroll cue
+  ═══════════════════════════════════════════════════════════ */
+  (function initUXEnhancements() {
+
+    // ── 1. Card feedback handled by script.js (card--added class) ──
+    // Removed duplicate here to avoid double-feedback on add-to-cart clicks.
+
+    // ── 2. Search hint fades when user starts typing ───────────
+    const searchInput = document.getElementById('productSearchInput');
+    const searchHint  = document.getElementById('searchHint');
+    if (searchInput && searchHint) {
+      searchInput.addEventListener('input', function() {
+        searchHint.classList.toggle('hidden', this.value.length > 0);
       });
     }
 
-    async function init() {
-      updateCartCount();
-      loadProfileLocationFromStorage();
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { window.location.href = './login.html?redirect=' + encodeURIComponent('./account.html'); return; }
-      currentUser = session.user;
-      const profile = await loadProfile(currentUser.id);
-      fillForm(profile, currentUser.email);
-      const displayName = profile?.full_name || currentUser.email || 'مرحبًا';
-      const heading = $('#accountHeading');
-      if (heading) heading.textContent = `مرحبًا، ${displayName}`;
+    // ── 3. Hero scroll cue — hide mobile sticky on hero ────────
+    // Show mobile sticky CTA only after user scrolls past hero
+    const heroSection = document.getElementById('hero-section');
+    const stickyCta   = document.querySelector('.mobile-sticky-cta');
+    if (heroSection && stickyCta) {
+      const heroObs = new IntersectionObserver(
+        ([entry]) => stickyCta.classList.toggle('above-fold', entry.isIntersecting),
+        { threshold: 0.10 }
+      );
+      heroObs.observe(heroSection);
     }
 
-    async function handleSave() {
-      if (!currentUser) return;
-      const name = $('#accName')?.value?.trim() || '';
-      const phone = $('#accPhone')?.value?.trim() || '';
-      const governorate = $('#accGovernoate')?.value?.trim() || '';
-      const address = $('#accAddress')?.value?.trim() || '';
-      if (phone && typeof authValidatePhone === 'function' && !authValidatePhone(phone)) { setMsg('اكتب رقم موبايل مصري صحيح', 'is-error'); return; }
-      const saveBtn = $('#saveProfileBtn');
-      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'جارٍ الحفظ...'; }
-      setMsg('');
-      const error = await saveProfile(currentUser.id, { full_name: name, email: currentUser.email, phone, governorate, address });
-      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'حفظ التغييرات'; }
-      if (error) { setMsg('تعذر الحفظ، أعد المحاولة', 'is-error'); showToast('تعذر حفظ التغييرات'); }
-      else {
-        syncCustomerStorage({ name, phone, city: governorate, address });
-        setMsg('تم حفظ التغييرات ✓', 'is-success');
-        showToast('تم حفظ بياناتك بنجاح');
-        const heading = $('#accountHeading');
-        if (heading && name) heading.textContent = `مرحبًا، ${name}`;
+    // ── 4. Keyboard: Enter on product card opens modal ──────────
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter') return;
+      const card = e.target.closest('.product-card:not(.skeleton-card)');
+      if (card && e.target === card) {
+        e.preventDefault();
+        const id = card.dataset.id;
+        if (id && typeof openProduct === 'function') openProduct(Number(id));
       }
+    });
+
+    // ── 5. Filter change announces count to screen readers ──────
+    const announce = document.getElementById('productAnnounce');
+    const grid     = document.getElementById('productGrid');
+    if (announce && grid) {
+      new MutationObserver(() => {
+        const count = grid.querySelectorAll('.product-card:not(.skeleton-card)').length;
+        if (count > 0) announce.textContent = `${count} منتج متاح`;
+      }).observe(grid, { childList: true });
     }
 
-    async function handleLogout() { await sb.auth.signOut(); window.location.href = './index.html'; }
+  })();
 
-    $('#saveProfileBtn')?.addEventListener('click', handleSave);
-    $('#logoutBtn')?.addEventListener('click', handleLogout);
-    $('#logoutBtn2')?.addEventListener('click', handleLogout);
-    $('#accUseCurrentLocationBtn')?.addEventListener('click', useCurrentProfileLocation);
-    $('#accOpenGoogleMapsBtn')?.addEventListener('click', () => window.open('https://www.google.com/maps/search/?api=1&query=Egypt', '_blank', 'noopener'));
-    $('#accApplyGoogleMapsLinkBtn')?.addEventListener('click', applyProfileGoogleMapsLink);
-    $('#accClearLocationBtn')?.addEventListener('click', () => { clearProfileLocation(); syncCustomerStorage({ name: $('#accName')?.value?.trim() || '', phone: $('#accPhone')?.value?.trim() || '', city: $('#accGovernoate')?.value?.trim() || '', address: $('#accAddress')?.value?.trim() || '' }); showToast('تم مسح الموقع المحفوظ'); });
-    $('#accGoogleMapsLinkInput')?.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); applyProfileGoogleMapsLink(); } });
 
-    init();
-  </script>
-
-  <script src="./assets/js/scroll-fix.js"></script>
-  <script src="./assets/js/mobile-bottom-nav.js"></script>
-</body>
-</html>
+})();
+} // end guard

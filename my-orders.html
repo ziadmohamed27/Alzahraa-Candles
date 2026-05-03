@@ -1,264 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-<meta name="description" content="تابع جميع طلباتك السابقة من Alzahraa Candles في مكان واحد.">
+<meta name="description" content="دخول لوحة إدارة متجر Alzahraa Candles.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>طلباتي | Alzahraa Candles</title>
-  <meta name="robots" content="noindex, follow">
+  <title>تسجيل دخول الإدارة | Alzahraa Candles</title>
+  <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#A07840">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="طلباتي | Alzahraa Candles">
-  <meta property="og:description" content="تابع سجل طلباتك من Alzahraa Candles.">
-  <meta property="og:url" content="https://alzahraa-candles.netlify.app/my-orders.html">
-  <meta property="og:image" content="https://alzahraa-candles.netlify.app/og-image.png">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="طلباتي | Alzahraa Candles">
   <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
   <meta name="mobile-web-app-capable" content="yes">
-  <link rel="preconnect" href="https://wihhfwdaysupjpfzshfq.supabase.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
   <link rel="stylesheet" href="./assets/css/style.css">
   <link rel="stylesheet" href="./assets/css/premium.css">
-  <link rel="stylesheet" href="./assets/css/luxury-polish.css">
-  <link rel="stylesheet" href="./assets/css/candle-fx.css">
-  <link rel="stylesheet" href="./assets/css/ux-improvements.css">
-  <link rel="stylesheet" href="./assets/css/ux-v09.css">
-  <link rel="stylesheet" href="./assets/css/deep-fixes.css">
-  <link rel="stylesheet" href="./assets/css/mobile-bottom-nav.css">
-  <link rel="stylesheet" href="./assets/css/mobile-polish.css">
-  <link rel="stylesheet" href="./assets/css/mobile-storefront.css">
-  <link rel="canonical" href="https://alzahraa-candles.netlify.app/my-orders.html">
 </head>
 <body>
-  <header class="site-header" id="top">
-    <div class="container nav">
-      <a class="icon-btn menu-btn home-candle-btn" href="./index.html" aria-label="العودة للصفحة الرئيسية" title="الصفحة الرئيسية">
-        <span class="sr-only">الصفحة الرئيسية</span>
-        <span class="candle-home" aria-hidden="true">
-          <span class="candle-roof"></span>
-          <span class="candle-flame"></span>
-          <span class="candle-body"></span>
-        </span>
-      </a>
-      <a class="brand" href="./index.html">
-        <span class="brand-title">Alzahraa Candles</span>
-        <span class="brand-sub">HANDMADE · LUXURY</span>
-      </a>
-      <div class="nav-end-group">
-        <span id="accountNavWrap"></span>
-        <span id="notificationNavWrap"></span>
-        <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
-          <span class="cart-emoji">🛍️</span>
-          <span class="cart-count" id="cartCount">0</span>
+  <main class="admin-login-page">
+    <section class="admin-login-card">
+      <div class="admin-login-head">
+        <a class="brand auth-brand" href="./index.html">
+          <span class="brand-title">Alzahraa Candles</span>
+          <span class="brand-sub">HANDMADE · LUXURY</span>
         </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="account-page section">
-    <div class="container">
-
-      <div class="cart-page-head">
-        <div>
-          <span class="pill small">✦ طلباتي</span>
-          <h1>سجل طلباتي</h1>
-          <p>جميع طلباتك المسجلة عبر الموقع في مكان واحد.</p>
-        </div>
-        <div class="account-head-actions">
-          <a href="./account.html" class="btn btn-ghost">حسابي</a>
-          <a href="./index.html#products" class="btn btn-primary">تسوق الآن</a>
-        </div>
+        <span class="pill small" style="margin-top:8px">✦ لوحة الإدارة</span>
+        <h1>دخول الإدارة</h1>
+        <p>لوحة داخلية لمتابعة الطلبات وتحديث الحالة وتصدير البيانات.</p>
       </div>
 
-      <div id="ordersContainer">
-        <div class="myorders-loading">
-          <div class="myorders-loading-icon">🕯️</div>
-          <p>جارٍ تحميل طلباتك...</p>
-        </div>
-      </div>
+      <label class="admin-field">
+        <span>البريد الإلكتروني</span>
+        <input type="email" id="adminEmail" placeholder="name@example.com" autocomplete="email">
+      </label>
 
-    </div>
+      <label class="admin-field">
+        <span>كلمة المرور</span>
+        <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password">
+      </label>
+
+      <button id="adminLoginBtn" type="button" class="admin-primary-btn">دخول لوحة الإدارة</button>
+      <p id="adminLoginMsg" class="admin-login-msg" aria-live="polite"></p>
+
+      <a href="./index.html" class="btn btn-ghost admin-back-btn">العودة للمتجر</a>
+    </section>
   </main>
-
-  <div class="toast" id="toast" aria-live="polite"></div>
 
   <script src="./assets/js/cache-cleanup.js"></script>
   <script src="./site-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./assets/js/auth-config.js"></script>
   <script>
-    const sb = createAuthClient();
-    const WHATSAPP_NUMBER = '201095314011';
-    const PRODUCT_IMAGES_BUCKET = 'products';
-    const $ = (s) => document.querySelector(s);
+    const SITE_CONFIG = window.__SITE_CONFIG__ || {};
+    const SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
+    const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const headerEl = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => headerEl && headerEl.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+    const emailInput    = document.getElementById('adminEmail');
+    const passwordInput = document.getElementById('adminPassword');
+    const loginBtn      = document.getElementById('adminLoginBtn');
+    const msg           = document.getElementById('adminLoginMsg');
 
-    function updateCartCount() {
-      try {
-        const raw = localStorage.getItem('candles-cart');
-        const cart = raw ? JSON.parse(raw) : [];
-        const count = Array.isArray(cart) ? cart.reduce((s, i) => s + (Number(i.qty) || 0), 0) : 0;
-        const el = $('#cartCount'); if (el) el.textContent = count;
-      } catch {}
+    function setMessage(text, type = '') {
+      msg.textContent = text;
+      msg.className = `admin-login-msg ${type}`.trim();
     }
 
-    function showToast(message) {
-      const toast = $('#toast'); if (!toast) return;
-      toast.textContent = message; toast.classList.add('show');
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
+    async function redirectIfAuthenticated() {
+      const { data } = await supabaseClient.auth.getUser();
+      if (data.user) window.location.href = './admin-orders.html';
     }
 
-    const money = (v) => `${Number(v || 0).toFixed(2)} ج.م`;
-
-    function escHtml(str) {
-      if (typeof str !== 'string') return String(str ?? '');
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    }
-
-    function formatDate(iso) {
-      if (!iso) return '—';
-      try { return new Date(iso).toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' }); } catch { return iso; }
-    }
-
-    const statusMap = { pending:'قيد المراجعة', confirmed:'تم التأكيد', processing:'قيد التجهيز', delivered:'تم التوصيل', cancelled:'ملغى' };
-    const statusClassMap = { pending:'is-pending', confirmed:'is-confirmed', processing:'is-processing', delivered:'is-delivered', cancelled:'is-cancelled' };
-
-    function buildItemsList(items) {
-      if (!Array.isArray(items) || !items.length) return '<p style="color:var(--muted);font-size:.9rem">لا توجد تفاصيل منتجات.</p>';
-      return items.map(i => `
-        <div class="myorder-item">
-          <div class="myorder-item-name">${escHtml(i.name || '—')}</div>
-          <div class="myorder-item-meta">
-            <span>${escHtml(String(i.qty || 1))} × ${money(i.price)}</span>
-            <strong>${money((i.price || 0) * (i.qty || 1))}</strong>
-          </div>
-        </div>`).join('');
-    }
-
-    function buildWhatsAppLink(order) {
-      const msg = `مرحبًا، أريد الاستفسار عن طلبي رقم: ${order.order_number || order.id}`;
-      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    }
-
-    function getProductImageUrl(imagePath) {
-      const value = String(imagePath || '').trim();
-      if (!value) return '';
-      if (/^https?:\/\//i.test(value)) return value;
-      const cleanPath = value.replace(/^\/+/, '');
-      const normalizedPath = cleanPath.startsWith(`${PRODUCT_IMAGES_BUCKET}/`) ? cleanPath.slice(PRODUCT_IMAGES_BUCKET.length + 1) : cleanPath;
-      const { data } = sb.storage.from(PRODUCT_IMAGES_BUCKET).getPublicUrl(normalizedPath);
-      return data?.publicUrl || '';
-    }
-
-    function normalizeReorderItem(product, qty) {
-      return { id: Number(product.id), name: product.name || '', price: Number(product.price) || 0, weight: product.weight || '', image_path: product.image || '', image: getProductImageUrl(product.image || ''), qty: Math.max(1, Number(qty) || 1) };
-    }
-
-    async function reorderOrder(orderId) {
-      const order = (window.__ordersCache || []).find((item) => String(item.id) === String(orderId));
-      if (!order) { showToast('تعذر العثور على الطلب'); return; }
-      const previousItems = Array.isArray(order.items_json) ? order.items_json : [];
-      const productIds = previousItems.map((item) => Number(item?.id)).filter((id) => Number.isFinite(id));
-      if (!productIds.length) { showToast('لا توجد منتجات قابلة لإعادة الطلب'); return; }
-      const { data: products, error } = await sb.from('products').select('id, name, price, weight, image').in('id', productIds);
-      if (error) { showToast('تعذر تجهيز الطلب الآن'); return; }
-      const productMap = new Map((products || []).map((p) => [String(p.id), p]));
-      const rebuiltCart = [];
-      const missingItems = [];
-      previousItems.forEach((item) => {
-        const product = productMap.get(String(item?.id));
-        if (!product) { missingItems.push(item?.name || `#${item?.id || '—'}`); return; }
-        rebuiltCart.push(normalizeReorderItem(product, item?.qty));
-      });
-      if (!rebuiltCart.length) { showToast('هذا الطلب يحتوي على منتجات غير متاحة حاليًا'); return; }
-      localStorage.setItem('candles-cart', JSON.stringify(rebuiltCart));
-      showToast(missingItems.length ? 'تمت إضافة المنتجات المتاحة فقط' : 'تمت إعادة تجهيز الطلب في السلة');
-      setTimeout(() => { window.location.href = './cart.html'; }, 350);
-    }
-
-    function renderOrders(orders) {
-      const container = $('#ordersContainer'); if (!container) return;
-      window.__ordersCache = Array.isArray(orders) ? orders : [];
-
-      if (!orders || !orders.length) {
-        container.innerHTML = `
-          <div class="myorders-empty">
-            <div class="myorders-empty-icon">🕯️</div>
-            <h3>لا توجد طلبات بعد</h3>
-            <p>ابدأ التسوق واستمتع بتجربة Alzahraa Candles!</p>
-            <a href="./index.html#products" class="btn btn-primary" style="margin-top:16px">اكتشف المجموعة</a>
-          </div>`;
-        return;
-      }
-
-      container.innerHTML = `<div class="myorders-list">${orders.map(order => `
-        <article class="myorder-card">
-          <div class="myorder-header">
-            <div class="myorder-header-right">
-              <span class="myorder-number">${escHtml(order.order_number || `#${order.id}`)}</span>
-              <span class="admin-status-badge ${statusClassMap[order.status] || ''}">${escHtml(statusMap[order.status] || order.status || '—')}</span>
-            </div>
-            <span class="myorder-date">${formatDate(order.created_at)}</span>
-          </div>
-
-          <div class="myorder-meta">
-            <div class="myorder-meta-item">
-              <span>الإجمالي</span>
-              <strong class="myorder-total">${money(order.total)}</strong>
-            </div>
-            ${order.city ? `<div class="myorder-meta-item"><span>المحافظة</span><strong>${escHtml(order.city)}</strong></div>` : ''}
-          </div>
-
-          <div class="myorder-items">
-            ${buildItemsList(order.items_json)}
-          </div>
-
-          <div class="myorder-actions">
-            <button type="button" class="btn btn-primary btn-sm" data-action="reorder-order" data-order-id="${escHtml(String(order.id))}">
-              🔄 إعادة الطلب
-            </button>
-            <a href="${buildWhatsAppLink(order)}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
-              💬 متابعة عبر واتساب
-            </a>
-          </div>
-        </article>`).join('')}
-      </div>`;
-    }
-
-    async function init() {
-      updateCartCount();
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { window.location.href = './login.html?redirect=' + encodeURIComponent('./my-orders.html'); return; }
-      const { data: orders, error } = await sb.from('orders').select('id, order_number, status, total, city, items_json, created_at').eq('user_id', session.user.id).order('created_at', { ascending: false });
+    async function handleLogin() {
+      const email    = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      if (!email || !password) { setMessage('اكتب البريد الإلكتروني وكلمة المرور.', 'is-error'); return; }
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'جارٍ تسجيل الدخول...';
+      setMessage('');
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
-        $('#ordersContainer').innerHTML = `<div class="admin-empty"><p style="color:#C0524C">تعذر تحميل الطلبات. أعد المحاولة لاحقًا.</p></div>`;
+        setMessage('فشل تسجيل الدخول. تأكد من الإيميل والباسورد.', 'is-error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'دخول لوحة الإدارة';
         return;
       }
-      renderOrders(orders);
+      setMessage('تم تسجيل الدخول بنجاح ✓', 'is-success');
+      setTimeout(() => { window.location.href = './admin-orders.html'; }, 500);
     }
 
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-action="reorder-order"]');
-      if (btn) reorderOrder(btn.dataset.orderId);
-    });
-
-    init();
+    loginBtn.addEventListener('click', handleLogin);
+    [passwordInput, emailInput].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); }));
+    redirectIfAuthenticated();
   </script>
-
   <script src="./assets/js/scroll-fix.js"></script>
-  <script src="./assets/js/mobile-bottom-nav.js"></script>
 </body>
 </html>

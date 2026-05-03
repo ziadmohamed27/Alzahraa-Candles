@@ -1,0 +1,171 @@
+/* ================================================================
+   ux-improvements.css — Alzahraa Candles
+   Scope: collection tiles · mobile sticky · cart empty state ·
+          hero arrow · skip link · section backgrounds.
+   Cards/modal are fully owned by ux-v09.css — no overlap.
+   ================================================================ */
+
+/* ═══════════════════════════════════════════════════════════
+   COLLECTION TILES — functional filter shortcuts
+   ═══════════════════════════════════════════════════════════ */
+.collection-tile {
+  cursor: pointer;
+  appearance: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  text-align: right;
+}
+.collection-tile-cta {
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+  font-size: .76rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.85);
+  letter-spacing: .04em;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity .22s ease, transform .22s ease;
+  pointer-events: none;
+}
+.collection-tile:hover .collection-tile-cta,
+.collection-tile:focus-visible .collection-tile-cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+.collection-tile:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(191,142,82,.50);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE STICKY CTA — 3-button bar
+   ═══════════════════════════════════════════════════════════ */
+.mobile-sticky-cta {
+  display: none;
+  gap: 8px;
+  padding: 10px 16px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  transition: opacity .30s ease, transform .30s ease;
+}
+@media (max-width: 768px) {
+  .mobile-sticky-cta { display: flex; align-items: center; }
+}
+.mobile-sticky-cta.above-fold {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+}
+.sticky-shop-btn {
+  flex: 1;
+  text-align: center;
+  font-size: .88rem;
+  padding: 13px 12px;
+  border-radius: 14px;
+}
+.sticky-cart-btn {
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-size: .88rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(191,142,82,.28);
+  background: rgba(255,255,255,.80);
+  color: var(--text-mid, #4A2E1A);
+  white-space: nowrap;
+  transition: all .18s ease;
+}
+.sticky-cart-btn.has-items {
+  border-color: var(--gold, #BF8E52);
+  background: rgba(191,142,82,.08);
+}
+.sticky-cart-btn .sticky-cart-count {
+  display: inline-block;
+  font-weight: 800;
+  min-width: 16px;
+}
+.sticky-wa-btn {
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — scroll arrow on CTA
+   ═══════════════════════════════════════════════════════════ */
+.btn-arrow {
+  display: inline-block;
+  margin-right: 4px;
+  transition: transform .22s ease;
+}
+.btn-primary:hover .btn-arrow { transform: translateY(2px); }
+
+
+/* ═══════════════════════════════════════════════════════════
+   CART EMPTY STATE
+   ═══════════════════════════════════════════════════════════ */
+.cart-page-empty  { text-align: center; padding: 60px 24px; }
+.cart-empty-icon  { font-size: 3rem; margin-bottom: 16px; opacity: .6; }
+.cart-empty-title {
+  font-family: "El Messiri", serif;
+  font-size: 1.38rem;
+  font-weight: 700;
+  color: var(--text, #291508);
+  margin-bottom: 8px;
+}
+.cart-empty-sub {
+  font-size: .92rem;
+  color: var(--muted, #8C7060);
+  margin-bottom: 24px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+.cart-empty-btn { display: inline-flex; margin-bottom: 10px; }
+.cart-wa-btn    { display: block; margin-top: 8px; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   SEARCH HINT
+   ═══════════════════════════════════════════════════════════ */
+.products-search-hint {
+  font-size: .80rem;
+  color: rgba(140,112,96,.72);
+  margin-top: 8px;
+  text-align: center;
+  transition: opacity .2s ease;
+  letter-spacing: .02em;
+}
+.products-search-hint.hidden { opacity: 0; pointer-events: none; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION BACKGROUNDS
+   ═══════════════════════════════════════════════════════════ */
+#guide      { background: linear-gradient(180deg, #F4EDDF 0%, #EFE5D0 100%); }
+#confidence { background: linear-gradient(180deg, #F8F3EA 0%, #F2E9D8 100%); }
+#products .section-head { margin-bottom: 28px; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   ACCESSIBILITY — skip link
+   ═══════════════════════════════════════════════════════════ */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  right: 16px;
+  background: var(--gold-dark, #96601E);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 0 0 12px 12px;
+  font-weight: 700;
+  font-size: .88rem;
+  z-index: 9999;
+  transition: top .2s ease;
+  text-decoration: none;
+}
+.skip-link:focus { top: 0; }
