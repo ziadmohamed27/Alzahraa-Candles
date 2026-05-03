@@ -708,15 +708,14 @@ function openProduct(id) {
   ].filter((v, i, arr) => v && arr.indexOf(v) === i).slice(0, 3);
 
   content.innerHTML = `
-    <!-- ① Sheet header (mobile): product short-name + close button -->
-    <div class="ms-sheet-header" aria-label="رأس صفحة المنتج">
-      <span class="ms-sheet-title">${escHtml(p.name.split(' ').slice(0,4).join(' '))}</span>
+    <div class="ms-sheet-header">
+      <span class="ms-sheet-title">${escHtml(p.name.split(' ').slice(0,5).join(' '))}</span>
       <button class="ms-sheet-close" type="button" aria-label="إغلاق" data-action="close-sheet">✕</button>
     </div>
 
     <div class="modal-layout">
 
-      <!-- Image -->
+      <!-- Product image -->
       <div class="modal-img-wrap">
         <img src="${p.image}" alt="${escHtml(p.name)}"
           onerror="this.style.background='var(--cream-mid)';this.removeAttribute('src')">
@@ -727,7 +726,7 @@ function openProduct(id) {
         </div>` : ''}
       </div>
 
-      <!-- Info column -->
+      <!-- Info + sticky footer -->
       <div class="modal-info">
         <div class="modal-info-scroll">
 
@@ -741,6 +740,7 @@ function openProduct(id) {
           </div>
 
           ${(p.longDescription || p.description) ? `<p class="modal-desc">${escHtml(p.longDescription || p.description)}</p>` : ''}
+
           ${hlChips}
           ${specPills ? `<div class="modal-spec-pills">${specPills}</div>` : ''}
           ${benBlock}
@@ -748,29 +748,29 @@ function openProduct(id) {
 
         </div>
 
-        <!-- STICKY CTA FOOTER -->
+        <!-- Sticky footer: always visible, contains CTA + WA + trust -->
         <div class="modal-cta-footer">
-          <!-- Trust strip — mini reassurance chips -->
-          <div class="ms-trust-strip" aria-label="ضمانات الطلب">
+
+          <button class="btn btn-primary modal-add modal-add-main ms-cta-main"
+            data-id="${p.id}" type="button"
+            data-price="${escHtml(money(p.price))}"
+            data-name="${escHtml(p.name)}">
+            + أضف للسلة — ${money(p.price)}
+          </button>
+
+          <a class="ms-btn-wa" target="_blank" rel="noopener" href="${waLink}"
+            aria-label="اسأل عن المنتج عبر واتساب">
+            💬 اسأل عن المنتج
+          </a>
+
+          <div class="ms-trust-strip" aria-label="ضمانات">
             <span>📦 تأكيد قبل الشحن</span>
             <span>🎁 تغليف آمن</span>
             <span>🚚 توصيل مصر</span>
             <span>💵 دفع عند الاستلام</span>
           </div>
 
-          <!-- Primary CTA: add to cart with price -->
-          <button class="btn btn-primary modal-add modal-add-main ms-cta-main" data-id="${p.id}" type="button"
-            data-price="${escHtml(money(p.price))}" data-name="${escHtml(p.name)}">
-            + أضف للسلة — ${money(p.price)}
-          </button>
-
-          <!-- WhatsApp secondary — text + icon, not just emoji -->
-          <a class="btn ms-btn-wa" target="_blank" rel="noopener" href="${waLink}"
-            aria-label="اسأل عن المنتج عبر واتساب">
-            💬 اسأل عن المنتج
-          </a>
         </div>
-
       </div>
     </div>
   `;
@@ -778,6 +778,8 @@ function openProduct(id) {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
 
   // Focus the add button for a11y
   setTimeout(() => content.querySelector('.modal-add-main')?.focus(), 80);
@@ -785,9 +787,11 @@ function openProduct(id) {
 
 function closeProduct() {
   const overlay = $('#productModalOverlay');
-  if (overlay) overlay.classList.add('hidden');
+  if (overlay) {
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
   document.body.classList.remove('modal-open');
-  // Ensure body scroll is always restored
   document.body.style.overflow = '';
   document.documentElement.style.overflow = '';
   if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
