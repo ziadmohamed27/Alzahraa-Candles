@@ -1,0 +1,1039 @@
+/* ================================================================
+   mobile-final.css — Alzahraa Candles
+   THE definitive mobile layer. Loaded absolutely last.
+   Fixes all cascade conflicts. No regressions on desktop.
+   Target: 360px · 375px · 390px · 412px · 430px · 768px
+   ================================================================ */
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 0 — FOUNDATION: box-model + overflow guards (all screens)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  /* scroll-margin for hash navigation */
+}
+
+img, video, iframe, canvas, table, svg {
+  max-width: 100%;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 1 — PRODUCT BOTTOM SHEET (mobile only)
+   All of § 1 targets ONLY max-width: 768px
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+
+  /* ── 1a: Overlay — flex column, sheet snaps to bottom ── */
+  #productModalOverlay {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+    background: rgba(20, 10, 4, 0.60) !important;
+    backdrop-filter: blur(3px) !important;
+    -webkit-backdrop-filter: blur(3px) !important;
+  }
+
+  #productModalOverlay.hidden {
+    display: none !important;
+  }
+
+  /* ── 1b: The sheet itself ── */
+  #productModalOverlay .product-modal {
+    /* Reset desktop styles */
+    all: initial !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 93vh !important;
+    min-height: 220px !important;
+
+    /* Sheet chrome */
+    background: #fff8eb !important;
+    border-radius: 22px 22px 0 0 !important;
+    box-shadow: 0 -6px 32px rgba(80, 40, 10, 0.22) !important;
+
+    /* Prevent SHEET itself from scrolling — children scroll */
+    overflow: hidden !important;
+
+    /* Entrance animation */
+    animation: mfSheetIn 0.30s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  }
+
+  @keyframes mfSheetIn {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+
+  /* ── 1c: Hide the old desktop close button ── */
+  #productModalOverlay #closeProductModal {
+    display: none !important;
+  }
+
+  /* ── 1d: Modal content wrapper — NO padding, full height flex ── */
+  #productModalOverlay #productModalContent {
+    all: initial !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  /* ── 1e: Sheet Header (sticky top) ── */
+  .ms-sheet-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-direction: row-reverse !important; /* close button right for RTL ease */
+    padding: 14px 16px 12px !important;
+    background: #fff8eb !important;
+    border-bottom: 1px solid rgba(190, 155, 90, 0.20) !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    z-index: 10 !important;
+
+    /* drag handle above header */
+    border-top: none !important;
+  }
+
+  /* Drag handle pill */
+  .ms-sheet-header::before {
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    top: -12px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 38px !important;
+    height: 4px !important;
+    border-radius: 2px !important;
+    background: rgba(160, 120, 60, 0.28) !important;
+  }
+
+  .ms-sheet-title {
+    font-family: 'El Messiri', 'Tajawal', serif !important;
+    font-size: 0.90rem !important;
+    font-weight: 700 !important;
+    color: #2c1a0e !important;
+    line-height: 1.2 !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+    direction: rtl !important;
+    padding-right: 8px !important;
+  }
+
+  /* ── 1f: Close button — clear, 44×44 touch target ── */
+  .ms-sheet-close {
+    all: unset !important;
+    box-sizing: border-box !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 50% !important;
+    background: rgba(195, 160, 90, 0.14) !important;
+    border: 1.5px solid rgba(195, 160, 90, 0.30) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 17px !important;
+    line-height: 1 !important;
+    color: #2c1a0e !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: background 0.15s !important;
+  }
+
+  .ms-sheet-close:active {
+    background: rgba(195, 160, 90, 0.35) !important;
+    transform: scale(0.93) !important;
+  }
+
+  /* ── 1g: modal-layout — column on mobile ── */
+  #productModalOverlay .modal-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    gap: 0 !important;
+    grid-template-columns: none !important; /* kill desktop grid */
+  }
+
+  /* ── 1h: Product image ── */
+  #productModalOverlay .modal-img-wrap {
+    width: 100% !important;
+    max-height: 240px !important;
+    min-height: 160px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    border-radius: 0 !important;
+  }
+
+  #productModalOverlay .modal-img-wrap img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 240px !important;
+    object-fit: cover !important;
+    display: block !important;
+    border-radius: 0 !important;
+  }
+
+  /* ── 1i: modal-info = scrollable region + sticky footer ── */
+  #productModalOverlay .modal-info {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    background: #fff8eb !important;
+  }
+
+  /* ── 1j: Scrollable info area ── */
+  #productModalOverlay .modal-info-scroll {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding: 14px 16px 4px !important;
+  }
+
+  /* Product name in sheet */
+  #productModalOverlay .modal-name {
+    font-size: 1.10rem !important;
+    font-weight: 700 !important;
+    margin: 0 0 8px !important;
+    color: #2c1a0e !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Price */
+  #productModalOverlay .modal-price {
+    font-size: 1.22rem !important;
+    font-weight: 800 !important;
+    color: #9c7340 !important;
+  }
+
+  /* Description: max 4 lines */
+  #productModalOverlay .modal-desc {
+    font-size: 0.84rem !important;
+    line-height: 1.5 !important;
+    color: #5a3a18 !important;
+    -webkit-line-clamp: 4 !important;
+    -webkit-box-orient: vertical !important;
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    margin: 8px 0 !important;
+  }
+
+  /* Highlights chips */
+  #productModalOverlay .modal-hl-chips {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin: 8px 0 !important;
+  }
+
+  #productModalOverlay .modal-hl-chips span {
+    font-size: 0.74rem !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    background: rgba(190, 155, 90, 0.12) !important;
+    border: 1px solid rgba(190, 155, 90, 0.25) !important;
+    color: #6a4018 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Spec pills */
+  #productModalOverlay .modal-spec-pills {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    margin: 6px 0 !important;
+  }
+
+  /* ── 1k: Sticky CTA footer ── */
+  #productModalOverlay .modal-cta-footer {
+    /* Definitive sticky footer */
+    position: sticky !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    flex-shrink: 0 !important;
+    z-index: 20 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+
+    background: #fff8eb !important;
+    border-top: 1px solid rgba(190, 155, 90, 0.22) !important;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+
+    /* Subtle lift shadow */
+    box-shadow: 0 -4px 16px rgba(80, 40, 10, 0.08) !important;
+  }
+
+  /* Trust strip: one row, scrollable if needed */
+  #productModalOverlay .ms-trust-strip {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 2px !important;
+    order: 3 !important; /* below both buttons */
+  }
+
+  #productModalOverlay .ms-trust-strip::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  #productModalOverlay .ms-trust-strip span {
+    font-size: 0.66rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    padding: 4px 9px !important;
+    border-radius: 20px !important;
+    background: rgba(190, 155, 90, 0.10) !important;
+    border: 1px solid rgba(190, 155, 90, 0.22) !important;
+    color: #7c5a30 !important;
+    font-weight: 600 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+  }
+
+  /* ── PRIMARY CTA: Add to cart with price ── */
+  #productModalOverlay .ms-cta-main {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 52px !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #b07d35, #9c6828) !important;
+    color: #fff !important;
+    font-size: 0.96rem !important;
+    font-weight: 800 !important;
+    font-family: 'Tajawal', 'El Messiri', serif !important;
+    cursor: pointer !important;
+    border: none !important;
+    text-align: center !important;
+    -webkit-tap-highlight-color: transparent !important;
+    order: 1 !important; /* first */
+    transition: opacity 0.15s, transform 0.15s !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  #productModalOverlay .ms-cta-main:active {
+    opacity: 0.88 !important;
+    transform: scale(0.98) !important;
+  }
+
+  /* Added state */
+  #productModalOverlay .ms-cta-main.btn--added {
+    background: linear-gradient(135deg, #4a7a2a, #3a6020) !important;
+  }
+
+  /* Go-cart state */
+  #productModalOverlay .ms-cta-main.btn--go-cart {
+    background: linear-gradient(135deg, #7a5018, #5a3a10) !important;
+  }
+
+  /* ── SECONDARY: WhatsApp button ── */
+  #productModalOverlay .ms-btn-wa {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    border-radius: 12px !important;
+    background: rgba(37, 211, 102, 0.07) !important;
+    border: 1.5px solid rgba(37, 211, 102, 0.38) !important;
+    color: #075e54 !important;
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    order: 2 !important; /* second */
+  }
+
+  #productModalOverlay .ms-btn-wa:active {
+    background: rgba(37, 211, 102, 0.15) !important;
+  }
+
+  /* Hide old desktop CTA elements on mobile */
+  #productModalOverlay .modal-cta-row { display: contents !important; }
+  #productModalOverlay .btn-wa-compact { display: none !important; }
+  #productModalOverlay .modal-micro-trust { display: none !important; }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 2 — PRODUCT CARDS (mobile)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+
+  .product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .product-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 16px !important;
+  }
+
+  .card-img-wrap {
+    width: 100% !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+
+  .card-img-wrap .product-image,
+  .product-card .product-image {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  .card-body {
+    padding: 8px 10px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    gap: 3px !important;
+  }
+
+  .card-name {
+    font-size: clamp(0.78rem, 3.4vw, 0.88rem) !important;
+    line-height: 1.28 !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    min-height: 2.2em !important;
+    margin: 0 0 2px !important;
+  }
+
+  /* Hide non-essential card elements */
+  .card-scent,
+  .card-mood-row,
+  .card-meta { display: none !important; }
+
+  .card-footer {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 5px !important;
+    flex-wrap: nowrap !important;
+    margin-top: auto !important;
+    padding-top: 6px !important;
+    border-top: 1px solid rgba(195, 160, 90, 0.20) !important;
+    min-height: 38px !important;
+  }
+
+  .card-price {
+    font-size: clamp(0.76rem, 3.3vw, 0.88rem) !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    color: #9c7340 !important;
+    line-height: 1 !important;
+  }
+
+  /* THE add-button: reset then rebuild */
+  .card-atc,
+  .product-card .btn-primary.card-atc,
+  .product-card [data-atc] {
+    all: unset !important;
+    box-sizing: border-box !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+
+    background: #9c7340 !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: 7px 10px !important;
+    font-size: clamp(0.64rem, 2.7vw, 0.75rem) !important;
+    font-weight: 700 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    min-height: 32px !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+    max-width: 54% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.1 !important;
+  }
+
+  .card-atc:active,
+  .product-card [data-atc]:active {
+    opacity: 0.82 !important;
+    transform: scale(0.94) !important;
+  }
+
+  /* Wishlist heart */
+  .card-fav-btn,
+  .card-wish-btn,
+  .wl-btn {
+    width: 30px !important;
+    height: 30px !important;
+    top: 7px !important;
+    right: 7px !important;
+    left: auto !important;
+    background: rgba(255, 248, 235, 0.82) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    padding: 0 !important;
+  }
+
+  /* Badge */
+  .card-badge, .badge {
+    font-size: 0.60rem !important;
+    padding: 3px 7px !important;
+    max-width: 68% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* 360px tight */
+@media (max-width: 380px) {
+  .product-grid { gap: 7px !important; }
+  .card-body { padding: 6px 8px 8px !important; }
+  .card-atc, .product-card [data-atc] {
+    padding: 5px 7px !important;
+    font-size: 0.62rem !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 3 — BOTTOM NAVIGATION (mobile)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 900px) {
+  /* Body padding so nothing hides under the bar */
+  body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Nav bar */
+  .mobile-bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: space-around !important;
+    height: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    background: rgba(255, 248, 235, 0.94) !important;
+    backdrop-filter: blur(16px) saturate(1.4) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.4) !important;
+    border-top: 1px solid rgba(175, 135, 60, 0.16) !important;
+    box-shadow: 0 -3px 20px rgba(100, 60, 15, 0.10) !important;
+  }
+
+  /* Nav items */
+  .mbn-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 !important;
+    gap: 2px !important;
+    padding: 6px 2px !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: transform 0.14s ease !important;
+    color: inherit !important;
+  }
+
+  .mbn-item:active { transform: scale(0.90) !important; }
+
+  .mbn-icon {
+    width: 22px !important;
+    height: 22px !important;
+    fill: none !important;
+    stroke: #9c7340 !important;
+    stroke-width: 1.7 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    display: block !important;
+  }
+
+  .mbn-label {
+    font-size: 9.5px !important;
+    font-weight: 500 !important;
+    color: #9c7340 !important;
+    white-space: nowrap !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    line-height: 1 !important;
+  }
+
+  .mbn-item.mbn-active .mbn-icon {
+    stroke: #b07d35 !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .mbn-item.mbn-active .mbn-label {
+    color: #b07d35 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Cart badge */
+  .mbn-cart-badge {
+    position: absolute !important;
+    top: -2px !important;
+    right: -4px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    padding: 0 4px !important;
+    border-radius: 8px !important;
+    background: #c0392b !important;
+    color: #fff !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1.5px solid rgba(255, 248, 235, 0.92) !important;
+    pointer-events: none !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+  }
+
+  .mbn-cart-badge[data-count="0"],
+  .mbn-cart-badge:empty {
+    opacity: 0 !important;
+    transform: scale(0.6) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 4 — MINI CART BAR (above bottom nav)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  #ms-mini-cart {
+    position: fixed !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 6px) !important;
+    z-index: 9990 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+
+    background: #1e1208 !important;
+    color: #fff !important;
+    border-radius: 14px !important;
+    padding: 11px 14px !important;
+    box-shadow: 0 4px 22px rgba(0,0,0,0.28) !important;
+
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+    pointer-events: none !important;
+    transition: opacity 0.24s ease, transform 0.24s cubic-bezier(0.22,1,0.36,1) !important;
+    max-width: 100% !important;
+  }
+
+  #ms-mini-cart.ms-mini-cart--visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: all !important;
+  }
+
+  #ms-mini-cart .ms-mini-cart__msg {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  #ms-mini-cart .ms-mini-cart__check {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    border-radius: 50% !important;
+    background: #4caf50 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 11px !important;
+    font-style: normal !important;
+  }
+
+  #ms-mini-cart .ms-mini-cart__cta {
+    all: unset !important;
+    box-sizing: border-box !important;
+    background: #9c7340 !important;
+    color: #fff !important;
+    border-radius: 9px !important;
+    padding: 6px 12px !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 5 — QUICK CHIPS (mobile)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#qs-chips { display: none; }
+
+@media (max-width: 768px) {
+  #qs-chips {
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    margin: 0 0 10px !important;
+  }
+
+  #qs-chips-inner {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 7px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 2px 0 8px !important;
+    max-width: 100% !important;
+  }
+
+  #qs-chips-inner::-webkit-scrollbar { display: none !important; }
+
+  .qs-chip {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    padding: 6px 13px !important;
+    border-radius: 20px !important;
+    font-size: 0.76rem !important;
+    font-weight: 600 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    cursor: pointer !important;
+    border: 1.5px solid rgba(190, 155, 90, 0.38) !important;
+    background: rgba(255, 248, 235, 0.90) !important;
+    color: #7c5a30 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: background 0.14s, border-color 0.14s, color 0.14s !important;
+    line-height: 1.3 !important;
+  }
+
+  .qs-chip:active { transform: scale(0.94) !important; }
+
+  .qs-chip--active {
+    background: #9c7340 !important;
+    border-color: #9c7340 !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 6 — RECENTLY VIEWED (mobile)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#recently-viewed-section { display: none; }
+
+@media (max-width: 768px) {
+  #recently-viewed-section {
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    padding: 16px 0 4px !important;
+    margin-top: 20px !important;
+  }
+
+  .rv-heading {
+    font-family: 'El Messiri', serif !important;
+    font-size: 0.96rem !important;
+    font-weight: 700 !important;
+    color: #2c1a0e !important;
+    margin: 0 0 10px !important;
+    direction: rtl !important;
+  }
+
+  .rv-track {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+    width: 100% !important;
+  }
+
+  .rv-track::-webkit-scrollbar { display: none !important; }
+
+  .rv-card {
+    flex-shrink: 0 !important;
+    width: 106px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    background: #fff8eb !important;
+    border: 1px solid rgba(190, 155, 90, 0.25) !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .rv-card:active { transform: scale(0.96) !important; }
+
+  .rv-img-wrap {
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    overflow: hidden !important;
+    background: rgba(190, 155, 90, 0.12) !important;
+  }
+
+  .rv-img-wrap img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  .rv-body {
+    padding: 5px 7px 7px !important;
+  }
+
+  .rv-name {
+    font-size: 0.70rem !important;
+    font-weight: 600 !important;
+    color: #2c1a0e !important;
+    line-height: 1.3 !important;
+    margin: 0 0 3px !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+  }
+
+  .rv-price {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    color: #9c7340 !important;
+    white-space: nowrap !important;
+    display: block !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 7 — TRUST STRIPS (cart page + general)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.cart-trust-strip { display: none; }
+
+@media (max-width: 768px) {
+  .cart-trust-strip {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    padding: 10px 0 4px !important;
+  }
+
+  .cart-trust-strip span {
+    font-size: 0.68rem !important;
+    color: #7c5a30 !important;
+    background: rgba(190, 155, 90, 0.12) !important;
+    border: 1px solid rgba(190, 155, 90, 0.22) !important;
+    border-radius: 20px !important;
+    padding: 4px 10px !important;
+    white-space: nowrap !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 8 — MOBILE CHECKOUT (cart.html)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  /* Form inputs: large tap targets */
+  #customerName, #customerPhone, #customerCity,
+  #customerAddress, #customerNotes,
+  .checkout-form input, .checkout-form select,
+  .checkout-form textarea, .cart-form input,
+  .cart-form select, .cart-form textarea {
+    min-height: 48px !important;
+    font-size: 1rem !important;
+    border-radius: 10px !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Inline field errors */
+  .ms-field-error {
+    display: block !important;
+    font-size: 0.74rem !important;
+    color: #c0392b !important;
+    margin-top: 4px !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    font-weight: 600 !important;
+  }
+
+  .ms-field-invalid {
+    border-color: #c0392b !important;
+    background: #fff5f5 !important;
+  }
+
+  /* Summary/submit: not hidden under nav */
+  .cart-actions, .checkout-actions, .cart-submit-wrap,
+  .cart-page-summary-card {
+    padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Submit buttons: full width */
+  #checkoutBtn, .cart-page-submit, .btn-whatsapp {
+    width: 100% !important;
+    min-height: 52px !important;
+    font-size: 0.96rem !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 9 — TOAST + WHATSAPP FLOAT positioning (mobile)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  .toast, .undo-toast {
+    bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(10px) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  .toast.show, .undo-toast.show {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  /* WhatsApp FAB: clear bottom nav */
+  .whatsapp-float, .whatsapp-btn,
+  a[href*="wa.me"], a[href*="whatsapp"] {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 10 — GENERAL MOBILE POLISH
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  /* Container: full width, consistent side padding */
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  /* Section spacing: tighter on mobile */
+  section { padding-top: 36px !important; padding-bottom: 36px !important; }
+
+  /* Headings: proportional to viewport */
+  h1 { font-size: clamp(1.5rem, 6.5vw, 2.2rem) !important; }
+  h2 { font-size: clamp(1.2rem, 5vw, 1.7rem) !important; }
+
+  /* Search bar: full width, tappable */
+  .products-search-wrap, .search-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #productSearchInput {
+    width: 100% !important;
+    min-height: 44px !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* Filter buttons: large tap targets */
+  .filter-btn {
+    min-height: 36px !important;
+    font-size: 0.80rem !important;
+    padding: 7px 13px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Prevent any fixed/absolute/sticky from causing horizontal overflow */
+  .site-header, .mobile-bottom-nav, #ms-mini-cart,
+  .toast, .undo-toast, .whatsapp-float {
+    max-width: 100vw !important;
+  }
+
+  /* Header: normal fixed behavior, no horizontal overflow */
+  .site-header {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+}

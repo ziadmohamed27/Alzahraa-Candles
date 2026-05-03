@@ -202,6 +202,7 @@ html, body {
   }
 }
 
+/* === SECTION 2 superseded by mobile-final.css — kept for reference ===
 /* ──────────────────────────────────────────────────────────────
    SECTION 2 — BOTTOM SHEET MODAL (mobile product preview)
    Replaces centered modal with a bottom sheet on mobile
@@ -367,6 +368,8 @@ html, body {
     }
   }
 }
+
+=== END SECTION 2 === */
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 3 — STICKY MINI CART BAR (above bottom nav)

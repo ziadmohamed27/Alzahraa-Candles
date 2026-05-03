@@ -4,6 +4,7 @@
    Loaded LAST — highest priority on mobile
    ================================================================ */
 
+/* === SECTION 1 superseded by mobile-final.css ===
 /* ──────────────────────────────────────────────────────────────
    SECTION 1 — BOTTOM SHEET: Header, Close, WA button, CTA
    ────────────────────────────────────────────────────────────── */
@@ -185,6 +186,8 @@
     padding: 12px 16px 0 !important;
   }
 }
+
+=== END === */
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 2 — QUICK FILTER CHIPS

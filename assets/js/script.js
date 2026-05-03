@@ -787,7 +787,9 @@ function closeProduct() {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
-  if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
+  // Ensure body scroll is always restored
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
   if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
 }
 
@@ -869,11 +871,11 @@ document.addEventListener('click', (e) => {
       const origLabel = addBtn.textContent.trim();
       addBtn.disabled = true;
       addBtn.classList.add('btn--added');
-      addBtn.innerHTML = '<span class="atc-check">✓</span> أُضيف إلى السلة';
+      addBtn.innerHTML = '<span class="atc-check">✓</span> تمت الإضافة';
 
-      // After 1s show "view cart" as next step
+      // After 1.1s: show "view cart" CTA — don't auto-navigate
       setTimeout(() => {
-        addBtn.innerHTML = '<span class="atc-check">🛍️</span> عرض السلة ←';
+        addBtn.innerHTML = '🛍️ عرض السلة';
         addBtn.classList.remove('btn--added');
         addBtn.classList.add('btn--go-cart');
         addBtn.disabled = false;
@@ -882,14 +884,17 @@ document.addEventListener('click', (e) => {
           closeProduct();
           window.location.href = './cart.html';
         };
-      }, 900);
+      }, 1100);
 
-      // Auto-close after 2.8s if no action
+      // Reset after 4s if user doesn't tap
       setTimeout(() => {
         if (addBtn.classList.contains('btn--go-cart')) {
-          closeProduct();
+          addBtn.classList.remove('btn--go-cart');
+          addBtn.textContent = origLabel;
+          addBtn.onclick = null;
+          addBtn.disabled = false;
         }
-      }, 2800);
+      }, 4000);
     }
     return;
   }
