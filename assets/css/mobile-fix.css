@@ -1,0 +1,761 @@
+/* ================================================================
+   mobile-fix.css — Alzahraa Candles
+   Root-cause fixes ONLY. Loaded last — overrides all conflicts.
+   No hacks. No transform scale. No setInterval. RTL-safe.
+   Fixes: horizontal overflow · cart items · qty buttons · sheet scroll
+   ================================================================ */
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 0 — GLOBAL OVERFLOW CONTAINMENT
+   Root cause: elements wider than viewport leak from padding,
+   absolute positioning, and flex children without min-width: 0.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  /* Disable rubber-band horizontal scroll (iOS) */
+  overscroll-behavior-x: none;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+}
+
+/* All media types must never exceed viewport */
+img, video, canvas, svg, iframe, embed, object {
+  max-width: 100%;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 1 — BODY PADDING: bottom nav clearance
+   88px = 64px nav + 24px buffer — no content hidden behind nav.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 2 — BOTTOM SHEET: correct flex architecture
+   Architecture:
+     #productModalOverlay  →  flex-end overlay
+       └─ .product-modal   →  flex-col, max-height: 92vh, overflow: hidden
+           ├─ ::before         (drag pill — 14px tall)
+           ├─ .ms-sheet-header (fixed header — ~48px, injected by JS)
+           └─ #productModalContent  (flex:1, overflow-y:auto  ← SCROLL HERE)
+               └─ .modal-layout  (flex-col)
+                   ├─ .modal-img-wrap   (image)
+                   └─ .modal-info       (flex-col, flex:1)
+                       ├─ .modal-info-scroll  (flex:1, overflow:hidden — content)
+                       └─ .modal-cta-footer   (flex-shrink:0 — sticky CTA)
+
+   Key fixes vs mobile-final.css:
+   • #productModalContent gets overflow-y:auto (not .modal-info-scroll)
+   • .modal-info: NO overflow:hidden (kills sticky)
+   • .modal-cta-footer: flex-shrink:0 only (no position:sticky needed)
+   • .modal-info-scroll: overflow:hidden (no scroll — parent scrolls)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+
+  /* ── Overlay ── */
+  #productModalOverlay {
+    position: fixed !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+    z-index: 9500 !important;
+    background: rgba(15, 8, 2, 0.60) !important;
+    backdrop-filter: blur(3px) !important;
+    -webkit-backdrop-filter: blur(3px) !important;
+  }
+
+  #productModalOverlay.hidden {
+    display: none !important;
+  }
+
+  /* ── Sheet ── */
+  #productModalOverlay .product-modal {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    max-height: 92dvh !important;
+    max-height: 92vh !important;   /* fallback */
+    min-height: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;  /* children manage their own scroll */
+
+    border-radius: 22px 22px 0 0 !important;
+    background: #fff8eb !important;
+    box-shadow: 0 -6px 32px rgba(50, 25, 5, 0.24) !important;
+
+    direction: rtl !important;
+    font-family: 'Tajawal', 'El Messiri', 'Segoe UI', Arial, sans-serif !important;
+    color: #2c1a0e !important;
+    animation: mfSheetIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  }
+
+  @keyframes mfSheetIn {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  /* ── Drag pill ── */
+  #productModalOverlay .product-modal::before {
+    content: '' !important;
+    display: block !important;
+    width: 38px !important;
+    height: 4px !important;
+    border-radius: 2px !important;
+    background: rgba(160, 120, 60, 0.24) !important;
+    margin: 10px auto 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── Sheet header (injected by JS outside #productModalContent) ── */
+  #productModalOverlay .ms-sheet-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 14px 10px !important;
+    flex-shrink: 0 !important;
+    border-bottom: 1px solid rgba(185, 148, 78, 0.16) !important;
+    background: #fff8eb !important;
+    direction: rtl !important;
+    min-height: 0 !important;
+    /* No ::before handle here — handle is on .product-modal::before */
+  }
+
+  #productModalOverlay .ms-sheet-title {
+    flex: 1 !important;
+    min-width: 0 !important;
+    font-size: 0.86rem !important;
+    font-weight: 700 !important;
+    color: #2c1a0e !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: right !important;
+    direction: rtl !important;
+    font-family: 'Tajawal', 'El Messiri', serif !important;
+  }
+
+  #productModalOverlay .ms-sheet-close {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    flex-shrink: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 50% !important;
+    border: 1.5px solid rgba(185, 148, 78, 0.26) !important;
+    background: rgba(185, 148, 78, 0.09) !important;
+    color: #2c1a0e !important;
+    font-size: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    font-family: inherit !important;
+  }
+
+  #productModalOverlay .ms-sheet-close:active {
+    background: rgba(185, 148, 78, 0.25) !important;
+  }
+
+  /* ── #productModalContent: THE scroll container ── */
+  #productModalOverlay #productModalContent {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;   /* ← THIS is where scrolling happens */
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    direction: rtl !important;
+  }
+
+  /* Remove drag handle from content (it's on .product-modal::before now) */
+  #productModalOverlay #productModalContent::before {
+    display: none !important;
+  }
+
+  /* ── modal-layout: flex column fills content ── */
+  #productModalOverlay .modal-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100% !important;  /* fill the scroll container */
+    gap: 0 !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+  }
+
+  /* ── Product image ── */
+  #productModalOverlay .modal-img-wrap {
+    width: 100% !important;
+    height: 210px !important;
+    min-height: 160px !important;
+    max-height: 210px !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    position: relative !important;
+    background: rgba(185, 148, 78, 0.08) !important;
+  }
+
+  #productModalOverlay .modal-img-wrap img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* ── .modal-info: flex column — info scroll + footer ── */
+  #productModalOverlay .modal-info {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    /* NO overflow: hidden here — that kills sticky/flex children */
+    overflow: visible !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    direction: rtl !important;
+  }
+
+  /* ── Scrollable content region — NOT the scroll container (parent is) ── */
+  #productModalOverlay .modal-info-scroll {
+    flex: 1 !important;
+    min-height: 0 !important;
+    /* Do NOT set overflow here — the scroll is on #productModalContent */
+    overflow: visible !important;
+    padding: 12px 16px 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    direction: rtl !important;
+  }
+
+  /* ── CTA FOOTER: last child of .modal-info flex column
+     flex-shrink:0 makes it stay at the bottom naturally.
+     No position:sticky needed — the parent is NOT overflow:auto. ── */
+  #productModalOverlay .modal-cta-footer {
+    flex-shrink: 0 !important;
+    min-height: 0 !important;
+    position: static !important;  /* override mobile-final.css sticky */
+
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+
+    background: #fff8eb !important;
+    border-top: 1px solid rgba(185, 148, 78, 0.18) !important;
+    box-shadow: 0 -2px 10px rgba(50, 25, 5, 0.06) !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    direction: rtl !important;
+    z-index: 5 !important;
+  }
+
+  /* Override old modal-cta-row flex */
+  #productModalOverlay .modal-cta-row {
+    display: contents !important;
+  }
+
+  /* ── Hide desktop-only close button ── */
+  #productModalOverlay #closeProductModal {
+    display: none !important;
+  }
+
+  /* ── Fix body.modal-open: don't lock body on mobile ── */
+  body.modal-open {
+    overflow: auto !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 3 — CART ITEMS: professional mobile layout
+   Root causes:
+   • .cart-page-item had no grid-template-columns → children flex oddly
+   • .qty-row-lg button 40×40 + qty-input 52px → too wide on 320px
+   • .cart-page-item-bottom flex-wrap:wrap → qty row breaks to new line
+   • Missing min-width:0 on content children
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+
+  /* Cart items list: single column, full width */
+  .cart-page-items {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Each cart item: 2-col grid [image | content] */
+  .cart-page-item {
+    display: grid !important;
+    grid-template-columns: 72px 1fr !important;
+    gap: 10px !important;
+    padding: 12px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    align-items: start !important;
+  }
+
+  /* Image: fixed square */
+  .cart-page-item-image {
+    width: 72px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .cart-page-item-image img {
+    width: 72px !important;
+    height: 72px !important;
+    min-width: 72px !important;
+    object-fit: cover !important;
+    border-radius: 10px !important;
+    display: block !important;
+    background: #f0e8d8 !important;
+  }
+
+  /* Content column: flex column, no overflow */
+  .cart-page-item-content {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  /* Top row: name + remove button */
+  .cart-page-item-top {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    min-width: 0 !important;
+  }
+
+  .cart-page-item-top > div {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .cart-page-item-top h3 {
+    font-size: 0.88rem !important;
+    line-height: 1.3 !important;
+    margin: 0 0 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-weight: 700 !important;
+    color: #2c1a0e !important;
+    direction: rtl !important;
+  }
+
+  .cart-page-item-top p {
+    font-size: 0.74rem !important;
+    color: #7c5a30 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Remove button */
+  .remove-btn {
+    flex-shrink: 0 !important;
+    font-size: 1rem !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    opacity: 0.75 !important;
+  }
+
+  .remove-btn:active {
+    opacity: 1 !important;
+    background: rgba(192, 57, 43, 0.10) !important;
+  }
+
+  /* ── Bottom row: price + qty ── */
+  /* dir="ltr" on qty-row in HTML already handles - N + order correctly */
+  .cart-page-item-bottom {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;  /* ← MUST NOT WRAP */
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .cart-page-item-price {
+    font-size: 0.94rem !important;
+    font-weight: 800 !important;
+    color: #9c7340 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+    line-height: 1 !important;
+  }
+
+  /* ── Qty row: compact, LTR ordered (- N +) ── */
+  .qty-row.qty-row-lg {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+    /* dir="ltr" is set in HTML — no need to set here */
+  }
+
+  .qty-row.qty-row-lg button {
+    /* Root fix: was 40×40, too large for 320px */
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    border-radius: 7px !important;
+    border: 1.5px solid rgba(185, 148, 78, 0.35) !important;
+    background: #fff8eb !important;
+    color: #2c1a0e !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+  }
+
+  .qty-row.qty-row-lg button:active {
+    background: rgba(185, 148, 78, 0.22) !important;
+  }
+
+  .qty-input {
+    /* Root fix: was 52px, now 34px — fits on 320px */
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: 16px !important;   /* ← prevents iOS auto-zoom on focus */
+    text-align: center !important;
+    border: 1.5px solid rgba(185, 148, 78, 0.35) !important;
+    border-radius: 7px !important;
+    background: #fff8eb !important;
+    color: #2c1a0e !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+    font-family: 'Tajawal', Arial, sans-serif !important;
+  }
+}
+
+/* 320px–360px: even tighter */
+@media (max-width: 370px) {
+  .cart-page-item {
+    grid-template-columns: 60px 1fr !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  .cart-page-item-image,
+  .cart-page-item-image img {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+  }
+
+  .qty-row.qty-row-lg button {
+    width: 27px !important;
+    height: 27px !important;
+    min-width: 27px !important;
+  }
+
+  .qty-input {
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 27px !important;
+  }
+
+  .cart-page-item-price {
+    font-size: 0.84rem !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 4 — FLOATING BUTTONS: clear the bottom nav
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  /* Floating WhatsApp: hide on mobile — bottom nav has products tab */
+  .floating-wa,
+  #floatingWhatsApp {
+    display: none !important;
+  }
+
+  /* Scroll-to-top: above bottom nav, right side */
+  .scroll-top-btn,
+  #scrollTopBtn {
+    position: fixed !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+    left: auto !important;
+    z-index: 9300 !important;
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1rem !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 5 — PRODUCT CARDS: ensure no overflow at 320px
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  .product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .product-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .product-card .card-body {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .product-card .card-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    flex-wrap: nowrap !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .product-card .card-price {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex-shrink: 1 !important;
+    max-width: 48% !important;
+  }
+
+  .product-card .card-atc {
+    flex-shrink: 0 !important;
+    max-width: 52% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 6 — CONTAINER: no excess horizontal padding
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    /* 14px each side — enough visual breathing room */
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Cart page: items wrap needs padding reset too */
+  .cart-page-items-wrap {
+    padding: 16px 0 !important;
+  }
+
+  .cart-page-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 7 — INPUTS: font-size ≥ 16px to prevent iOS auto-zoom
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    /* Prevent auto-zoom on iOS — must be exactly ≥ 16px */
+    font-size: max(16px, 1rem) !important;
+  }
+
+  /* But keep visual size compact for qty input */
+  .qty-input {
+    font-size: 16px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 8 — CART PAGE SUMMARY: clear the bottom nav
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  .cart-page-summary-card {
+    /* Extra padding at bottom so submit btn is above bottom nav */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Submit / WhatsApp button: full width, prominent */
+  #checkoutBtn,
+  .btn-whatsapp.cart-page-submit {
+    width: 100% !important;
+    min-height: 52px !important;
+    border-radius: 13px !important;
+    font-size: 0.96rem !important;
+    font-weight: 800 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 9 — TOAST & MINI CART: correct stacking above bottom nav
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  /* Toast: above mini-cart bar */
+  .toast,
+  .undo-toast,
+  #toast {
+    position: fixed !important;
+    bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) translateY(10px) !important;
+    max-width: calc(100vw - 32px) !important;
+    width: auto !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    text-align: center !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: 9400 !important;
+  }
+
+  .toast.show,
+  .undo-toast.show {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+    pointer-events: auto !important;
+  }
+
+  /* Mini cart: above bottom nav, below toast */
+  #ms-mini-cart {
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 6px) !important;
+    z-index: 9390 !important;
+    left: 12px !important;
+    right: 12px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   § 10 — FIXED/ABSOLUTE ELEMENTS: prevent horizontal overflow
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  /* These elements must never cause horizontal scroll */
+  .site-header,
+  .mobile-bottom-nav,
+  #ms-mini-cart,
+  .toast,
+  #toast,
+  .undo-toast,
+  #productModalOverlay {
+    max-width: 100vw !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent any deep children from escaping viewport */
+  main,
+  .container,
+  section,
+  article,
+  aside {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Filter chips row: horizontal scroll contained */
+  #filters {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  /* Quick chips */
+  #qs-chips {
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Recently viewed */
+  #recently-viewed-section {
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+}

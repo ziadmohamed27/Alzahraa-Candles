@@ -132,6 +132,7 @@
   ]
 }</script>
   <link rel="stylesheet" href="./assets/css/mobile-final.css">
+  <link rel="stylesheet" href="./assets/css/mobile-fix.css">
 </head>
 <body class="storefront-body">
   <a href="#products" class="skip-link">تخطي للمنتجات</a>
@@ -622,10 +623,12 @@
   <button class="scroll-top-btn" id="scrollTopBtn" aria-label="العودة لأعلى">↑</button>
 
   <!-- ═══════════════════════════════ MODAL ═══ -->
-  <div class="overlay hidden" id="productModalOverlay">
-    <div class="modal product-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="close-btn" id="closeProductModal" aria-label="إغلاق">×</button>
-      <div class="modal-content" id="productModalContent"></div>
+  <div class="overlay hidden" id="productModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal product-modal">
+      <!-- close btn for desktop only — mobile uses ms-sheet-header injected by openProduct() -->
+      <button class="close-btn" id="closeProductModal" aria-label="إغلاق" type="button">×</button>
+      <!-- ms-sheet-header is prepended here by JS on mobile -->
+      <div id="productModalContent"></div>
     </div>
   </div>
 

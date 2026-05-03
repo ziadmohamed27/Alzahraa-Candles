@@ -707,12 +707,33 @@ function openProduct(id) {
     p.weight && p.weight.trim(),
   ].filter((v, i, arr) => v && arr.indexOf(v) === i).slice(0, 3);
 
-  content.innerHTML = `
-    <div class="ms-sheet-header">
-      <span class="ms-sheet-title">${escHtml(p.name.split(' ').slice(0,5).join(' '))}</span>
-      <button class="ms-sheet-close" type="button" aria-label="إغلاق" data-action="close-sheet">✕</button>
-    </div>
+  // ── Mobile bottom sheet structure ──────────────────────────────────
+  // On mobile: .product-modal is a flex column:
+  //   1. .ms-sheet-header  (fixed height, outside scroll zone)
+  //   2. #productModalContent  (flex:1, overflow-y:auto)
+  //      └─ .modal-layout (image + info + sticky footer)
+  //
+  // We inject the header directly into .product-modal before content.
+  // ─────────────────────────────────────────────────────────────────
 
+  const productModal = $('#productModalOverlay .product-modal');
+
+  // Remove any previous sheet header
+  const oldHeader = productModal?.querySelector('.ms-sheet-header');
+  if (oldHeader) oldHeader.remove();
+
+  // Inject sheet header before #productModalContent (mobile only)
+  if (productModal && window.innerWidth <= 768) {
+    const sheetHeader = document.createElement('div');
+    sheetHeader.className = 'ms-sheet-header';
+    sheetHeader.innerHTML = `
+      <span class="ms-sheet-title">${escHtml(p.name.split(' ').slice(0, 5).join(' '))}</span>
+      <button class="ms-sheet-close" type="button" aria-label="إغلاق" data-action="close-sheet">✕</button>
+    `;
+    productModal.insertBefore(sheetHeader, content);
+  }
+
+  content.innerHTML = `
     <div class="modal-layout">
 
       <!-- Product image -->
@@ -778,8 +799,12 @@ function openProduct(id) {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  document.body.style.overflow = 'hidden';
-  document.documentElement.style.overflow = 'hidden';
+  // On mobile the bottom sheet handles its own scroll — don't lock the whole body.
+  // On desktop the overlay backdrop is enough.
+  if (window.innerWidth > 768) {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+  }
 
   // Focus the add button for a11y
   setTimeout(() => content.querySelector('.modal-add-main')?.focus(), 80);
