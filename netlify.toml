@@ -1,109 +1,43 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-<meta name="description" content="لوحة إدارة طلبات متجر Alzahraa Candles — للمشرفين فقط.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>إدارة الطلبات | Alzahraa Candles</title>
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#A07840">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
-  <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
-  <link rel="stylesheet" href="./assets/css/style.css">
-</head>
-<body>
-  <main class="admin-shell container">
+[build]
+  command = "node scripts/generate-site-config.js"
+  publish = "."
 
-    <section class="admin-topbar">
-      <div>
-        <span class="pill small">✦ لوحة الإدارة</span>
-        <h1>إدارة الطلبات</h1>
-        <p>فلترة متقدمة، فرز سريع، تصدير CSV، وإشارات واضحة للطلبات الجديدة والمتأخرة.</p>
-      </div>
-      <div class="admin-topbar-actions">
-        <button id="refreshBtn" type="button" class="btn btn-ghost">🔄 تحديث</button>
-        <button id="exportCsvBtn" type="button" class="btn btn-ghost">📥 تصدير CSV</button>
-        <button id="logoutBtn" type="button" class="btn btn-ghost" style="color:#C0524C;border-color:rgba(192,82,76,.3)">خروج</button>
-      </div>
-    </section>
+# Keep site-config fresh because it contains runtime Supabase configuration.
+[[headers]]
+  for = "/site-config.js"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"
+    Pragma = "no-cache"
 
-    <section class="admin-tools-card">
-      <div class="admin-tools-grid admin-tools-grid-advanced">
-        <label class="admin-search-wrap admin-span-2">
-          <span>البحث</span>
-          <input type="text" id="searchInput" placeholder="ابحث برقم الطلب أو الاسم أو الهاتف">
-        </label>
-        <label class="admin-filter-wrap">
-          <span>الحالة</span>
-          <select id="statusFilter">
-            <option value="">كل الحالات</option>
-            <option value="pending">قيد المراجعة</option>
-            <option value="confirmed">تم التأكيد</option>
-            <option value="processing">قيد التجهيز</option>
-            <option value="delivered">تم التسليم</option>
-            <option value="cancelled">ملغي</option>
-          </select>
-        </label>
-        <label class="admin-filter-wrap">
-          <span>المحافظة</span>
-          <select id="cityFilter"><option value="">كل المحافظات</option></select>
-        </label>
-        <label class="admin-filter-wrap">
-          <span>من تاريخ</span>
-          <input type="date" id="dateFrom">
-        </label>
-        <label class="admin-filter-wrap">
-          <span>إلى تاريخ</span>
-          <input type="date" id="dateTo">
-        </label>
-        <label class="admin-filter-wrap">
-          <span>الترتيب</span>
-          <select id="sortSelect">
-            <option value="newest">الأحدث أولاً</option>
-            <option value="oldest">الأقدم أولاً</option>
-            <option value="highest_total">الأعلى قيمة</option>
-            <option value="lowest_total">الأقل قيمة</option>
-            <option value="pending_first">المعلّقة أولاً</option>
-          </select>
-        </label>
-      </div>
-      <div class="admin-tools-actions-row">
-        <button id="clearFiltersBtn" type="button" class="btn btn-ghost btn-sm">مسح الفلاتر</button>
-        <div id="adminLastUpdated" class="admin-last-updated">آخر تحديث: —</div>
-      </div>
-    </section>
+# HTML pages should be revalidated after each deploy.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://wa.me; frame-ancestors 'none';"
 
-    <section id="ordersStats" class="admin-stats-grid"></section>
+# JS/CSS are revalidated to avoid stale frontend code during active development.
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
-    <section class="admin-list-head">
-      <div>
-        <h2>الطلبات</h2>
-        <p class="admin-list-sub">تابع الحالات، راجع التفاصيل، وصدّر النتائج الحالية عند الحاجة.</p>
-      </div>
-      <div class="admin-list-metrics">
-        <div id="ordersCountLabel" class="admin-list-count">عدد النتائج: 0</div>
-        <div id="ordersFilteredTotalLabel" class="admin-list-total admin-list-count">الإجمالي: 0.00 ج.م</div>
-      </div>
-    </section>
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
-    <section id="ordersList" class="admin-orders-list"></section>
+# Images can be cached briefly.
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
 
-  </main>
-
-  <script src="./assets/js/cache-cleanup.js"></script>
-  <script src="./site-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./assets/js/admin-orders.js"></script>
-  <script src="./assets/js/scroll-fix.js"></script>
-</body>
-</html>
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"

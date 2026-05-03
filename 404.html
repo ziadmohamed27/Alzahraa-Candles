@@ -1,687 +1,172 @@
-/* ================================================================
-   Alzahraa Candles — features.js
-   New business features: Wishlist, Search Autocomplete,
-   Scent Quiz, Price Slider, WA bubble, Recently Searched.
-   ================================================================ */
-
-if (window.__alzahraaFeaturesInit) { /* guard */ } else {
-window.__alzahraaFeaturesInit = true;
-(function () {
-  'use strict';
-
-  const $ = (s, ctx = document) => ctx.querySelector(s);
-  const $$ = (s, ctx = document) => [...ctx.querySelectorAll(s)];
-  const escH = str => String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const money = v => `${Number(v || 0).toFixed(0)} ج.م`;
-
-  /* ── helpers ── */
-  function getProds() { return window.currentProducts || []; }
-  function toast(msg, dur = 2000) {
-    const t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => t.classList.remove('show'), dur);
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     1. WISHLIST — heart button on every product card
-  ═══════════════════════════════════════════════════════════ */
-  const WL_KEY = 'candles-wishlist';
-
-  function getWishlist() {
-    try { return new Set(JSON.parse(localStorage.getItem(WL_KEY) || '[]')); }
-    catch { return new Set(); }
-  }
-
-  function saveWishlist(set) {
-    localStorage.setItem(WL_KEY, JSON.stringify([...set]));
-  }
-
-  function toggleWishlist(id) {
-    const wl = getWishlist();
-    const numId = Number(id);
-    if (wl.has(numId)) {
-      wl.delete(numId);
-      toast('تمت إزالة المنتج من المفضلة');
-    } else {
-      wl.add(numId);
-      toast('تمت إضافة المنتج إلى المفضلة');
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+<meta name="description" content="الصفحة غير موجودة — عُد إلى متجر Alzahraa Candles.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>الصفحة غير موجودة | Alzahraa Candles</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#A07840">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
+  <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alzahraa Candles">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/premium.css">
+  <style>
+    .page-404 {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(240,215,175,.4) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 10% 80%, rgba(230,200,165,.25) 0%, transparent 55%),
+        var(--cream);
     }
-    saveWishlist(wl);
-    updateHearts();
-    if (typeof window.renderAccountNav === 'function') window.renderAccountNav({ wrapSelector: '#accountNavWrap' });
-  }
-
-  function updateHearts() {
-    const wl = getWishlist();
-    $$('.wl-btn').forEach(btn => {
-      const id = Number(btn.dataset.id);
-      const active = wl.has(id);
-      btn.classList.toggle('wl-active', active);
-      btn.setAttribute('aria-pressed', active);
-      btn.title = active ? 'إزالة من المفضلة' : 'إضافة للمفضلة';
-      btn.innerHTML = active ? '❤️' : '🤍';
-    });
-    updateWishlistNav(wl.size);
-  }
-
-  function updateWishlistNav(count) {
-    const navBtn = document.getElementById('wishlistNavBtn');
-    const countEl = document.getElementById('wishlistCount');
-    if (!navBtn || !countEl) return;
-    const size = Number(count) || 0;
-    countEl.textContent = size;
-    navBtn.classList.toggle('is-empty', size === 0);
-    navBtn.setAttribute('href', size ? '#wishlistSection' : '#products');
-    navBtn.setAttribute('title', size ? `المفضلة (${size})` : 'المفضلة');
-    navBtn.setAttribute('aria-label', size ? `المفضلة، ${size} عناصر` : 'المفضلة');
-  }
-
-  function injectHeartButtons() {
-    const grid = document.getElementById('productGrid');
-    if (!grid) return;
-
-    const mo = new MutationObserver(() => {
-      // childList only (not subtree) — prevents observing our own mutations
-      $$('.product-card:not(.skeleton-card)', grid).forEach(card => {
-        if (card.querySelector('.wl-btn')) return;
-        const id = card.dataset.id;
-        if (!id) return;
-        const btn = document.createElement('button');
-        btn.className = 'wl-btn';
-        btn.dataset.id = id;
-        btn.type = 'button';
-        btn.setAttribute('aria-label', 'إضافة للمفضلة');
-        btn.innerHTML = '🤍';
-        card.appendChild(btn);
-      });
-      updateHearts();
-    });
-
-    mo.observe(grid, { childList: true, subtree: false });
-    window.__wlObs = mo;
-  }
-
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.wl-btn');
-    if (!btn) return;
-    e.stopPropagation();
-    e.preventDefault();
-    toggleWishlist(btn.dataset.id);
-    // Animate
-    btn.classList.add('wl-pop');
-    setTimeout(() => btn.classList.remove('wl-pop'), 400);
-  });
-
-  /* Wishlist page — show favorites section when any saved */
-  function renderWishlistSection() {
-    const section = document.getElementById('wishlistSection');
-    if (!section) return;
-    const wl = getWishlist();
-    const prods = getProds().filter(p => wl.has(Number(p.id)));
-
-    if (!prods.length) { section.style.display = 'none'; updateWishlistNav(0); return; }
-    section.style.display = '';
-
-    updateWishlistNav(prods.length);
-
-    const track = section.querySelector('.wl-track');
-    if (!track) return;
-    track.innerHTML = prods.map(p => `
-      <div class="rv-card view-product" data-id="${p.id}" role="button" tabindex="0"
-           aria-label="${escH(p.name)}">
-        <div class="rv-img">
-          ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" loading="lazy">` : '<span class="rv-fallback">🕯️</span>'}
-        </div>
-        <div class="rv-info">
-          <p class="rv-name">${escH(p.name)}</p>
-          <p class="rv-price">${money(p.price)}</p>
-        </div>
-      </div>`).join('');
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     2. SEARCH AUTOCOMPLETE — live dropdown
-  ═══════════════════════════════════════════════════════════ */
-  const RS_KEY = 'candles-recent-search';
-
-  function getRecentSearches() {
-    try { return JSON.parse(localStorage.getItem(RS_KEY) || '[]'); }
-    catch { return []; }
-  }
-
-  function saveSearch(q) {
-    if (!q || q.length < 2) return;
-    let rs = getRecentSearches().filter(s => s !== q);
-    rs.unshift(q);
-    rs = rs.slice(0, 5);
-    localStorage.setItem(RS_KEY, JSON.stringify(rs));
-  }
-
-  function initSearchAutocomplete() {
-    const input = document.getElementById('productSearchInput');
-    if (!input) return;
-
-    // Build dropdown
-    const dropdown = document.createElement('div');
-    dropdown.id = 'searchDropdown';
-    dropdown.className = 'search-dropdown';
-    dropdown.setAttribute('role', 'listbox');
-    dropdown.setAttribute('aria-label', 'اقتراحات البحث');
-    input.parentElement?.parentElement?.style.setProperty('position', 'relative');
-    input.closest('.products-search-field')?.parentElement?.appendChild(dropdown);
-
-    let debounceTimer;
-
-    input.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => updateDropdown(input.value.trim()), 120);
-    });
-
-    input.addEventListener('focus', () => {
-      if (!input.value.trim()) showRecentSearches(dropdown);
-    });
-
-    document.addEventListener('click', e => {
-      if (!dropdown.contains(e.target) && e.target !== input) {
-        dropdown.classList.remove('open');
-      }
-    });
-
-    // Keyboard navigation
-    input.addEventListener('keydown', e => {
-      if (!dropdown.classList.contains('open')) return;
-      const items = $$('.sd-item', dropdown);
-      const current = dropdown.querySelector('.sd-item.focused');
-      const idx = items.indexOf(current);
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const next = items[idx + 1] || items[0];
-        current?.classList.remove('focused');
-        next?.classList.add('focused');
-        input.value = next?.dataset.value || input.value;
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prev = items[idx - 1] || items[items.length - 1];
-        current?.classList.remove('focused');
-        prev?.classList.add('focused');
-        input.value = prev?.dataset.value || input.value;
-      } else if (e.key === 'Enter') {
-        dropdown.classList.remove('open');
-        saveSearch(input.value.trim());
-      } else if (e.key === 'Escape') {
-        dropdown.classList.remove('open');
-      }
-    });
-  }
-
-  function updateDropdown(query) {
-    const dropdown = document.getElementById('searchDropdown');
-    if (!dropdown) return;
-
-    if (!query) { showRecentSearches(dropdown); return; }
-
-    const prods = getProds();
-    const matches = prods
-      .filter(p => p.name.toLowerCase().includes(query) ||
-                   (p.bestFor || '').toLowerCase().includes(query) ||
-                   (p.description || '').toLowerCase().includes(query) ||
-                   (p.category || '').toLowerCase().includes(query))
-      .slice(0, 6);
-
-    if (!matches.length) { dropdown.classList.remove('open'); return; }
-
-    dropdown.innerHTML = matches.map(p => `
-      <button class="sd-item" role="option" data-id="${p.id}" data-value="${escH(p.name)}" type="button">
-        <span class="sd-icon">🕯️</span>
-        <span class="sd-text">
-          <span class="sd-name">${highlightMatch(p.name, query)}</span>
-          ${p.category ? `<span class="sd-cat">${escH(p.category)}</span>` : ''}
-        </span>
-        <span class="sd-price">${money(p.price)}</span>
-      </button>`).join('');
-
-    dropdown.classList.add('open');
-
-    // Click on suggestion
-    $$('.sd-item', dropdown).forEach(item => {
-      item.addEventListener('click', () => {
-        const id = item.dataset.id;
-        const name = item.dataset.value;
-        const input = document.getElementById('productSearchInput');
-        if (input) {
-          input.value = name;
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        saveSearch(name);
-        dropdown.classList.remove('open');
-        // Open modal for this product
-        document.querySelector(`.product-card[data-id="${id}"]`)?.click();
-      });
-    });
-  }
-
-  function showRecentSearches(dropdown) {
-    const rs = getRecentSearches();
-    if (!rs.length) { dropdown.classList.remove('open'); return; }
-
-    dropdown.innerHTML = `
-      <div class="sd-section-label">🕐 بحثت مؤخرًا</div>
-      ${rs.map(s => `
-        <button class="sd-item sd-recent" data-value="${escH(s)}" type="button">
-          <span class="sd-icon">🔍</span>
-          <span class="sd-text"><span class="sd-name">${escH(s)}</span></span>
-          <button class="sd-remove" data-remove="${escH(s)}" aria-label="حذف" type="button">✕</button>
-        </button>`).join('')}`;
-
-    dropdown.classList.add('open');
-
-    $$('.sd-recent', dropdown).forEach(item => {
-      item.addEventListener('click', e => {
-        if (e.target.closest('.sd-remove')) return;
-        const val = item.dataset.value;
-        const input = document.getElementById('productSearchInput');
-        if (input) {
-          input.value = val;
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        dropdown.classList.remove('open');
-      });
-    });
-
-    $$('.sd-remove', dropdown).forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const val = btn.dataset.remove;
-        const rs2 = getRecentSearches().filter(s => s !== val);
-        localStorage.setItem(RS_KEY, JSON.stringify(rs2));
-        showRecentSearches(dropdown);
-      });
-    });
-  }
-
-  function highlightMatch(text, query) {
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return escH(text).replace(regex, '<mark class="search-highlight">$1</mark>');
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     3. SCENT FINDER QUIZ — 3-step interactive quiz
-  ═══════════════════════════════════════════════════════════ */
-  const quiz = {
-    steps: [
-      {
-        q: 'ما الأجواء التي تبحث عنها؟',
-        icon: '🌸',
-        choices: [
-          { label: 'هادئة ومريحة', value: 'calm', icon: '😌' },
-          { label: 'دافئة ومنزلية', value: 'warm', icon: '🏡' },
-          { label: 'أنيقة وفاخرة', value: 'luxury', icon: '✨' },
-          { label: 'منعشة ومفرحة', value: 'fresh', icon: '🌿' },
-        ],
-      },
-      {
-        q: 'ما الرائحة المفضلة لديك؟',
-        icon: '👃',
-        choices: [
-          { label: 'فانيلا وكراميل', value: 'vanilla', icon: '🍦' },
-          { label: 'ورد وأزهار', value: 'floral', icon: '🌹' },
-          { label: 'عود وأمبر', value: 'oud', icon: '🪵' },
-          { label: 'لافندر ومينت', value: 'lavender', icon: '💜' },
-        ],
-      },
-      {
-        q: 'لماذا الشمعة؟',
-        icon: '🎯',
-        choices: [
-          { label: 'هدية لشخص أحبه', value: 'gift', icon: '🎁' },
-          { label: 'ديكور المنزل', value: 'decor', icon: '🏠' },
-          { label: 'لحظات الاسترخاء', value: 'relax', icon: '🛁' },
-          { label: 'أجواء رومانسية', value: 'romantic', icon: '🕯️' },
-        ],
-      },
-    ],
-    answers: [],
-    current: 0,
-  };
-
-  function buildQuizModal() {
-    const modal = document.createElement('div');
-    modal.id = 'quizModal';
-    modal.className = 'quiz-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-label', 'مساعد اختيار الشمعة');
-    modal.innerHTML = `
-      <div class="quiz-backdrop" id="quizBackdrop"></div>
-      <div class="quiz-panel" id="quizPanel">
-        <button class="quiz-close" id="quizClose" aria-label="إغلاق">×</button>
-        <div id="quizContent"></div>
-      </div>`;
-    document.body.appendChild(modal);
-
-    document.getElementById('quizBackdrop')?.addEventListener('click', closeQuiz);
-    document.getElementById('quizClose')?.addEventListener('click', closeQuiz);
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('open')) closeQuiz();
-    });
-  }
-
-  function openQuiz() {
-    quiz.answers = [];
-    quiz.current = 0;
-    const modal = document.getElementById('quizModal');
-    if (!modal) return;
-    modal.classList.add('open');
-    document.body.classList.add('modal-open');
-    renderQuizStep();
-  }
-
-  function closeQuiz() {
-    const modal = document.getElementById('quizModal');
-    modal?.classList.remove('open');
-    document.body.classList.remove('modal-open');
-    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
-    if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
-  }
-
-  function renderQuizStep() {
-    const content = document.getElementById('quizContent');
-    if (!content) return;
-
-    const step = quiz.steps[quiz.current];
-    const total = quiz.steps.length;
-    const progress = ((quiz.current) / total) * 100;
-
-    content.innerHTML = `
-      <div class="quiz-header">
-        <p class="quiz-step-label">خطوة ${quiz.current + 1} من ${total}</p>
-        <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${progress}%"></div></div>
-      </div>
-      <div class="quiz-question">
-        <span class="quiz-q-icon">${step.icon}</span>
-        <h3 class="quiz-q-text">${escH(step.q)}</h3>
-      </div>
-      <div class="quiz-choices">
-        ${step.choices.map(c => `
-          <button class="quiz-choice" data-value="${escH(c.value)}" type="button">
-            <span class="qc-icon">${c.icon}</span>
-            <span class="qc-label">${escH(c.label)}</span>
-          </button>`).join('')}
-      </div>`;
-
-    // Animate in
-    requestAnimationFrame(() => content.classList.add('quiz-animated'));
-
-    $$('.quiz-choice', content).forEach(btn => {
-      btn.addEventListener('click', () => {
-        quiz.answers.push(btn.dataset.value);
-        quiz.current++;
-        if (quiz.current >= quiz.steps.length) {
-          renderQuizResult();
-        } else {
-          content.classList.remove('quiz-animated');
-          setTimeout(() => renderQuizStep(), 120);
-        }
-      });
-    });
-  }
-
-  function renderQuizResult() {
-    const content = document.getElementById('quizContent');
-    if (!content) return;
-
-    const prods = getProds();
-    const answers = quiz.answers.join(' ');
-
-    // Score products against answers
-    const scored = prods.map(p => {
-      let score = 0;
-      const haystack = `${p.name} ${p.description} ${p.bestFor} ${p.category} ${p.tag} ${p.badge}`.toLowerCase();
-      quiz.answers.forEach(ans => {
-        if (haystack.includes(ans)) score += 2;
-      });
-      // Boost products matching mood words
-      if (answers.includes('calm') && haystack.match(/هادئ|calm|lavender|ناعم/)) score += 3;
-      if (answers.includes('warm') && haystack.match(/دافئ|vanilla|فانيل|warm|cinnamon/)) score += 3;
-      if (answers.includes('luxury') && haystack.match(/فاخر|oud|عود|luxury|gold/)) score += 3;
-      if (answers.includes('gift') && haystack.match(/هدية|gift|box/)) score += 2;
-      return { ...p, _score: score };
-    });
-
-    const top = scored
-      .sort((a, b) => b._score - a._score || Math.random() - 0.5)
-      .slice(0, 4);
-
-    content.innerHTML = `
-      <div class="quiz-result-header">
-        <span class="quiz-result-icon">🕯️</span>
-        <h3>الشمعة المناسبة لك</h3>
-        <p>بناءً على إجاباتك، نقترح عليكِ هذه الخيارات:</p>
-      </div>
-      <div class="quiz-result-grid">
-        ${top.map(p => `
-          <button class="quiz-result-card view-product" data-id="${p.id}" type="button">
-            <div class="qrc-img">
-              ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" loading="lazy">` : '<span>🕯️</span>'}
-            </div>
-            <div class="qrc-info">
-              <p class="qrc-name">${escH(p.name)}</p>
-              <p class="qrc-price">${money(p.price)}</p>
-            </div>
-          </button>`).join('')}
-      </div>
-      <div class="quiz-result-actions">
-        <button class="btn btn-ghost" id="quizRetry" type="button">🔄 إعادة الاختبار</button>
-        <button class="btn btn-primary" id="quizClose2" type="button">✓ موافق، عودة للمتجر</button>
-      </div>`;
-
-    requestAnimationFrame(() => content.classList.add('quiz-animated'));
-
-    document.getElementById('quizRetry')?.addEventListener('click', () => {
-      quiz.answers = []; quiz.current = 0;
-      content.classList.remove('quiz-animated');
-      setTimeout(() => renderQuizStep(), 120);
-    });
-    document.getElementById('quizClose2')?.addEventListener('click', closeQuiz);
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     4. PRICE RANGE FILTER
-  ═══════════════════════════════════════════════════════════ */
-  function injectPriceFilter() {
-    const filtersEl = document.getElementById('filters');
-    if (!filtersEl || document.getElementById('priceFilterWrap')) return;
-
-    // Wait for products to load
-    const checkProds = setInterval(() => {
-      const prods = getProds();
-      if (!prods.length) return;
-      clearInterval(checkProds);
-
-      const prices = prods.map(p => p.price).filter(Boolean);
-      const minP = Math.floor(Math.min(...prices) / 10) * 10;
-      const maxP = Math.ceil(Math.max(...prices) / 10) * 10;
-
-      if (maxP <= minP) return;
-
-      const wrap = document.createElement('div');
-      wrap.id = 'priceFilterWrap';
-      wrap.className = 'price-filter-wrap';
-      wrap.innerHTML = `
-        <div class="price-filter-label">
-          <span>السعر:</span>
-          <span id="priceFilterDisplay" class="price-filter-val">
-            ${minP} — ${maxP} ج.م
-          </span>
-          <button class="price-filter-reset" id="priceReset" type="button" title="إعادة تعيين">✕</button>
-        </div>
-        <div class="price-range-slider">
-          <input type="range" id="priceMin" min="${minP}" max="${maxP}"
-                 value="${minP}" step="5" class="range-track" aria-label="الحد الأدنى للسعر">
-          <input type="range" id="priceMax" min="${minP}" max="${maxP}"
-                 value="${maxP}" step="5" class="range-track" aria-label="الحد الأقصى للسعر">
-          <div class="range-fill" id="rangeFill"></div>
-        </div>`;
-
-      filtersEl.parentElement?.insertBefore(wrap, filtersEl.nextSibling);
-
-      let currentMin = minP, currentMax = maxP;
-
-      function updatePriceDisplay() {
-        const display = document.getElementById('priceFilterDisplay');
-        if (display) display.textContent = `${currentMin} — ${currentMax} ج.م`;
-        updateRangeFill(minP, maxP, currentMin, currentMax);
-        filterByPrice(currentMin, currentMax);
-      }
-
-      function updateRangeFill(absMin, absMax, curMin, curMax) {
-        const fill = document.getElementById('rangeFill');
-        if (!fill) return;
-        const range = absMax - absMin;
-        const left = ((curMin - absMin) / range) * 100;
-        const right = 100 - ((curMax - absMin) / range) * 100;
-        fill.style.left = `${left}%`;
-        fill.style.right = `${right}%`;
-      }
-
-      document.getElementById('priceMin')?.addEventListener('input', e => {
-        currentMin = Math.min(Number(e.target.value), currentMax - 10);
-        e.target.value = currentMin;
-        updatePriceDisplay();
-      });
-
-      document.getElementById('priceMax')?.addEventListener('input', e => {
-        currentMax = Math.max(Number(e.target.value), currentMin + 10);
-        e.target.value = currentMax;
-        updatePriceDisplay();
-      });
-
-      document.getElementById('priceReset')?.addEventListener('click', () => {
-        currentMin = minP; currentMax = maxP;
-        document.getElementById('priceMin').value = minP;
-        document.getElementById('priceMax').value = maxP;
-        updatePriceDisplay();
-        window.__priceFilter = null;
-        triggerRender();
-      });
-
-      updateRangeFill(minP, maxP, currentMin, currentMax);
-    }, 500);
-  }
-
-  function filterByPrice(min, max) {
-    window.__priceFilter = { min, max };
-    triggerRender();
-  }
-
-  function triggerRender() {
-    // Trigger script.js to re-render by dispatching input on search field
-    const inp = document.getElementById('productSearchInput');
-    if (inp) {
-      const orig = inp.value;
-      inp.dispatchEvent(new Event('input', { bubbles: true }));
+    .page-404-card {
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
     }
-  }
+    .page-404-flame {
+      font-size: 5rem;
+      line-height: 1;
+      margin-bottom: 8px;
+      display: block;
+      animation: floatUp2 4s ease-in-out infinite;
+    }
+    .page-404-number {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(6rem, 18vw, 10rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--gold-dark);
+      opacity: .15;
+      display: block;
+      margin: -16px 0 0;
+      letter-spacing: -.04em;
+    }
+    .page-404-title {
+      font-family: "El Messiri", serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      color: var(--text);
+      margin: 4px 0 14px;
+    }
+    .page-404-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.85;
+      margin-bottom: 36px;
+    }
+    .page-404-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .page-404-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 24px 0;
+      opacity: .4;
+    }
+    .page-404-divider::before,
+    .page-404-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gold);
+    }
+    .page-404-divider span { font-size: .85rem; color: var(--muted); }
+    .page-404-links {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .page-404-links a {
+      font-size: .88rem;
+      color: var(--gold-dark);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .page-404-links a:hover { color: var(--text); }
+  </style>
+  <link rel="canonical" href="https://alzahraa-candles.netlify.app/404.html">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <span></span>
+      <a class="brand" href="./index.html">
+        <span class="brand-title">Alzahraa Candles</span>
+        <span class="brand-sub">HANDMADE · LUXURY</span>
+      </a>
+      <a class="icon-btn cart-btn" href="./cart.html" aria-label="السلة">
+        <span class="cart-emoji">🛍️</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </div>
+  </header>
 
-  // Hook into script.js getVisibleProducts via product grid observer
-  function hookPriceFilter() {
-    const grid = document.getElementById('productGrid');
-    if (!grid) return;
+  <main class="page-404" role="main">
+    <div class="page-404-card" data-reveal>
+      <span class="page-404-flame" aria-hidden="true">🕯️</span>
+      <span class="page-404-number" aria-hidden="true">404</span>
 
-    const mo = new MutationObserver(() => {
-      const filter = window.__priceFilter;
-      if (!filter) return;
+      <h1 class="page-404-title">هذه الصفحة غير موجودة</h1>
+      <p class="page-404-desc">
+        يبدو أن الصفحة التي تبحث عنها انطفأت مثل شمعة في الريح.<br>
+        لكن لا تقلق — متجرنا لا يزال مضيئًا!
+      </p>
 
-      $$('.product-card:not(.skeleton-card)', grid).forEach(card => {
-        const id = Number(card.dataset.id);
-        const prod = getProds().find(p => Number(p.id) === id);
-        if (!prod) return;
-        const show = prod.price >= filter.min && prod.price <= filter.max;
-        card.style.display = show ? '' : 'none';
-      });
-    });
+      <div class="page-404-actions">
+        <a href="./index.html" class="btn btn-primary">العودة للرئيسية</a>
+        <a href="./index.html#products" class="btn btn-ghost">تصفح المنتجات</a>
+      </div>
 
-    mo.observe(grid, { childList: true });
-    window.__priceFilterObs = mo;
-  }
+      <div class="page-404-divider"><span>أو انتقل إلى</span></div>
 
-  /* ═══════════════════════════════════════════════════════════
-     5. "BACK TO PRODUCTS" STICKY BUTTON
-  ═══════════════════════════════════════════════════════════ */
-  function initBackToProducts() {
-    const btn = document.createElement('button');
-    btn.id = 'backToProdsBtn';
-    btn.className = 'back-to-prods-btn';
-    btn.setAttribute('aria-label', 'العودة للمنتجات');
-    btn.innerHTML = '⬆ المنتجات';
-    document.body.appendChild(btn);
+      <nav class="page-404-links" aria-label="روابط سريعة">
+        <a href="./cart.html">🛍️ السلة</a>
+        <a href="./login.html">🔑 تسجيل الدخول</a>
+        <a href="https://wa.me/201095314011" target="_blank" rel="noopener">💬 واتساب</a>
+        <a href="./my-orders.html">📦 طلباتي</a>
+      </nav>
+    </div>
+  </main>
 
-    const prodSection = document.getElementById('products');
-    if (!prodSection) return;
+  <script>
+    // Cart count
+    try {
+      const c = JSON.parse(localStorage.getItem('candles-cart') || '[]');
+      const el = document.getElementById('cartCount');
+      if (el) el.textContent = c.reduce((s, i) => s + (Number(i.qty) || 0), 0);
+    } catch {}
 
-    const io = new IntersectionObserver(([entry]) => {
-      btn.classList.toggle('visible', !entry.isIntersecting && window.scrollY > 200);
-    }, { threshold: 0 });
-    io.observe(prodSection);
+    // Header scroll shadow
+    const hdr = document.querySelector('.site-header');
+    window.addEventListener('scroll', () => hdr?.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
 
-    btn.addEventListener('click', () => {
-      prodSection.scrollIntoView({ behavior: 'smooth' });
-    });
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     QUIZ TRIGGER — add to guide section
-  ═══════════════════════════════════════════════════════════ */
-  function injectQuizTrigger() {
-    const guide = document.getElementById('guide');
-    if (!guide) return;
-
-    const existing = guide.querySelector('.quiz-trigger-btn');
-    if (existing) return;
-
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-primary quiz-trigger-btn';
-    btn.type = 'button';
-    btn.innerHTML = '✨ ساعدني أختار الشمعة المناسبة';
-    btn.addEventListener('click', openQuiz);
-
-    // Insert at top of guide section container
-    const container = guide.querySelector('.container');
-    if (container) container.insertBefore(btn, container.firstChild);
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     INIT
-  ═══════════════════════════════════════════════════════════ */
-  function init() {
-    injectHeartButtons();
-    initSearchAutocomplete();
-    buildQuizModal();
-    injectPriceFilter();
-    hookPriceFilter();
-    initBackToProducts();
-
-    // Inject quiz trigger — just try immediately, no observer needed
-    injectQuizTrigger();
-
-    // Wishlist section
-    renderWishlistSection();
-    window.addEventListener('storage', e => {
-      if (e.key === WL_KEY) { updateHearts(); renderWishlistSection(); }
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  // Expose for other scripts
-  window.openScentQuiz = openQuiz;
-
-})();
-} // end features guard
+    // Reveal animation
+    setTimeout(() => {
+      document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('revealed'));
+    }, 80);
+  </script>
+  <script src="./assets/js/scroll-fix.js"></script>
+</body>
+</html>
