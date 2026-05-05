@@ -707,33 +707,21 @@ function openProduct(id) {
     p.weight && p.weight.trim(),
   ].filter((v, i, arr) => v && arr.indexOf(v) === i).slice(0, 3);
 
-  // ── Mobile bottom sheet structure ──────────────────────────────────
-  // On mobile: .product-modal is a flex column:
-  //   1. .ms-sheet-header  (fixed height, outside scroll zone)
-  //   2. #productModalContent  (flex:1, overflow-y:auto)
-  //      └─ .modal-layout (image + info + sticky footer)
-  //
-  // We inject the header directly into .product-modal before content.
-  // ─────────────────────────────────────────────────────────────────
-
-  const productModal = $('#productModalOverlay .product-modal');
-
-  // Remove any previous sheet header
-  const oldHeader = productModal?.querySelector('.ms-sheet-header');
-  if (oldHeader) oldHeader.remove();
-
-  // Inject sheet header before #productModalContent (mobile only)
-  if (productModal && window.innerWidth <= 768) {
-    const sheetHeader = document.createElement('div');
-    sheetHeader.className = 'ms-sheet-header';
-    sheetHeader.innerHTML = `
-      <span class="ms-sheet-title">${escHtml(p.name.split(' ').slice(0, 5).join(' '))}</span>
-      <button class="ms-sheet-close" type="button" aria-label="إغلاق" data-action="close-sheet">✕</button>
-    `;
-    productModal.insertBefore(sheetHeader, content);
-  }
-
   content.innerHTML = `
+    <div class="ms-sheet-header">
+      <span class="ms-sheet-title">${escHtml(p.name.split(' ').slice(0,5).join(' '))}</span>
+      <div class="ms-sheet-actions">
+        <button class="ms-share-btn" type="button" aria-label="مشاركة المنتج"
+          data-action="share-product"
+          data-name="${escHtml(p.name)}"
+          data-price="${escHtml(money(p.price))}"
+          data-id="${p.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+        <button class="ms-sheet-close" type="button" aria-label="إغلاق" data-action="close-sheet">✕</button>
+      </div>
+    </div>
+
     <div class="modal-layout">
 
       <!-- Product image -->
@@ -799,8 +787,7 @@ function openProduct(id) {
   const overlay = $('#productModalOverlay');
   if (overlay) overlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  // On mobile the bottom sheet handles its own scroll — don't lock the whole body.
-  // On desktop the overlay backdrop is enough.
+  // Only lock scroll on desktop — mobile bottom sheet handles its own scroll
   if (window.innerWidth > 768) {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -956,6 +943,31 @@ document.addEventListener('click', (e) => {
   if (e.target.id === 'closeProductModal' || e.target.id === 'productModalOverlay' ||
       e.target.closest('[data-action="close-sheet"]')) {
     closeProduct();
+    return;
+  }
+
+  // Share product
+  const shareBtn = e.target.closest('[data-action="share-product"]');
+  if (shareBtn) {
+    const name  = shareBtn.dataset.name  || '';
+    const price = shareBtn.dataset.price || '';
+    const id    = shareBtn.dataset.id    || '';
+    const url   = `${window.location.origin}${window.location.pathname}#product-${id}`;
+    const text  = `${name} — ${price}\nشموع يدوية من Alzahraa Candles 🕯️`;
+
+    if (navigator.share) {
+      navigator.share({ title: name, text, url }).catch(() => {});
+    } else {
+      // Fallback: copy link to clipboard
+      const copyText = `${text}\n${url}`;
+      navigator.clipboard?.writeText(copyText).then(() => {
+        showToast('تم نسخ الرابط 📋');
+      }).catch(() => {
+        // Final fallback: open WhatsApp share
+        const waText = encodeURIComponent(`${text}\n${url}`);
+        window.open(`https://wa.me/?text=${waText}`, '_blank');
+      });
+    }
     return;
   }
 

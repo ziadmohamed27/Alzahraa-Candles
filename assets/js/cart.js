@@ -942,16 +942,74 @@ function resetSuccessState() {
   hideOrderSuccess();
 }
 
+function getCartProductImageUrl(imagePath) {
+  const value = String(imagePath || '').trim();
+  if (!value) return '';
+  if (/^https?:\/\//i.test(value)) return value;
+  const bucket = 'product-images';
+  const cleanPath = value.replace(/^\/+/, '').replace(new RegExp(`^${bucket}\/`), '');
+  return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${cleanPath}`;
+}
+
+async function fetchRVProducts(ids) {
+  if (!supabaseClient || !ids.length) return [];
+  try {
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('id, name, price, image')
+      .in('id', ids);
+    if (error || !data) return [];
+    return data.map(p => ({
+      id: p.id,
+      name: p.name || '',
+      price: Number(p.price) || 0,
+      image: getCartProductImageUrl(p.image || ''),
+    }));
+  } catch { return []; }
+}
+
 function renderCartItems() {
   const el = $('#cartPageItems');
   if (!el) return;
 
   if (!state.cart.length) {
+    // Build recently viewed recovery row if available
+    let rvHtml = '';
+    if (!orderSubmittedSuccessfully) {
+      try {
+        const rvIds = JSON.parse(localStorage.getItem('candles-rv') || '[]').slice(0, 3);
+        if (rvIds.length) {
+          // Async: fetch RV products then inject HTML
+          fetchRVProducts(rvIds).then(rvProducts => {
+            const track = el.querySelector('.cart-empty-rv-track');
+            if (!track || !rvProducts.length) return;
+            track.innerHTML = rvProducts.map(p => `
+              <a href="./index.html#product-${p.id}" class="cart-empty-rv-card">
+                <img src="${escHtml(p.image || '')}" alt="${escHtml(p.name)}"
+                  onerror="this.style.background='rgba(185,148,78,0.15)';this.removeAttribute('src')">
+                <span class="cart-empty-rv-name">${escHtml(p.name)}</span>
+                <span class="cart-empty-rv-price">${money(p.price)}</span>
+              </a>`).join('');
+          });
+          rvHtml = `
+            <div class="cart-empty-rv">
+              <p class="cart-empty-rv-label">شاهدتها مؤخرًا 👀</p>
+              <div class="cart-empty-rv-track cart-empty-rv-loading">
+                <div class="cart-empty-rv-skeleton"></div>
+                <div class="cart-empty-rv-skeleton"></div>
+                <div class="cart-empty-rv-skeleton"></div>
+              </div>
+            </div>`;
+        }
+      } catch {}
+    }
+
     el.innerHTML = `
       <div class="empty cart-page-empty">
-        <div class="cart-empty-icon">🕯️</div>
-        <h3 class="cart-empty-title">${orderSubmittedSuccessfully ? 'تم إرسال طلبك بنجاح! 🎉' : 'السلة فارغة حتى الآن'}</h3>
+        <div class="cart-empty-icon">${orderSubmittedSuccessfully ? '🎉' : '🕯️'}</div>
+        <h3 class="cart-empty-title">${orderSubmittedSuccessfully ? 'تم إرسال طلبك بنجاح!' : 'السلة فارغة حتى الآن'}</h3>
         <p class="cart-empty-sub">${orderSubmittedSuccessfully ? 'شكرًا لطلبك — سنتواصل معك قريبًا للتأكيد.' : 'ابدأ بإضافة شمعتك المفضلة من المتجر.'}</p>
+        ${rvHtml}
         <a href="./index.html#products" class="btn btn-primary cart-empty-btn">
           ${orderSubmittedSuccessfully ? 'تسوّق مجددًا' : 'استعرض المنتجات'}
         </a>
@@ -977,10 +1035,13 @@ function renderCartItems() {
         </div>
 
         <div class="cart-page-item-bottom">
-          <div class="cart-page-item-price">${money(item.price)}</div>
+          <div class="cart-page-item-price">
+            ${item.qty > 1 ? `<span class="item-unit-price">${money(item.price)} × ${item.qty}</span>
+            <span class="item-line-total">${money(item.price * item.qty)}</span>` : money(item.price)}
+          </div>
 
           <div class="qty-row qty-row-lg" dir="ltr">
-            <button data-action="dec" data-id="${item.id}" type="button" aria-label="تقليل الكمية">−</button>
+            <button data-action="dec" data-id="${item.id}" type="button" aria-label="تقليل الكمية">-</button>
             <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
             <button data-action="inc" data-id="${item.id}" type="button" aria-label="زيادة الكمية">+</button>
           </div>

@@ -660,10 +660,10 @@ mark.search-highlight {
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(191,142,82,.12);
   padding: 10px 0 !important;
-  margin-left: -16px;
-  margin-right: -16px;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
   box-shadow: 0 3px 16px rgba(40,18,5,.05);
 }
 
