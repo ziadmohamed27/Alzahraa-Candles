@@ -3632,3 +3632,50 @@ img, video, canvas, svg, iframe, embed, object {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* --- Quantity display stability fix: use non-editable quantity chip on cart page --- */
+@media (max-width: 768px) {
+  .cart-page-item .qty-row,
+  .cart-page-item .qty-row-lg {
+    align-items: center !important;
+  }
+
+  .cart-page-item .qty-value {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    inline-size: 36px !important;
+    block-size: 32px !important;
+    min-inline-size: 36px !important;
+    min-block-size: 32px !important;
+    max-inline-size: 36px !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    border: 1px solid rgba(185, 148, 78, 0.35) !important;
+    border-radius: 10px !important;
+    background: #fffdf8 !important;
+    color: #2c1a0e !important;
+    font-family: Arial, "Helvetica Neue", sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums lining-nums !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    direction: ltr !important;
+    overflow: hidden !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .cart-page-item .qty-value {
+    inline-size: 34px !important;
+    block-size: 30px !important;
+    min-inline-size: 34px !important;
+    min-block-size: 30px !important;
+    max-inline-size: 34px !important;
+    font-size: 17px !important;
+  }
+}

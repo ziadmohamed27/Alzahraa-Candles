@@ -1040,9 +1040,9 @@ function renderCartItems() {
             <span class="item-line-total">${money(item.price * item.qty)}</span>` : money(item.price)}
           </div>
 
-          <div class="qty-row qty-row-lg" dir="ltr">
+          <div class="qty-row qty-row-lg" dir="ltr" aria-label="الكمية الحالية ${item.qty}">
             <button data-action="dec" data-id="${item.id}" type="button" aria-label="تقليل الكمية">-</button>
-            <input class="qty-input" data-action="set-qty" data-id="${item.id}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${item.qty}" aria-label="كمية ${escHtml(item.name)}">
+            <span class="qty-value" aria-hidden="true">${item.qty}</span>
             <button data-action="inc" data-id="${item.id}" type="button" aria-label="زيادة الكمية">+</button>
           </div>
         </div>
