@@ -3261,3 +3261,374 @@ img, video, canvas, svg, iframe, embed, object {
     }
   }
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CART + HERO MOBILE HARD FIX — 2026-05-08
+   Fixes the remaining RTL cart overflow seen on real phones:
+   - cart container no longer becomes wider than the visual viewport
+   - cart item uses explicit LTR grid placement, with RTL text inside
+   - qty control is a second row, never clipped by the card edge
+   - order form keeps enough room above bottom nav
+   - hero CTA buttons wrap safely on 320–430px screens
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  html,
+  body {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .cart-page,
+  .cart-page .section,
+  .cart-page .container,
+  .cart-page-layout,
+  .cart-page-summary,
+  .cart-page-items,
+  .cart-page-items-wrap,
+  .order-form-page,
+  .cart-page-summary-card {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .cart-page {
+    overflow-x: hidden !important;
+    padding-inline: 0 !important;
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .cart-page .section {
+    overflow-x: hidden !important;
+    padding-inline: 0 !important;
+    padding-bottom: calc(144px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .cart-page .container {
+    inline-size: 100vw !important;
+    max-inline-size: 100vw !important;
+    margin-inline: 0 !important;
+    padding-inline: 12px !important;
+    overflow-x: hidden !important;
+  }
+
+  .cart-page-head {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    padding-inline: 0 !important;
+    margin-inline: 0 !important;
+  }
+
+  .cart-page-head h1,
+  .cart-page-head p {
+    max-inline-size: 100% !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .cart-page-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
+    margin-inline: 0 !important;
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  .cart-page-items-wrap,
+  .order-form-page,
+  .cart-page-summary-card {
+    margin-inline: 0 !important;
+    padding: 16px 12px !important;
+    border-radius: 24px !important;
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  .cart-page-items {
+    display: grid !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  .cart-page-title-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    max-inline-size: 100% !important;
+  }
+
+  .cart-page-title-row h2 {
+    flex: 1 1 auto !important;
+    min-inline-size: 0 !important;
+    font-size: clamp(1.35rem, 7vw, 1.75rem) !important;
+  }
+
+  .cart-page-title-row .btn,
+  .cart-page-title-row button {
+    flex: 0 0 auto !important;
+    max-inline-size: 48% !important;
+    white-space: nowrap !important;
+    padding-inline: 12px !important;
+  }
+
+  .cart-page-item {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 68px !important;
+    grid-template-areas: "content image" !important;
+    align-items: start !important;
+    gap: 10px !important;
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    margin-inline: 0 !important;
+    padding: 12px !important;
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  .cart-page-item-image {
+    grid-area: image !important;
+    inline-size: 68px !important;
+    max-inline-size: 68px !important;
+    min-inline-size: 68px !important;
+    overflow: hidden !important;
+  }
+
+  .cart-page-item-image img {
+    inline-size: 68px !important;
+    block-size: 68px !important;
+    max-inline-size: 68px !important;
+    border-radius: 16px !important;
+    display: block !important;
+  }
+
+  .cart-page-item-content {
+    grid-area: content !important;
+    direction: rtl !important;
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    overflow: visible !important;
+    display: grid !important;
+    gap: 9px !important;
+  }
+
+  .cart-page-item-top {
+    direction: rtl !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    min-inline-size: 0 !important;
+    max-inline-size: 100% !important;
+    overflow: visible !important;
+  }
+
+  .cart-page-item-top > div {
+    min-inline-size: 0 !important;
+    max-inline-size: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .cart-page-item-top h3 {
+    max-inline-size: 100% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: right !important;
+  }
+
+  .cart-page-item-top p {
+    text-align: right !important;
+  }
+
+  .cart-page-item-bottom {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    justify-items: start !important;
+    align-items: start !important;
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    overflow: visible !important;
+  }
+
+  .cart-page-item-price {
+    direction: rtl !important;
+    justify-self: stretch !important;
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    white-space: normal !important;
+    text-align: right !important;
+    overflow: visible !important;
+    line-height: 1.35 !important;
+  }
+
+  .cart-page-item-price .item-line-total,
+  .cart-page-item-price .item-unit-price {
+    display: inline-block !important;
+    max-inline-size: 100% !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+  }
+
+  .cart-page-item .qty-row,
+  .cart-page-item .qty-row-lg {
+    direction: ltr !important;
+    justify-self: start !important;
+    inline-size: auto !important;
+    max-inline-size: 112px !important;
+    min-inline-size: 104px !important;
+    display: inline-grid !important;
+    grid-template-columns: 32px 36px 32px !important;
+    align-items: center !important;
+    justify-content: start !important;
+    gap: 4px !important;
+    overflow: visible !important;
+    flex: none !important;
+  }
+
+  .cart-page-item .qty-row button,
+  .cart-page-item .qty-row-lg button {
+    inline-size: 32px !important;
+    block-size: 32px !important;
+    min-inline-size: 32px !important;
+    min-block-size: 32px !important;
+    max-inline-size: 32px !important;
+    flex: 0 0 32px !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: visible !important;
+  }
+
+  .cart-page-item .qty-input {
+    inline-size: 36px !important;
+    block-size: 32px !important;
+    min-inline-size: 36px !important;
+    min-block-size: 32px !important;
+    max-inline-size: 36px !important;
+    flex: 0 0 36px !important;
+    padding: 0 !important;
+    text-align: center !important;
+  }
+
+  .order-form-page {
+    margin-bottom: 18px !important;
+  }
+
+  .cart-page-summary-card {
+    margin-bottom: calc(116px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .order-form-page input,
+  .order-form-page textarea,
+  .order-form-page select,
+  .delivery-google-link-row,
+  .delivery-location-actions,
+  .delivery-location-card,
+  .shipping-note-box,
+  .urgent-choice-box {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    box-sizing: border-box !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .delivery-google-link-row,
+  .delivery-location-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  .hero,
+  .hero-inner,
+  .hero-grid,
+  .hero-copy {
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .hero-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 10px !important;
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+  }
+
+  .hero-actions .btn {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    padding-inline: 10px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: clamp(0.86rem, 3.8vw, 0.98rem) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .cart-page .container {
+    padding-inline: 10px !important;
+  }
+
+  .cart-page-items-wrap,
+  .order-form-page,
+  .cart-page-summary-card {
+    padding-inline: 10px !important;
+  }
+
+  .cart-page-item {
+    grid-template-columns: minmax(0, 1fr) 60px !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  .cart-page-item-image,
+  .cart-page-item-image img {
+    inline-size: 60px !important;
+    block-size: 60px !important;
+    min-inline-size: 60px !important;
+    max-inline-size: 60px !important;
+  }
+
+  .cart-page-item .qty-row,
+  .cart-page-item .qty-row-lg {
+    grid-template-columns: 30px 34px 30px !important;
+    min-inline-size: 102px !important;
+    max-inline-size: 102px !important;
+  }
+
+  .cart-page-item .qty-row button,
+  .cart-page-item .qty-row-lg button {
+    inline-size: 30px !important;
+    block-size: 30px !important;
+    min-inline-size: 30px !important;
+    min-block-size: 30px !important;
+    max-inline-size: 30px !important;
+  }
+
+  .cart-page-item .qty-input {
+    inline-size: 34px !important;
+    block-size: 30px !important;
+    min-inline-size: 34px !important;
+    min-block-size: 30px !important;
+    max-inline-size: 34px !important;
+  }
+
+  .hero-actions {
+    grid-template-columns: 1fr !important;
+  }
+}
