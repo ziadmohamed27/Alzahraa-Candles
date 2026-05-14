@@ -1,8 +1,8 @@
 
-const SITE_CONFIG = window.__SITE_CONFIG__ || {};
-const SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const APP_CONFIG = window.AppConfig || {};
+const SUPABASE_URL = APP_CONFIG.getSupabaseUrl ? APP_CONFIG.getSupabaseUrl() : '';
+const SUPABASE_ANON_KEY = APP_CONFIG.getSupabaseAnonKey ? APP_CONFIG.getSupabaseAnonKey() : '';
+const supabaseClient = APP_CONFIG.createSupabaseClient ? APP_CONFIG.createSupabaseClient() : supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const ordersList = document.getElementById('ordersList');
 const searchInput = document.getElementById('searchInput');
@@ -93,8 +93,13 @@ function parseStructuredNotes(rawValue) {
 }
 
 async function requireAuth() {
+  if (APP_CONFIG.requireAdmin) {
+    return APP_CONFIG.requireAdmin(supabaseClient, { loginUrl: './admin-login.html' });
+  }
+
   const { data } = await supabaseClient.auth.getUser();
-  if (!data.user) window.location.href = './admin-login.html';
+  if (!data.user) { window.location.href = './admin-login.html'; return false; }
+  return true;
 }
 
 function money(v) {
@@ -264,14 +269,8 @@ async function loadOrders() {
     .order('created_at', { ascending: false }));
 
   if (error) {
-    ({ data, error } = await supabaseClient
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false }));
-  }
-
-  if (error) {
-    ordersList.innerHTML = '<div class="admin-empty is-error">فشل تحميل الطلبات.</div>';
+    console.error('[AdminOrders] failed to load orders_dashboard', error);
+    ordersList.innerHTML = '<div class="admin-empty is-error">فشل تحميل الطلبات. تأكد من تطبيق ملف supabase/policies.sql وإنشاء orders_dashboard.</div>';
     return;
   }
 
@@ -745,6 +744,7 @@ logoutBtn?.addEventListener('click', async () => {
 });
 
 (async function init() {
-  await requireAuth();
+  const allowed = await requireAuth();
+  if (allowed === false) return;
   await loadOrders();
 })();

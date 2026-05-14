@@ -3,9 +3,9 @@
    يعتمد على Supabase للمنتجات + يدعم صور المنتجات من Supabase Storage
    ================================================================= */
 
-const SITE_CONFIG = window.__SITE_CONFIG__ || {};
-const SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
+const APP_CONFIG = window.AppConfig || {};
+const SUPABASE_URL = APP_CONFIG.getSupabaseUrl ? APP_CONFIG.getSupabaseUrl() : '';
+const SUPABASE_ANON_KEY = APP_CONFIG.getSupabaseAnonKey ? APP_CONFIG.getSupabaseAnonKey() : '';
 const PRODUCT_IMAGES_BUCKET = 'products';
 const WHATSAPP_NUMBER = '201095314011';
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -87,18 +87,14 @@ const faqs = [
 let catalogPageSupabaseClient = null;
 
 (function initSupabase() {
-  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith('PUT_')) {
-    console.error('[Supabase] المفتاح غير صحيح أو غير مضاف.');
-    return;
+  try {
+    if (APP_CONFIG.createSupabaseClient) catalogPageSupabaseClient = APP_CONFIG.createSupabaseClient();
+    else if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) catalogPageSupabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if (!catalogPageSupabaseClient) throw new Error('Supabase runtime config is missing');
+    console.log('[Supabase] client initialized', catalogPageSupabaseClient);
+  } catch (error) {
+    console.error('[Supabase] تعذر تهيئة الاتصال.', error);
   }
-
-  if (!window.supabase) {
-    console.error('[Supabase] مكتبة Supabase لم يتم تحميلها.');
-    return;
-  }
-
-  catalogPageSupabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  console.log('[Supabase] client initialized', catalogPageSupabaseClient);
 })();
 
 function readCart() {

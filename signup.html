@@ -92,6 +92,7 @@
 
   <script src="./assets/js/cache-cleanup.js"></script>
   <script src="./site-config.js"></script>
+  <script src="./assets/js/app-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./assets/js/auth-config.js"></script>
   <script>
@@ -110,7 +111,10 @@
     const confirmActionBtn = document.getElementById('confirmActionBtn');
 
     function setMsg(text, type = '') { msgEl.textContent = text; msgEl.className = `admin-login-msg ${type}`.trim(); }
-    function getRedirectDest() { return new URLSearchParams(location.search).get('redirect') || './account.html'; }
+    function getRedirectDest() {
+      const raw = new URLSearchParams(location.search).get('redirect');
+      return window.AppConfig?.safeRedirectTarget(raw, './account.html') || './account.html';
+    }
     function escapeHtml(v) { return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
     function showPostSignupState(mode, email) {

@@ -54,12 +54,10 @@
 
   <script src="./assets/js/cache-cleanup.js"></script>
   <script src="./site-config.js"></script>
+  <script src="./assets/js/app-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SITE_CONFIG = window.__SITE_CONFIG__ || {};
-    const SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
-    const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.AppConfig.createSupabaseClient();
 
     const emailInput    = document.getElementById('adminEmail');
     const passwordInput = document.getElementById('adminPassword');
@@ -73,7 +71,7 @@
 
     async function redirectIfAuthenticated() {
       const { data } = await supabaseClient.auth.getUser();
-      if (data.user) window.location.href = './admin-orders.html';
+      if (data.user && await window.AppConfig.isAdminUser(supabaseClient, data.user)) window.location.href = './admin-orders.html';
     }
 
     async function handleLogin() {
@@ -83,13 +81,23 @@
       loginBtn.disabled = true;
       loginBtn.textContent = 'جارٍ تسجيل الدخول...';
       setMessage('');
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
         setMessage('فشل تسجيل الدخول. تأكد من الإيميل والباسورد.', 'is-error');
         loginBtn.disabled = false;
         loginBtn.textContent = 'دخول لوحة الإدارة';
         return;
       }
+
+      const allowed = await window.AppConfig.isAdminUser(supabaseClient, data?.user);
+      if (!allowed) {
+        await supabaseClient.auth.signOut();
+        setMessage('هذا الحساب ليس لديه صلاحية إدارة. فعّل role=admin في جدول profiles.', 'is-error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'دخول لوحة الإدارة';
+        return;
+      }
+
       setMessage('تم تسجيل الدخول بنجاح ✓', 'is-success');
       setTimeout(() => { window.location.href = './admin-orders.html'; }, 500);
     }

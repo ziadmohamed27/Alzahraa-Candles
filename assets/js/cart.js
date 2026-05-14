@@ -1,6 +1,6 @@
-const SITE_CONFIG = window.__SITE_CONFIG__ || {};
-const SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
-const SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
+const APP_CONFIG = window.AppConfig || {};
+const SUPABASE_URL = APP_CONFIG.getSupabaseUrl ? APP_CONFIG.getSupabaseUrl() : '';
+const SUPABASE_ANON_KEY = APP_CONFIG.getSupabaseAnonKey ? APP_CONFIG.getSupabaseAnonKey() : '';
 
 const $ = (s) => document.querySelector(s);
 
@@ -17,6 +17,7 @@ let supabaseClient = null;
 let isSubmittingOrder = false;
 let orderSubmittedSuccessfully = false;
 let lastSubmittedOrderNumber = '';
+let lastWhatsAppOrderUrl = '';
 const URGENT_RATE = 0.05;
 const URGENT_MIN_FEE = 10;
 const WHATSAPP_NUMBER = '201095314011';
@@ -32,8 +33,12 @@ const ORDER_NOTE_PREFIXES = {
 };
 
 (function initSupabase() {
-  if (!window.supabase || !SUPABASE_ANON_KEY) return;
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  try {
+    if (APP_CONFIG.createSupabaseClient) supabaseClient = APP_CONFIG.createSupabaseClient();
+    else if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (error) {
+    console.error('[Supabase] failed to initialize client', error);
+  }
 })();
 
 function showToast(message) {
@@ -79,6 +84,7 @@ function showOrderSuccess(orderNumber, isDirect = false) {
       <div class="order-success-actions">
         <div class="order-success-number">${escHtml(orderNumber || 'تم حفظ الطلب')}</div>
         <button type="button" class="btn btn-ghost btn-sm" id="copyOrderNumberBtn">نسخ الرقم</button>
+        ${lastWhatsAppOrderUrl ? '<button type="button" class="btn btn-ghost btn-sm" id="reopenWhatsAppBtn">فتح واتساب مرة أخرى</button>' : ''}
         <a href="./index.html#products" class="btn btn-ghost btn-sm">العودة للمنتجات</a>
       </div>
       <p>سيتم التواصل معك لتأكيد الطلب والتوصيل.</p>
@@ -939,6 +945,7 @@ function buildStructuredNotes({ customerAddress, customerNotes, isUrgent, urgent
 function resetSuccessState() {
   orderSubmittedSuccessfully = false;
   lastSubmittedOrderNumber = '';
+  lastWhatsAppOrderUrl = '';
   hideOrderSuccess();
 }
 
@@ -1393,7 +1400,11 @@ async function checkout() {
     const { orderNumber } = await saveOrderWithUniqueNumber(3);
     const msg = buildWhatsAppMessage(orderNumber, customerName, customerPhone, customerCity, customerAddress, customerNotes, isUrgent, deliveryMapsLink, deliveryLocationSource);
 
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    lastWhatsAppOrderUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    const whatsappWindow = window.open(lastWhatsAppOrderUrl, '_blank', 'noopener');
+    if (!whatsappWindow) {
+      showToast('تم حفظ الطلب. اضغط زر فتح واتساب مرة أخرى لإرسال الرسالة');
+    }
 
     orderSubmittedSuccessfully = true;
     lastSubmittedOrderNumber = orderNumber;
@@ -1514,6 +1525,11 @@ document.addEventListener('click', (e) => {
     const mapsInput = $('#googleMapsLinkInput');
     if (mapsInput) mapsInput.value = '';
     showToast('تم مسح موقع التسليم');
+    return;
+  }
+
+  if (e.target.id === 'reopenWhatsAppBtn') {
+    if (lastWhatsAppOrderUrl) window.open(lastWhatsAppOrderUrl, '_blank', 'noopener');
     return;
   }
 

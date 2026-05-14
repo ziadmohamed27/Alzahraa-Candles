@@ -4,9 +4,9 @@
    ================================================================= */
 
 (function initAuthConfig(global) {
-  const SITE_CONFIG = global.__SITE_CONFIG__ || {};
-  const AUTH_SUPABASE_URL = SITE_CONFIG.supabaseUrl || 'https://wihhfwdaysupjpfzshfq.supabase.co';
-    const AUTH_SUPABASE_ANON_KEY = SITE_CONFIG.supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpaGhmd2RheXN1cGpwZnpzaGZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI4MjAsImV4cCI6MjA4ODkyODgyMH0.Eem_ytvdtd7UnkWaguief7WeaZFbP4vU16gfl4gefls';
+  const APP = global.AppConfig || null;
+  const AUTH_SUPABASE_URL = APP?.getSupabaseUrl ? APP.getSupabaseUrl() : '';
+  const AUTH_SUPABASE_ANON_KEY = APP?.getSupabaseAnonKey ? APP.getSupabaseAnonKey() : '';
 
   global.AuthConfig = {
     supabaseUrl: AUTH_SUPABASE_URL,
@@ -15,7 +15,9 @@
 
   /* Initialise one shared Supabase client for auth/account pages */
   global.createAuthClient = function createAuthClient() {
+    if (APP?.createSupabaseClient) return APP.createSupabaseClient();
     if (!global.supabase) throw new Error('[Auth] Supabase SDK not loaded');
+    if (!AUTH_SUPABASE_URL || !AUTH_SUPABASE_ANON_KEY) throw new Error('[Auth] Missing Supabase runtime config');
     return global.supabase.createClient(AUTH_SUPABASE_URL, AUTH_SUPABASE_ANON_KEY);
   };
 
