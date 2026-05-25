@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 560">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FBF0E4"/>
+      <stop offset="1" stop-color="#EDD8BC"/>
+    </linearGradient>
+    <linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F8EAD6"/>
+      <stop offset="1" stop-color="#D4A060"/>
+    </linearGradient>
+    <radialGradient id="wax" cx="50%" cy="30%" r="60%">
+      <stop offset="0" stop-color="#FDF4E2"/>
+      <stop offset="1" stop-color="#E8C890"/>
+    </radialGradient>
+    <linearGradient id="flame3" x1=".5" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#FFF090"/>
+      <stop offset=".55" stop-color="#ECA020"/>
+      <stop offset="1" stop-color="#C05818"/>
+    </linearGradient>
+    <filter id="b3"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="sb3"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+
+  <rect width="500" height="560" fill="url(#bg3)" rx="0"/>
+
+  <!-- Background glow shapes -->
+  <circle cx="440" cy="80"  r="100" fill="#ECC898" opacity=".3"/>
+  <circle cx="60"  cy="460" r="90"  fill="#DDB880" opacity=".25"/>
+  <ellipse cx="250" cy="300" rx="200" ry="200" fill="#FFF4DE" opacity=".3"/>
+
+  <!-- Candle glow halo -->
+  <ellipse cx="250" cy="230" rx="120" ry="120" fill="#FFD058" opacity=".28" filter="url(#b3)"/>
+
+  <!-- Wide bowl / vessel candle -->
+  <!-- Bowl outer shape -->
+  <path d="M120 320 Q100 360 105 400 Q110 450 250 460 Q390 450 395 400 Q400 360 380 320 Z" fill="url(#bowl)"/>
+
+  <!-- Bowl highlight -->
+  <path d="M135 325 Q118 360 122 396 Q126 430 165 445" stroke="white" stroke-width="10" fill="none" opacity=".18" stroke-linecap="round"/>
+
+  <!-- Wax surface inside bowl -->
+  <ellipse cx="250" cy="318" rx="130" ry="28" fill="url(#wax)"/>
+
+  <!-- Bowl rim -->
+  <ellipse cx="250" cy="316" rx="133" ry="30" fill="none" stroke="#C08848" stroke-width="4"/>
+  <ellipse cx="250" cy="316" rx="133" ry="30" fill="#C9A858" opacity=".25"/>
+
+  <!-- Multiple wicks — 3-wick candle -->
+  <line x1="210" y1="318" x2="207" y2="270" stroke="#3A1C08" stroke-width="3" stroke-linecap="round"/>
+  <line x1="250" y1="318" x2="247" y2="268" stroke="#3A1C08" stroke-width="3" stroke-linecap="round"/>
+  <line x1="290" y1="318" x2="287" y2="272" stroke="#3A1C08" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Flame glow (all 3) -->
+  <ellipse cx="208" cy="252" rx="20" ry="28" fill="#FFD058" opacity=".4" filter="url(#sb3)"/>
+  <ellipse cx="248" cy="248" rx="24" ry="34" fill="#FFD058" opacity=".45" filter="url(#sb3)"/>
+  <ellipse cx="288" cy="254" rx="20" ry="28" fill="#FFD058" opacity=".4" filter="url(#sb3)"/>
+
+  <!-- Left flame -->
+  <path d="M208 224 C199 235 196 248 198 258 C200 267 204 273 208 274 C212 273 216 267 218 258 C220 248 217 235 208 224Z" fill="url(#flame3)"/>
+  <path d="M208 232 C203 241 201 251 203 258 C204 264 206 268 208 269 C210 268 212 264 213 258 C215 251 213 241 208 232Z" fill="#FFFCA8" opacity=".85"/>
+
+  <!-- Center flame (tallest) -->
+  <path d="M248 215 C237 228 232 245 234 258 C236 270 242 278 248 279 C254 278 260 270 262 258 C264 245 259 228 248 215Z" fill="url(#flame3)"/>
+  <path d="M248 225 C241 236 238 249 240 259 C241 267 244 273 248 274 C252 273 255 267 256 259 C258 249 255 236 248 225Z" fill="#FFFCA8" opacity=".9"/>
+  <circle cx="248" cy="220" r="4.5" fill="white" opacity=".7"/>
+
+  <!-- Right flame -->
+  <path d="M288 226 C279 237 276 250 278 260 C280 269 284 275 288 276 C292 275 296 269 298 260 C300 250 297 237 288 226Z" fill="url(#flame3)"/>
+  <path d="M288 234 C283 243 281 253 283 260 C284 266 286 270 288 271 C290 270 292 266 293 260 C295 253 293 243 288 234Z" fill="#FFFCA8" opacity=".85"/>
+
+  <!-- Decorative band on bowl lower half -->
+  <path d="M125 385 Q140 375 250 372 Q360 375 375 385" stroke="#C9A858" stroke-width="1.5" fill="none" opacity=".5"/>
+  <!-- Small dots pattern on band -->
+  <circle cx="175" cy="380" r="3" fill="#C9A858" opacity=".4"/>
+  <circle cx="215" cy="377" r="3" fill="#C9A858" opacity=".4"/>
+  <circle cx="250" cy="376" r="3" fill="#C9A858" opacity=".4"/>
+  <circle cx="285" cy="377" r="3" fill="#C9A858" opacity=".4"/>
+  <circle cx="325" cy="380" r="3" fill="#C9A858" opacity=".4"/>
+
+  <!-- Shadow under bowl -->
+  <ellipse cx="250" cy="466" rx="120" ry="12" fill="#B08040" opacity=".18" filter="url(#sb3)"/>
+
+  <!-- Surface line -->
+  <line x1="60" y1="475" x2="440" y2="475" stroke="#C9A46A" stroke-width="1" opacity=".28"/>
+
+  <!-- Small decorative leaves -->
+  <ellipse cx="130" cy="460" rx="18" ry="9" fill="#B8A870" opacity=".4" transform="rotate(-30 130 460)"/>
+  <ellipse cx="370" cy="455" rx="18" ry="9" fill="#B8A870" opacity=".4" transform="rotate(25 370 455)"/>
+</svg>
