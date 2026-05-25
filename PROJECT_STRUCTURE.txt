@@ -1,4 +1,4 @@
-Alzahraa Candles - Organized static project
+SIRAJ - Organized static project
 
 Upload the CONTENTS of this folder/zip to Netlify.
 

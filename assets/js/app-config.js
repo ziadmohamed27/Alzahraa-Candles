@@ -1,5 +1,5 @@
 /* =================================================================
-   Alzahraa Candles — app-config.js
+   SIRAJ — app-config.js
    Shared runtime config, Supabase client factory, safe redirects,
    and admin role checks.
    ================================================================= */

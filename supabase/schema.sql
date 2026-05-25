@@ -1,4 +1,4 @@
--- Alzahraa Candles database schema - matched to the current database you shared.
+-- SIRAJ database schema - matched to the current database you shared.
 -- For an existing live database, prefer running existing-database-migration.sql.
 -- Use this file only for a fresh Supabase project or as documentation.
 

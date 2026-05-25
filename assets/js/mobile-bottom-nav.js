@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Mobile Bottom Navigation — Alzahraa Candles
+   Mobile Bottom Navigation — SIRAJ
    v2 — Smart Products button · Mini Cart bar · Cart sync · Auth
    ═══════════════════════════════════════════════════════════════ */
 (function () {

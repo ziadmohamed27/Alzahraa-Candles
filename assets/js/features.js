@@ -1,5 +1,5 @@
 /* ================================================================
-   Alzahraa Candles — features.js
+   SIRAJ — features.js
    New business features: Wishlist, Search Autocomplete,
    Scent Quiz, Price Slider, WA bubble, Recently Searched.
    ================================================================ */

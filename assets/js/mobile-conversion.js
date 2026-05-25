@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   mobile-conversion.js — Alzahraa Candles
+   mobile-conversion.js — SIRAJ
    Quick Filter Chips · Recently Viewed · Trust Strip helpers
    Mobile only (max 900px)
    ═══════════════════════════════════════════════════════════════ */

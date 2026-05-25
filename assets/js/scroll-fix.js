@@ -1,5 +1,5 @@
 /* =================================================================
-   Alzahraa Candles — scroll-fix.js (root-cause safe fix)
+   SIRAJ — scroll-fix.js (root-cause safe fix)
    Purpose: remove stale scroll locks left by previous drawer/modal code.
    No MutationObserver. No setInterval. No permanent loop.
    ================================================================= */

@@ -1,4 +1,4 @@
--- Alzahraa Candles RLS policies - matched to the current database.
+-- SIRAJ RLS policies - matched to the current database.
 -- For your live database, run existing-database-migration.sql first because it includes these policies.
 
 alter table public.profiles enable row level security;

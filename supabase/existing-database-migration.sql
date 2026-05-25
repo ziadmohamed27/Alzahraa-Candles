@@ -1,4 +1,4 @@
--- Alzahraa Candles - SAFE migration for your CURRENT Supabase database
+-- SIRAJ - SAFE migration for your CURRENT Supabase database
 -- Based on the schema you shared on 2026-05-14.
 -- Run this instead of recreating tables. It only adds missing admin/RLS pieces,
 -- refreshes the dashboard view, and adds helpful indexes/triggers.

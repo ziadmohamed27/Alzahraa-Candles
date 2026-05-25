@@ -1,5 +1,5 @@
 /* ================================================================
-   Alzahraa Candles — interactions.js
+   SIRAJ — interactions.js
    Dynamic layer: progress bar, cart drawer, sparkles, counters,
    stagger reveals, sticky filters, search highlights, typewriter.
    Zero modifications to script.js or cart.js.
@@ -25,7 +25,7 @@ else { window.__alzahraaInteractionsInit = true;
     bar.id = 'scrollProgressBar';
     bar.style.cssText = `
       position:fixed;top:0;left:0;height:3px;width:0%;
-      background:linear-gradient(90deg,#C9A46A,#A07840,#C9A46A);
+      background:linear-gradient(90deg,#C9A46A,#4b148c,#C9A46A);
       background-size:200% auto;
       z-index:9999;transition:width .1s linear;
       animation:shimmer 2s linear infinite;
@@ -257,7 +257,7 @@ else { window.__alzahraaInteractionsInit = true;
     const cx = rect.left + rect.width / 2 + window.scrollX;
     const cy = rect.top + rect.height / 2 + window.scrollY;
 
-    const colors = ['#C9A46A','#F5D78E','#A07840','#FFE4A0','#D4A86A'];
+    const colors = ['#C9A46A','#F5D78E','#4b148c','#FFE4A0','#D4A86A'];
     for (let i = 0; i < 12; i++) {
       const s = document.createElement('span');
       s.className = 'sparkle-particle';

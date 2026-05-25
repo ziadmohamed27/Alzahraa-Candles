@@ -1,5 +1,5 @@
 /* =================================================================
-   Alzahraa Candles — auth-config.js
+   SIRAJ — auth-config.js
    Shared Supabase config and customer auth utilities
    ================================================================= */
 

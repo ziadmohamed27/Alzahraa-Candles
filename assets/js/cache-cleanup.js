@@ -1,4 +1,4 @@
-/* Alzahraa Candles — legacy cache cleanup
+/* SIRAJ — legacy cache cleanup
    Removes old service workers/caches that could keep stale JS or 404 responses. */
 (function () {
   'use strict';

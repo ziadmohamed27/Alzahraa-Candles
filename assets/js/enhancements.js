@@ -1,5 +1,5 @@
 /* ================================================================
-   Alzahraa Candles — enhancements.js
+   SIRAJ — enhancements.js
    Quantity picker in modal, MutationObserver cleanup, image
    lightbox, recently viewed, share button, back-to-products,
    product badge tooltips, smooth page transitions.
@@ -234,8 +234,8 @@ window.__alzahraaEnhancementsInit = true;
     document.addEventListener('click', async e => {
       const btn = e.target.closest('.modal-share-btn');
       if (!btn) return;
-      const title = document.getElementById('modalTitle')?.textContent || 'Alzahraa Candles';
-      const text = `اكتشف ${title} من Alzahraa Candles 🕯️`;
+      const title = document.getElementById('modalTitle')?.textContent || 'SIRAJ';
+      const text = `اكتشف ${title} من SIRAJ 🕯️`;
       const url = window.location.href;
 
       if (navigator.share) {

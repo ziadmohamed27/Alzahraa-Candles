@@ -1,4 +1,4 @@
-# Supabase setup for Alzahraa Candles
+# Supabase setup for SIRAJ
 
 ## Your current live database
 

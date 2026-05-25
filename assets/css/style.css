@@ -18,7 +18,7 @@
   src: local("Tajawal");
 }
 /* ============================================================
-   Alzahraa Candles — Luxury Redesign
+   SIRAJ — Luxury Redesign
    Palette: Warm Cream / Deep Brown / Soft Gold / Muted Rose
    ============================================================ */
 
@@ -5134,3 +5134,127 @@ a, button, [role="button"], input[type="submit"] {
   }
 }
 
+
+/* ─────────────────────────────────────────────
+   SIRAJ brand refresh
+───────────────────────────────────────────── */
+:root {
+  --siraj-purple: #4b148c;
+  --siraj-purple-dark: #2b0b52;
+  --siraj-purple-soft: #eadcf8;
+  --siraj-flame: #f6c55c;
+  --gold: #8b55c8;
+  --gold-light: #d9c0f0;
+  --gold-dark: #4b148c;
+  --text: #231126;
+  --text-mid: #46304c;
+  --muted: #837086;
+  --line: #e6d8ea;
+}
+.brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+}
+.brand-logo {
+  width: min(180px, 28vw);
+  height: 42px;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 4px 10px rgba(75,20,140,.08));
+}
+.brand-sub {
+  color: var(--siraj-purple);
+  letter-spacing: .26em;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.home-candle-btn {
+  background: linear-gradient(145deg, #fffaf3, #f0e5fb);
+  border-color: rgba(75,20,140,.16);
+}
+.home-candle-btn .candle-flame,
+.candle-home .candle-flame {
+  filter: hue-rotate(35deg) saturate(1.15);
+}
+.hero {
+  background:
+    radial-gradient(ellipse 55% 50% at 76% 22%, rgba(75,20,140,.12) 0%, transparent 67%),
+    radial-gradient(ellipse 40% 45% at 15% 75%, rgba(246,197,92,.22) 0%, transparent 60%),
+    linear-gradient(150deg, #fffaf3 0%, #f7eefc 46%, #efe0f5 100%);
+}
+.eyebrow-line { background: linear-gradient(90deg, var(--siraj-purple), var(--siraj-flame)); }
+.hero-copy h1 em {
+  background: linear-gradient(100deg, var(--siraj-purple), #7d49bd 52%, #b2762e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-badge {
+  border-color: rgba(75,20,140,.14);
+  background: rgba(255,255,255,.72);
+}
+.hero-visual::before {
+  content: "";
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(75,20,140,.14), rgba(246,197,92,.12) 45%, transparent 70%);
+  filter: blur(2px);
+}
+.brand-hero-card {
+  width: 64%;
+  max-width: 430px;
+  right: 8%;
+  background: rgba(255,255,255,.72) !important;
+  border: 1px solid rgba(75,20,140,.13);
+  padding: 34px 28px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.brand-hero-card img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 24px rgba(75,20,140,.12));
+}
+.hero-img-sm-1 {
+  background: rgba(255,255,255,.72) !important;
+  border: 1px solid rgba(75,20,140,.12);
+  padding: 22px;
+}
+.hero-img-sm-1 img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.hero-img-sm-2 {
+  background: linear-gradient(145deg, #fff7e7, #eadcf8) !important;
+  border: 1px solid rgba(75,20,140,.12);
+}
+.hero-float-1 {
+  color: var(--siraj-purple-dark);
+  border-color: rgba(75,20,140,.15);
+}
+.hero-float-2 {
+  background: linear-gradient(135deg, var(--siraj-purple), #7b45b5);
+  box-shadow: 0 12px 30px rgba(75,20,140,.24);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--siraj-purple), #7b45b5);
+  box-shadow: 0 12px 30px rgba(75,20,140,.22);
+}
+.btn-primary:hover { box-shadow: 0 18px 40px rgba(75,20,140,.28); }
+.footer-brand { color: var(--siraj-purple); }
+@media (max-width: 768px) {
+  .brand { min-width: 130px; }
+  .brand-logo { width: 132px; height: 34px; }
+  .brand-sub { font-size: .56rem; letter-spacing: .18em; }
+}
+@media (max-width: 520px) {
+  .brand-logo { width: 118px; }
+  .brand-sub { display: none; }
+}
