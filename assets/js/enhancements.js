@@ -1,30 +1,13 @@
-/* ================================================================
-   SIRAJ — enhancements.js
-   Quantity picker in modal, MutationObserver cleanup, image
-   lightbox, recently viewed, share button, back-to-products,
-   product badge tooltips, smooth page transitions.
-   Runs AFTER script.js — zero modifications to original files.
-   ================================================================ */
-
-if (window.__alzahraaEnhancementsInit) { /* guard */ } else {
+if (window.__alzahraaEnhancementsInit) {  } else {
 window.__alzahraaEnhancementsInit = true;
 (function () {
   'use strict';
-
   const $ = (s, ctx = document) => ctx.querySelector(s);
   const $$ = (s, ctx = document) => [...ctx.querySelectorAll(s)];
-
-  /* ─────────────────────────────────────────────────────────────
-     1. MODAL QUANTITY PICKER
-     Injects a qty control before the Add button in the product
-     modal — respects script.js addToCart() which increments qty.
-  ───────────────────────────────────────────────────────────── */
   let modalQty = 1;
-
   function injectModalQty() {
     const modal = document.getElementById('productModalContent');
     if (!modal) return;
-
     let _processingQty = false; // prevent re-entrant calls
     const mo = new MutationObserver(() => {
       if (_processingQty) return;
@@ -32,9 +15,7 @@ window.__alzahraaEnhancementsInit = true;
       const addBtn = modal.querySelector('.modal-add');
       if (!addBtn || modal.querySelector('.modal-qty-wrap')) return;
       _processingQty = true;
-
       modalQty = 1;
-
       const wrap = document.createElement('div');
       wrap.className = 'modal-qty-wrap';
       wrap.setAttribute('aria-label', 'اختيار الكمية');
@@ -45,7 +26,6 @@ window.__alzahraaEnhancementsInit = true;
           <span class="modal-qty-val" id="mqVal" aria-live="polite">1</span>
           <button class="btn btn-ghost modal-qty-btn" id="mqPlus"  type="button" aria-label="زيادة">+</button>
         </div>`;
-
       // Insert before the modal CTA footer (new v09 structure)
       const ctaFooter = modal.querySelector('.modal-cta-footer');
       if (ctaFooter) {
@@ -55,21 +35,18 @@ window.__alzahraaEnhancementsInit = true;
         if (addBtnEl && addBtnEl.parentNode) addBtnEl.parentNode.insertBefore(wrap, addBtnEl);
       }
       setTimeout(() => { _processingQty = false; }, 50);
-
       modal.querySelector('#mqMinus')?.addEventListener('click', () => {
         if (modalQty > 1) { modalQty--; updateMq(); }
       });
       modal.querySelector('#mqPlus')?.addEventListener('click', () => {
         if (modalQty < 99) { modalQty++; updateMq(); }
       });
-
       // Override the add button to add qty times
       addBtn.addEventListener('click', function override(e) {
         if (modalQty <= 1) return; // qty=1 is handled by script.js normally
         e.stopImmediatePropagation();
         const id = Number(addBtn.dataset.id);
         if (!id) return;
-
         // Get current cart and bump by extra qty-1 (script.js adds 1)
         try {
           const raw = localStorage.getItem('candles-cart');
@@ -99,29 +76,21 @@ window.__alzahraaEnhancementsInit = true;
         } catch (err) { console.warn(err); }
       }, true);
     });
-
     mo.observe(modal, { childList: true });
     // Store ref for cleanup
     window.__mqObserver = mo;
   }
-
   function updateMq() {
     const val = document.getElementById('mqVal');
     const minus = document.getElementById('mqMinus');
     if (val) val.textContent = modalQty;
     if (minus) minus.disabled = modalQty <= 1;
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     2. RECENTLY VIEWED — horizontal strip below products
-  ───────────────────────────────────────────────────────────── */
   const RV_KEY = 'candles-recent';
   const RV_MAX = 6;
-
   function getRecentlyViewed() {
     try { return JSON.parse(localStorage.getItem(RV_KEY) || '[]'); } catch { return []; }
   }
-
   function addRecentlyViewed(product) {
     try {
       let rv = getRecentlyViewed().filter(p => Number(p.id) !== Number(product.id));
@@ -130,20 +99,16 @@ window.__alzahraaEnhancementsInit = true;
       localStorage.setItem(RV_KEY, JSON.stringify(rv));
     } catch {}
   }
-
   function renderRecentlyViewed() {
     const rv = getRecentlyViewed();
     const section = document.getElementById('recentlyViewedSection');
     if (!section) return;
-
     if (rv.length < 2) { section.style.display = 'none'; return; }
     section.style.display = '';
-
     const track = section.querySelector('.rv-track');
     if (!track) return;
     const money = v => `${Number(v || 0).toFixed(0)} ج.م`;
     const escH = str => String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
     track.innerHTML = rv.map(p => `
       <div class="rv-card view-product" data-id="${p.id}" role="button" tabindex="0"
            aria-label="عرض ${escH(p.name)}">
@@ -156,7 +121,6 @@ window.__alzahraaEnhancementsInit = true;
         </div>
       </div>`).join('');
   }
-
   // Track views when modal opens
   const modalEl = document.getElementById('productModalOverlay');
   if (modalEl) {
@@ -182,10 +146,6 @@ window.__alzahraaEnhancementsInit = true;
     viewObs.observe(modalEl, { attributes: true, attributeFilter: ['class'] });
     window.__viewObserver = viewObs;
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     3. IMAGE LIGHTBOX — tap product image in modal to expand
-  ───────────────────────────────────────────────────────────── */
   function initLightbox() {
     const lb = document.createElement('div');
     lb.id = 'imageLightbox';
@@ -199,13 +159,11 @@ window.__alzahraaEnhancementsInit = true;
         <p id="lbCaption"></p>
       </div>`;
     document.body.appendChild(lb);
-
     document.getElementById('lbBackdrop')?.addEventListener('click', closeLb);
     document.getElementById('lbClose')?.addEventListener('click', closeLb);
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && lb.classList.contains('open')) closeLb();
     });
-
     // Open on modal image click
     document.addEventListener('click', e => {
       const img = e.target.closest('.modal-layout img');
@@ -218,7 +176,6 @@ window.__alzahraaEnhancementsInit = true;
       document.body.classList.add('modal-open');
     });
   }
-
   function closeLb() {
     const lb = document.getElementById('imageLightbox');
     lb?.classList.remove('open');
@@ -226,10 +183,6 @@ window.__alzahraaEnhancementsInit = true;
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     4. SHARE BUTTON — Web Share API with fallback copy
-  ───────────────────────────────────────────────────────────── */
   function initShareButtons() {
     document.addEventListener('click', async e => {
       const btn = e.target.closest('.modal-share-btn');
@@ -237,7 +190,6 @@ window.__alzahraaEnhancementsInit = true;
       const title = document.getElementById('modalTitle')?.textContent || 'SIRAJ';
       const text = `اكتشف ${title} من SIRAJ 🕯️`;
       const url = window.location.href;
-
       if (navigator.share) {
         try {
           await navigator.share({ title, text, url });
@@ -252,17 +204,14 @@ window.__alzahraaEnhancementsInit = true;
       }
     });
   }
-
   // Inject share button into modal
   function injectShareButton() {
     const modalEl = document.getElementById('productModalContent');
     if (!modalEl) return;
-
     const mo2 = new MutationObserver(() => {
       // Inject share button into the modal scroll body
       const scrollBody = modalEl.querySelector('.modal-info-scroll');
       if (!scrollBody || scrollBody.querySelector('.modal-share-btn')) return;
-
       const trustRow = scrollBody.querySelector('.modal-trust-row');
       const shareBtn = document.createElement('button');
       shareBtn.className = 'btn btn-ghost modal-share-btn';
@@ -272,24 +221,17 @@ window.__alzahraaEnhancementsInit = true;
       if (trustRow) trustRow.appendChild(shareBtn);
       else scrollBody.appendChild(shareBtn);
     });
-
     mo2.observe(modalEl, { childList: true });
     window.__shareObserver = mo2;
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     5. SMOOTH PAGE TRANSITIONS — fade between pages
-  ───────────────────────────────────────────────────────────── */
   function initPageTransitions() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
     // Fade in on load
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity .3s ease';
     requestAnimationFrame(() => requestAnimationFrame(() => {
       document.body.style.opacity = '1';
     }));
-
     // Fade out on internal link click
     document.addEventListener('click', e => {
       const link = e.target.closest('a[href]');
@@ -299,16 +241,11 @@ window.__alzahraaEnhancementsInit = true;
           href.startsWith('https') || href.startsWith('mailto') ||
           href.startsWith('tel') || link.target === '_blank') return;
       if (e.ctrlKey || e.metaKey || e.shiftKey) return;
-
       e.preventDefault();
       document.body.style.opacity = '0';
       setTimeout(() => { window.location.href = href; }, 280);
     });
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     6. TOAST HELPER for enhancements
-  ───────────────────────────────────────────────────────────── */
   function showEnhToast(msg) {
     const existing = document.getElementById('toast');
     if (existing) {
@@ -318,10 +255,6 @@ window.__alzahraaEnhancementsInit = true;
       showEnhToast._t = setTimeout(() => existing.classList.remove('show'), 2200);
     }
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     7. KEYBOARD NAVIGATION — product cards navigable with keys
-  ───────────────────────────────────────────────────────────── */
   function initKeyboardNav() {
     document.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -332,14 +265,9 @@ window.__alzahraaEnhancementsInit = true;
       }
     });
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     8. FILTER ACTIVE COUNT — badge on filter section title
-  ───────────────────────────────────────────────────────────── */
   function initFilterBadge() {
     const filters = document.getElementById('filters');
     if (!filters) return;
-
     const mo = new MutationObserver(() => {
       const active = filters.querySelectorAll('.filter-btn.active');
       const existing = document.getElementById('filterActiveBadge');
@@ -357,14 +285,9 @@ window.__alzahraaEnhancementsInit = true;
         existing.remove();
       }
     });
-
     mo.observe(filters, { subtree: true, attributes: true, attributeFilter: ['class'] });
     window.__filterObs = mo;
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     9. COPY TO CLIPBOARD on phone numbers / order numbers
-  ───────────────────────────────────────────────────────────── */
   function initCopyClipboard() {
     document.addEventListener('click', async e => {
       const copyBtn = e.target.closest('[data-copy]');
@@ -378,17 +301,12 @@ window.__alzahraaEnhancementsInit = true;
       } catch {}
     });
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     10. SCROLL-LINKED HERO PARALLAX — subtle depth effect
-  ───────────────────────────────────────────────────────────── */
   function initHeroParallax() {
     const hero = document.querySelector('.hero');
     const heroVisual = document.querySelector('.hero-visual');
     if (!hero || !heroVisual) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (window.matchMedia('(hover: none)').matches) return; // skip on touch
-
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (ticking) return;
@@ -402,10 +320,6 @@ window.__alzahraaEnhancementsInit = true;
       });
     }, { passive: true });
   }
-
-  /* ─────────────────────────────────────────────────────────────
-     INIT
-  ───────────────────────────────────────────────────────────── */
   function init() {
     injectModalQty();
     initLightbox();
@@ -416,7 +330,6 @@ window.__alzahraaEnhancementsInit = true;
     initFilterBadge();
     initCopyClipboard();
     initHeroParallax();
-
     // Recently viewed — render on load, re-render when products change
     renderRecentlyViewed();
     const prodGrid = document.getElementById('productGrid');
@@ -431,8 +344,6 @@ window.__alzahraaEnhancementsInit = true;
       window.__rvGridObs = rvObs;
     }
   }
-
-
   // Clean up observers when page hidden to save memory
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
@@ -442,12 +353,10 @@ window.__alzahraaEnhancementsInit = true;
       window.__rvGridObs?.disconnect();
     }
   });
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-
 })();
 } // end enhancements guard

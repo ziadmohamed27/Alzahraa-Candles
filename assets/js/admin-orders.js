@@ -1,9 +1,7 @@
-
 const APP_CONFIG = window.AppConfig || {};
 const SUPABASE_URL = APP_CONFIG.getSupabaseUrl ? APP_CONFIG.getSupabaseUrl() : '';
 const SUPABASE_ANON_KEY = APP_CONFIG.getSupabaseAnonKey ? APP_CONFIG.getSupabaseAnonKey() : '';
 const supabaseClient = APP_CONFIG.createSupabaseClient ? APP_CONFIG.createSupabaseClient() : supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 const ordersList = document.getElementById('ordersList');
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
@@ -19,11 +17,9 @@ const sortSelect = document.getElementById('sortSelect');
 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const adminLastUpdated = document.getElementById('adminLastUpdated');
-
 let allOrders = [];
 let detailsCache = new Map();
 let activeStatFilter = 'all';
-
 const STATUS_MAP = {
   pending: { label: 'قيد المراجعة', className: 'is-pending' },
   confirmed: { label: 'تم التأكيد', className: 'is-confirmed' },
@@ -31,8 +27,6 @@ const STATUS_MAP = {
   delivered: { label: 'تم التسليم', className: 'is-delivered' },
   cancelled: { label: 'ملغي', className: 'is-cancelled' },
 };
-
-
 const NOTE_PREFIXES = {
   address: 'العنوان:',
   customerNote: 'ملاحظات العميل:',
@@ -42,7 +36,6 @@ const NOTE_PREFIXES = {
   locationSource: 'مصدر موقع التسليم:',
   locationLink: 'رابط موقع التسليم:',
 };
-
 function parseStructuredNotes(rawValue) {
   const raw = String(rawValue || '').replace(/\r/g, '').trim();
   const meta = {
@@ -55,12 +48,9 @@ function parseStructuredNotes(rawValue) {
     locationLink: '',
     raw,
   };
-
   if (!raw) return meta;
-
   const normalized = raw.split('|').map(part => part.trim()).filter(Boolean).join('\n');
   const lines = normalized.split('\n').map(line => line.trim()).filter(Boolean);
-
   for (const line of lines) {
     if (line.startsWith(NOTE_PREFIXES.address)) meta.address = line.slice(NOTE_PREFIXES.address.length).trim();
     else if (line.startsWith(NOTE_PREFIXES.customerNote)) meta.customerNote = line.slice(NOTE_PREFIXES.customerNote.length).trim();
@@ -70,60 +60,49 @@ function parseStructuredNotes(rawValue) {
     else if (line.startsWith(NOTE_PREFIXES.locationSource)) meta.locationSource = line.slice(NOTE_PREFIXES.locationSource.length).trim();
     else if (line.startsWith(NOTE_PREFIXES.locationLink)) meta.locationLink = line.slice(NOTE_PREFIXES.locationLink.length).trim();
   }
-
   if (!meta.address) {
     const legacyAddress = raw.match(/العنوان\s*:\s*([^|\n]+)/);
     if (legacyAddress) meta.address = legacyAddress[1].trim();
   }
-
   if (!meta.customerNote) {
     const legacyNote = raw.match(/ملاحظات(?: العميل)?\s*:\s*([^|\n]+)/);
     if (legacyNote) meta.customerNote = legacyNote[1].trim();
     else if (raw && !raw.includes(NOTE_PREFIXES.address)) meta.customerNote = raw;
   }
-
   if (!meta.orderType && /طلب\s+مستعجل/.test(raw)) meta.orderType = 'طلب مستعجل';
   if (!meta.urgentFee && /\+\d/.test(raw)) {
     const legacyUrgent = raw.match(/\((\+[^)]+)\)/);
     if (legacyUrgent) meta.urgentFee = legacyUrgent[1];
   }
   if (!meta.shipping) meta.shipping = 'يحدد لاحقًا';
-
   return meta;
 }
-
 async function requireAuth() {
   if (APP_CONFIG.requireAdmin) {
     return APP_CONFIG.requireAdmin(supabaseClient, { loginUrl: './admin-login.html' });
   }
-
   const { data } = await supabaseClient.auth.getUser();
   if (!data.user) { window.location.href = './admin-login.html'; return false; }
   return true;
 }
-
 function money(v) {
   const n = Number(v || 0);
   return `${n.toFixed(2)} ج.م`;
 }
-
 function toSafeInt(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? Math.trunc(n) : fallback;
 }
-
 function getOrderItemsCount(order) {
   const direct = [order?.items_count, order?.total_items, order?.itemsCount, order?.qty_total];
   for (const value of direct) {
     const parsed = Number(value);
     if (Number.isFinite(parsed) && parsed >= 0) return Math.trunc(parsed);
   }
-
   const items = Array.isArray(order?.items_json) ? order.items_json : [];
   if (!items.length) return 0;
   return items.reduce((sum, item) => sum + Math.max(0, toSafeInt(item?.qty, 0)), 0);
 }
-
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -132,21 +111,18 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
-
 function formatDate(value) {
   if (!value) return '-';
   return new Date(value).toLocaleString('ar-EG', {
     year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: '2-digit'
   });
 }
-
 function formatShortDate(value) {
   if (!value) return '-';
   return new Date(value).toLocaleDateString('ar-EG', {
     year: 'numeric', month: '2-digit', day: '2-digit'
   });
 }
-
 function getStatusMeta(status) {
   return STATUS_MAP[status] || { label: status || '-', className: '' };
 }
@@ -160,7 +136,6 @@ function getSortLabel(mode) {
   };
   return map[mode] || 'الأحدث أولًا';
 }
-
 function getActiveFilterSummary(filteredRows) {
   const search = String(searchInput?.value || '').trim();
   const selectedStatus = statusFilter?.value || '';
@@ -171,7 +146,6 @@ function getActiveFilterSummary(filteredRows) {
     today: 'طلبات اليوم',
     overdue: 'طلبات تحتاج متابعة',
   };
-
   return {
     search: search || '—',
     status: statusLabel,
@@ -184,22 +158,18 @@ function getActiveFilterSummary(filteredRows) {
     total: filteredRows.reduce((sum, order) => sum + Number(order?.total || 0), 0),
   };
 }
-
 function csvText(value, forceText = false) {
   const raw = String(value ?? '');
   const escaped = raw.replace(/"/g, '""');
   if (forceText) return `"=""${escaped}"""`;
   return `"${escaped}"`;
 }
-
-
 function toWhatsAppLink(phone) {
   const normalized = String(phone || '').replace(/\D/g, '');
   if (!normalized) return '#';
   const e164 = normalized.startsWith('20') ? normalized : normalized.startsWith('0') ? `2${normalized}` : normalized;
   return `https://wa.me/${e164}`;
 }
-
 function getDeliveryLocationUrl(order, meta = null) {
   const direct = String(order?.delivery_maps_link || '').trim();
   if (direct) return direct;
@@ -210,7 +180,6 @@ function getDeliveryLocationUrl(order, meta = null) {
   if (Number.isFinite(lat) && Number.isFinite(lng)) return `https://www.google.com/maps?q=${lat},${lng}`;
   return '';
 }
-
 function getDeliveryLocationSourceLabel(order, meta = null) {
   const raw = String(order?.delivery_location_source || meta?.locationSource || '').trim();
   if (!raw) return 'غير محدد';
@@ -219,73 +188,59 @@ function getDeliveryLocationSourceLabel(order, meta = null) {
   if (raw === 'google_maps_link') return 'رابط من خرائط Google';
   return raw;
 }
-
 function isToday(value) {
   if (!value) return false;
   const d = new Date(value);
   const now = new Date();
   return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
 }
-
 function isOverdue(order) {
   const openStatuses = ['pending', 'confirmed', 'processing'];
   if (!openStatuses.includes(order?.status)) return false;
   const createdAt = new Date(order?.created_at || Date.now()).getTime();
   return (Date.now() - createdAt) >= 48 * 60 * 60 * 1000;
 }
-
 function updateLastUpdated() {
   if (adminLastUpdated) {
     adminLastUpdated.textContent = `آخر تحديث: ${formatDate(new Date().toISOString())}`;
   }
 }
-
 function normalizeCityValue(value) {
   return String(value || '').trim();
 }
-
 function populateCityFilter(rows) {
   if (!cityFilter) return;
   const current = cityFilter.value || '';
   const cities = [...new Set(rows.map(o => normalizeCityValue(o.city)).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'ar'));
-
   cityFilter.innerHTML = '<option value="">كل المحافظات</option>' +
     cities.map(city => `<option value="${escapeHtml(city)}">${escapeHtml(city)}</option>`).join('');
-
   const stillExists = cities.includes(current);
   cityFilter.value = stillExists ? current : '';
 }
-
 async function loadOrders() {
   ordersList.innerHTML = '<div class="admin-empty">جارٍ تحميل الطلبات...</div>';
-
   let data = null;
   let error = null;
-
   ({ data, error } = await supabaseClient
     .from('orders_dashboard')
     .select('*')
     .order('created_at', { ascending: false }));
-
   if (error) {
     console.error('[AdminOrders] failed to load orders_dashboard', error);
     ordersList.innerHTML = '<div class="admin-empty is-error">فشل تحميل الطلبات. تأكد من تطبيق ملف supabase/policies.sql وإنشاء orders_dashboard.</div>';
     return;
   }
-
   allOrders = data || [];
   populateCityFilter(allOrders);
   updateLastUpdated();
   applyFilters();
 }
-
 function buildStats(orders) {
   const totalSales = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
   const todayOrders = orders.filter(o => isToday(o.created_at));
   const todaySales = todayOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
   const overdueOrders = orders.filter(isOverdue);
-
   return [
     { key: 'all', title: 'إجمالي الطلبات', value: orders.length, filterMode: 'all' },
     { key: 'sales', title: 'إجمالي المبيعات', value: money(totalSales), filterMode: 'all', extraClass: 'is-sales' },
@@ -298,21 +253,17 @@ function buildStats(orders) {
     { key: 'overdue', title: 'طلبات تحتاج متابعة', value: overdueOrders.length, filterMode: 'overdue', extraClass: 'is-urgent' },
   ];
 }
-
 function renderStats(baseOrders) {
   const items = buildStats(baseOrders);
-
   ordersStats.innerHTML = items.map(item => {
     const isActive = (item.filterMode === 'status' && statusFilter?.value === item.status) ||
       (item.filterMode === 'today' && activeStatFilter === 'today') ||
       (item.filterMode === 'overdue' && activeStatFilter === 'overdue') ||
       (item.filterMode === 'all' && activeStatFilter === 'all' && !statusFilter?.value);
-
     const classes = ['admin-stat-card'];
     if (item.extraClass) classes.push(item.extraClass);
     classes.push('is-clickable');
     if (isActive) classes.push('is-active');
-
     return `
       <button type="button" class="${classes.join(' ')}" data-stat-key="${item.key}" data-filter-mode="${item.filterMode}" ${item.status ? `data-status="${item.status}"` : ''}>
         <span>${item.title}</span>
@@ -321,29 +272,24 @@ function renderStats(baseOrders) {
     `;
   }).join('');
 }
-
 function renderOrders(orders) {
   if (ordersCountLabel) ordersCountLabel.textContent = `عدد النتائج: ${orders.length} من أصل ${allOrders.length}`;
-
   if (!orders.length) {
     ordersList.innerHTML = '<div class="admin-empty">لا توجد طلبات مطابقة.</div>';
     return;
   }
-
   ordersList.innerHTML = orders.map(order => {
     const status = getStatusMeta(order.status);
     const itemsCount = getOrderItemsCount(order);
     const isOrderNew = isToday(order.created_at);
     const overdue = isOverdue(order);
     const orderMeta = parseStructuredNotes(order.notes);
-
     return `
       <article class="admin-order-card ${overdue ? 'is-overdue-card' : ''}" data-order-id="${order.id}">
         <div class="admin-order-grid">
           <div class="admin-order-col admin-order-summary">
             <div class="admin-order-price">الإجمالي: <strong>${money(order.total)}</strong></div>
             <div class="admin-order-date">${formatDate(order.created_at)}</div>
-
             <label class="admin-status-control">
               <span>تحديث الحالة</span>
               <select data-id="${order.id}" class="statusSelect">
@@ -354,13 +300,11 @@ function renderOrders(orders) {
                 <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option>
               </select>
             </label>
-
             <div class="admin-order-actions">
               <a class="btn btn-ghost" href="${toWhatsAppLink(order.phone)}" target="_blank" rel="noopener">واتساب</a>
               <button type="button" class="btn btn-ghost admin-details-btn" data-id="${order.id}">تفاصيل</button>
             </div>
           </div>
-
           <div class="admin-order-col admin-order-main">
             <div class="admin-order-title-row">
               <h3 class="admin-order-number">
@@ -374,13 +318,11 @@ function renderOrders(orders) {
                 <span class="admin-status-badge ${status.className}">${status.label}</span>
               </div>
             </div>
-
             <div class="admin-order-identity">
               <p><strong>الاسم:</strong> <span>${escapeHtml(order.customer_name || '-')}</span></p>
               <p class="admin-copy-field"><strong>الهاتف:</strong> <span class="admin-phone-value" dir="ltr">${escapeHtml(order.phone || '-')}</span><button type="button" class="admin-inline-copy copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}" aria-label="نسخ الهاتف" title="نسخ الهاتف">⧉</button></p>
               <p><strong>المدينة:</strong> <span>${escapeHtml(order.city || '-')}</span></p>
             </div>
-
             <div class="admin-order-highlights">
               <span class="admin-meta-chip">${itemsCount} قطعة</span>
               <span class="admin-meta-chip">${formatShortDate(order.created_at)}</span>
@@ -388,13 +330,11 @@ function renderOrders(orders) {
             </div>
           </div>
         </div>
-
         <div class="admin-order-details hidden" id="details-${order.id}"></div>
       </article>
     `;
   }).join('');
 }
-
 function withinDateRange(order) {
   const created = new Date(order.created_at);
   const from = dateFromInput?.value ? new Date(`${dateFromInput.value}T00:00:00`) : null;
@@ -403,7 +343,6 @@ function withinDateRange(order) {
   if (to && created > to) return false;
   return true;
 }
-
 function sortOrders(orders) {
   const mode = sortSelect?.value || 'newest';
   const arr = [...orders];
@@ -412,7 +351,6 @@ function sortOrders(orders) {
     const bTime = new Date(b.created_at || 0).getTime();
     const aTotal = Number(a.total || 0);
     const bTotal = Number(b.total || 0);
-
     if (mode === 'oldest') return aTime - bTime;
     if (mode === 'highest_total') return bTotal - aTotal;
     if (mode === 'lowest_total') return aTotal - bTotal;
@@ -426,12 +364,10 @@ function sortOrders(orders) {
   });
   return arr;
 }
-
 function applyFilters() {
   const q = String(searchInput?.value || '').trim().toLowerCase();
   const status = statusFilter?.value || '';
   const selectedCity = normalizeCityValue(cityFilter?.value || '');
-
   let filtered = allOrders.filter(order => {
     const meta = parseStructuredNotes(order.notes);
     const matchesSearch =
@@ -441,29 +377,22 @@ function applyFilters() {
       String(order.city || '').toLowerCase().includes(q) ||
       String(meta.address || '').toLowerCase().includes(q) ||
       String(meta.customerNote || '').toLowerCase().includes(q);
-
     const matchesStatus = !status || order.status === status;
     const matchesCity = !selectedCity || normalizeCityValue(order.city) === selectedCity;
     const matchesDate = withinDateRange(order);
-
     let matchesStat = true;
     if (activeStatFilter === 'today') matchesStat = isToday(order.created_at);
     else if (activeStatFilter === 'overdue') matchesStat = isOverdue(order);
-
     return matchesSearch && matchesStatus && matchesCity && matchesDate && matchesStat;
   });
-
   filtered = sortOrders(filtered);
-
   const filteredTotal = filtered.reduce((sum, order) => sum + Number(order?.total || 0), 0);
   if (ordersFilteredTotalLabel) {
     ordersFilteredTotalLabel.textContent = `إجمالي النتائج: ${money(filteredTotal)}`;
   }
-
   renderStats(allOrders);
   renderOrders(filtered);
 }
-
 function renderDetailsHtml(order) {
   const items = Array.isArray(order.items_json) ? order.items_json : [];
   const itemsCount = getOrderItemsCount(order);
@@ -486,7 +415,6 @@ function renderDetailsHtml(order) {
       </div>
     </div>
   `;}).join('') : '<div class="admin-empty small">لا توجد تفاصيل منتجات.</div>';
-
   return `
     <div class="admin-details-grid">
       <div>
@@ -517,40 +445,32 @@ function renderDetailsHtml(order) {
     </div>
   `;
 }
-
 async function toggleDetails(id) {
   const box = document.getElementById(`details-${id}`);
   if (!box) return;
-
   if (!box.classList.contains('hidden')) {
     box.classList.add('hidden');
     box.innerHTML = '';
     return;
   }
-
   box.classList.remove('hidden');
   box.innerHTML = '<div class="admin-empty small">جارٍ تحميل التفاصيل...</div>';
-
   if (detailsCache.has(id)) {
     box.innerHTML = renderDetailsHtml(detailsCache.get(id));
     return;
   }
-
   const { data, error } = await supabaseClient
     .from('orders')
     .select('*')
     .eq('id', id)
     .single();
-
   if (error || !data) {
     box.innerHTML = '<div class="admin-empty small is-error">تعذر تحميل تفاصيل الطلب.</div>';
     return;
   }
-
   detailsCache.set(id, data);
   box.innerHTML = renderDetailsHtml(data);
 }
-
 async function copyText(text) {
   try {
     await navigator.clipboard.writeText(String(text || ''));
@@ -563,11 +483,9 @@ async function copyText(text) {
     document.body.removeChild(el);
   }
 }
-
 function ensureCopyToast() {
   let toast = document.getElementById('copyToast');
   if (toast) return toast;
-
   toast = document.createElement('div');
   toast.id = 'copyToast';
   toast.className = 'toast';
@@ -577,7 +495,6 @@ function ensureCopyToast() {
   document.body.appendChild(toast);
   return toast;
 }
-
 let copyToastTimer = null;
 function showCopyToast(message = 'تم النسخ') {
   const toast = ensureCopyToast();
@@ -588,7 +505,6 @@ function showCopyToast(message = 'تم النسخ') {
     toast.classList.remove('show');
   }, 1000);
 }
-
 function exportCurrentViewToCsv() {
   const rows = [...document.querySelectorAll('.admin-order-card')]
     .map(card => {
@@ -596,9 +512,7 @@ function exportCurrentViewToCsv() {
       return allOrders.find(o => String(o.id) === String(id));
     })
     .filter(Boolean);
-
   const summary = getActiveFilterSummary(rows);
-
   const lines = [
     [csvText('ملخص الفلتر الحالي'), csvText('القيمة')].join(','),
     [csvText('البطاقة المحددة'), csvText(summary.statCard)].join(','),
@@ -612,10 +526,8 @@ function exportCurrentViewToCsv() {
     [csvText('إجمالي النتائج'), csvText(Number(summary.total || 0).toFixed(2))].join(','),
     '',
   ];
-
   const header = ['رقم الطلب', 'الاسم', 'الهاتف', 'المحافظة', 'العنوان', 'نوع الطلب', 'رسوم الاستعجال', 'الحالة', 'الإجمالي', 'عدد القطع', 'التاريخ', 'ملاحظات العميل', 'مصدر الموقع', 'رابط الموقع'];
   lines.push(header.map(h => csvText(h)).join(','));
-
   rows.forEach(order => {
     const meta = parseStructuredNotes(order.notes);
     const cols = [
@@ -636,7 +548,6 @@ function exportCurrentViewToCsv() {
     ];
     lines.push(cols.join(','));
   });
-
   const csvContent = '\uFEFF' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -648,7 +559,6 @@ function exportCurrentViewToCsv() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
-
 document.addEventListener('click', async (e) => {
   const statCard = e.target.closest('.admin-stat-card');
   if (statCard) {
@@ -670,40 +580,33 @@ document.addEventListener('click', async (e) => {
     applyFilters();
     return;
   }
-
   if (e.target.classList.contains('admin-details-btn')) {
     await toggleDetails(e.target.dataset.id);
     return;
   }
-
   if (e.target.classList.contains('copyOrderBtn')) {
     await copyText(e.target.dataset.number || '');
     showCopyToast('تم النسخ');
     return;
   }
-
   if (e.target.classList.contains('copyPhoneBtn')) {
     await copyText(e.target.dataset.phone || '');
     showCopyToast('تم النسخ');
     return;
   }
 });
-
 document.addEventListener('change', async (e) => {
   if (!e.target.classList.contains('statusSelect')) return;
   const id = e.target.dataset.id;
   const status = e.target.value;
-
   const { error } = await supabaseClient
     .from('orders')
     .update({ status })
     .eq('id', id);
-
   if (error) {
     alert('فشل تحديث الحالة');
     return;
   }
-
   const found = allOrders.find(o => String(o.id) === String(id));
   if (found) found.status = status;
   if (detailsCache.has(id)) {
@@ -713,7 +616,6 @@ document.addEventListener('change', async (e) => {
   }
   applyFilters();
 });
-
 searchInput?.addEventListener('input', applyFilters);
 statusFilter?.addEventListener('change', () => {
   activeStatFilter = 'all';
@@ -742,7 +644,6 @@ logoutBtn?.addEventListener('click', async () => {
   await supabaseClient.auth.signOut();
   window.location.href = './admin-login.html';
 });
-
 (async function init() {
   const allowed = await requireAuth();
   if (allowed === false) return;

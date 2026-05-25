@@ -1,19 +1,8 @@
-/* ═══════════════════════════════════════════════════════════════
-   Mobile Bottom Navigation — SIRAJ
-   v2 — Smart Products button · Mini Cart bar · Cart sync · Auth
-   ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
-
-  /* ── Only run on mobile ──────────────────────────────────────── */
   if (window.innerWidth > 900) return;
-
-  /* ── Prevent double-init ─────────────────────────────────────── */
   if (document.getElementById('mbn-root')) return;
-
-  /* ── Page detection ──────────────────────────────────────────── */
   var path = (window.location.pathname || '').toLowerCase();
-
   function isHomePage() {
     return (
       path === '/' ||
@@ -22,15 +11,12 @@
       path.endsWith('/index')
     );
   }
-
   var IS_HOME    = isHomePage();
   var IS_CART    = path.endsWith('cart.html')      || path.endsWith('/cart');
   var IS_ACCOUNT = path.endsWith('account.html')   || path.endsWith('/account');
   var IS_ORDERS  = path.endsWith('my-orders.html') || path.endsWith('/my-orders');
   var IS_LOGIN   = path.endsWith('login.html')  || path.endsWith('signup.html') ||
                    path.endsWith('/login')      || path.endsWith('/signup');
-
-  /* ── Cart count helpers ──────────────────────────────────────── */
   function getCartCount() {
     try {
       var raw = localStorage.getItem('candles-cart');
@@ -42,7 +28,6 @@
       }, 0);
     } catch (e) { return 0; }
   }
-
   function updateBadge(badge, count) {
     if (!badge) return;
     var prev = badge.getAttribute('data-count');
@@ -54,16 +39,12 @@
       badge.classList.add('mbn-badge-pop');
     }
   }
-
-  /* ── Build Nav HTML ──────────────────────────────────────────── */
   var nav = document.createElement('nav');
   nav.id = 'mbn-root';
   nav.className = 'mobile-bottom-nav';
   nav.setAttribute('aria-label', 'التنقل السريع');
   nav.setAttribute('role', 'navigation');
-
   nav.innerHTML =
-    /* 1. Home */
     '<a href="./index.html" class="mbn-item' + (IS_HOME ? ' mbn-active' : '') + '" aria-label="الرئيسية">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -73,8 +54,6 @@
       '</span>' +
       '<span class="mbn-label">الرئيسية</span>' +
     '</a>' +
-
-    /* 2. Products — data-bottom-nav="products" drives event delegation */
     '<a href="./index.html#products" class="mbn-item" data-bottom-nav="products" aria-label="المنتجات">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -86,8 +65,6 @@
       '</span>' +
       '<span class="mbn-label">المنتجات</span>' +
     '</a>' +
-
-    /* 3. Cart */
     '<a href="./cart.html" class="mbn-item' + (IS_CART ? ' mbn-active' : '') + '" aria-label="السلة" id="mbn-cart-link">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -99,8 +76,6 @@
       '</span>' +
       '<span class="mbn-label">السلة</span>' +
     '</a>' +
-
-    /* 4. My Orders */
     '<a href="./my-orders.html" class="mbn-item' + (IS_ORDERS ? ' mbn-active' : '') + '" aria-label="طلباتي">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -112,8 +87,6 @@
       '</span>' +
       '<span class="mbn-label">طلباتي</span>' +
     '</a>' +
-
-    /* 5. Account */
     '<a href="./login.html" class="mbn-item' + (IS_ACCOUNT || IS_LOGIN ? ' mbn-active' : '') + '" aria-label="حسابي" id="mbn-account-link">' +
       '<span class="mbn-icon-wrap">' +
         '<svg class="mbn-icon" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -123,12 +96,7 @@
       '</span>' +
       '<span class="mbn-label" id="mbn-account-label">حسابي</span>' +
     '</a>';
-
   document.body.appendChild(nav);
-
-  /* ═══════════════════════════════════════════════════════════════
-     PRODUCTS BUTTON — Smart scroll / navigate
-     ═══════════════════════════════════════════════════════════════ */
   function scrollToProducts() {
     var target = document.getElementById('products');
     if (!target) return false;
@@ -137,14 +105,11 @@
     window.scrollTo({ top: top, behavior: 'smooth' });
     return true;
   }
-
-  /* Event delegation on the nav */
   nav.addEventListener('click', function (event) {
     var el = event.target.closest('[data-bottom-nav="products"]');
     if (!el) return;
     event.preventDefault();
     event.stopPropagation();
-
     if (isHomePage()) {
       try { history.replaceState(null, '', '#products'); } catch (e) {}
       scrollToProducts();
@@ -152,8 +117,6 @@
       window.location.href = './index.html#products';
     }
   });
-
-  /* On page load: if URL hash is #products, scroll there */
   window.addEventListener('load', function () {
     if (window.location.hash === '#products') {
       setTimeout(function () {
@@ -163,10 +126,6 @@
       }, 250);
     }
   });
-
-  /* ═══════════════════════════════════════════════════════════════
-     MINI CART BAR — sits above bottom nav, shown after add-to-cart
-     ═══════════════════════════════════════════════════════════════ */
   var miniCart = document.createElement('div');
   miniCart.id = 'ms-mini-cart';
   miniCart.setAttribute('role', 'status');
@@ -178,14 +137,10 @@
     '</span>' +
     '<button class="ms-mini-cart__cta" id="ms-mini-cart-btn" type="button">عرض السلة</button>';
   document.body.appendChild(miniCart);
-
   var _miniTimer = null;
-
   document.getElementById('ms-mini-cart-btn').addEventListener('click', function () {
     window.location.href = './cart.html';
   });
-
-  /* Exposed globally — called by script.js after addToCart */
   window.alzahraaShowMiniCart = function (productName) {
     var textEl = document.getElementById('ms-mini-cart-text');
     if (textEl) {
@@ -200,13 +155,8 @@
     }, 3200);
     updateBadge(document.getElementById('mbn-cart-badge'), getCartCount());
   };
-
-  /* ═══════════════════════════════════════════════════════════════
-     CART BADGE SYNC
-     ═══════════════════════════════════════════════════════════════ */
   var badge = document.getElementById('mbn-cart-badge');
   updateBadge(badge, getCartCount());
-
   function attachHeaderObserver() {
     var headerCount = document.getElementById('cartCount');
     if (!headerCount) return;
@@ -216,16 +166,11 @@
     });
     obs.observe(headerCount, { childList: true, characterData: true, subtree: true });
   }
-
   window.addEventListener('storage', function (e) {
     if (e.key === 'candles-cart') {
       updateBadge(badge, getCartCount());
     }
   });
-
-  /* ═══════════════════════════════════════════════════════════════
-     AUTH STATE
-     ═══════════════════════════════════════════════════════════════ */
   function applyAuthState(loggedIn, name) {
     var link  = document.getElementById('mbn-account-link');
     var label = document.getElementById('mbn-account-label');
@@ -238,7 +183,6 @@
       if (label) label.textContent = 'تسجيل';
     }
   }
-
   function checkAuth() {
     if (window.authGetSupabaseClient) {
       try {
@@ -277,8 +221,6 @@
     } catch (e) {}
     applyAuthState(false);
   }
-
-  /* ── DOM / Load hooks ── */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       attachHeaderObserver();
@@ -290,10 +232,8 @@
     updateBadge(badge, getCartCount());
     checkAuth();
   }
-
   window.addEventListener('load', function () {
     checkAuth();
     updateBadge(badge, getCartCount());
   });
-
 })();

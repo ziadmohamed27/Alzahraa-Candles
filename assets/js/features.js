@@ -1,20 +1,11 @@
-/* ================================================================
-   SIRAJ — features.js
-   New business features: Wishlist, Search Autocomplete,
-   Scent Quiz, Price Slider, WA bubble, Recently Searched.
-   ================================================================ */
-
-if (window.__alzahraaFeaturesInit) { /* guard */ } else {
+if (window.__alzahraaFeaturesInit) {  } else {
 window.__alzahraaFeaturesInit = true;
 (function () {
   'use strict';
-
   const $ = (s, ctx = document) => ctx.querySelector(s);
   const $$ = (s, ctx = document) => [...ctx.querySelectorAll(s)];
   const escH = str => String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const money = v => `${Number(v || 0).toFixed(0)} ج.م`;
-
-  /* ── helpers ── */
   function getProds() { return window.currentProducts || []; }
   function toast(msg, dur = 2000) {
     const t = document.getElementById('toast');
@@ -24,21 +15,14 @@ window.__alzahraaFeaturesInit = true;
     clearTimeout(toast._t);
     toast._t = setTimeout(() => t.classList.remove('show'), dur);
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     1. WISHLIST — heart button on every product card
-  ═══════════════════════════════════════════════════════════ */
   const WL_KEY = 'candles-wishlist';
-
   function getWishlist() {
     try { return new Set(JSON.parse(localStorage.getItem(WL_KEY) || '[]')); }
     catch { return new Set(); }
   }
-
   function saveWishlist(set) {
     localStorage.setItem(WL_KEY, JSON.stringify([...set]));
   }
-
   function toggleWishlist(id) {
     const wl = getWishlist();
     const numId = Number(id);
@@ -53,7 +37,6 @@ window.__alzahraaFeaturesInit = true;
     updateHearts();
     if (typeof window.renderAccountNav === 'function') window.renderAccountNav({ wrapSelector: '#accountNavWrap' });
   }
-
   function updateHearts() {
     const wl = getWishlist();
     $$('.wl-btn').forEach(btn => {
@@ -66,7 +49,6 @@ window.__alzahraaFeaturesInit = true;
     });
     updateWishlistNav(wl.size);
   }
-
   function updateWishlistNav(count) {
     const navBtn = document.getElementById('wishlistNavBtn');
     const countEl = document.getElementById('wishlistCount');
@@ -78,11 +60,9 @@ window.__alzahraaFeaturesInit = true;
     navBtn.setAttribute('title', size ? `المفضلة (${size})` : 'المفضلة');
     navBtn.setAttribute('aria-label', size ? `المفضلة، ${size} عناصر` : 'المفضلة');
   }
-
   function injectHeartButtons() {
     const grid = document.getElementById('productGrid');
     if (!grid) return;
-
     const mo = new MutationObserver(() => {
       // childList only (not subtree) — prevents observing our own mutations
       $$('.product-card:not(.skeleton-card)', grid).forEach(card => {
@@ -99,11 +79,9 @@ window.__alzahraaFeaturesInit = true;
       });
       updateHearts();
     });
-
     mo.observe(grid, { childList: true, subtree: false });
     window.__wlObs = mo;
   }
-
   document.addEventListener('click', e => {
     const btn = e.target.closest('.wl-btn');
     if (!btn) return;
@@ -114,19 +92,14 @@ window.__alzahraaFeaturesInit = true;
     btn.classList.add('wl-pop');
     setTimeout(() => btn.classList.remove('wl-pop'), 400);
   });
-
-  /* Wishlist page — show favorites section when any saved */
   function renderWishlistSection() {
     const section = document.getElementById('wishlistSection');
     if (!section) return;
     const wl = getWishlist();
     const prods = getProds().filter(p => wl.has(Number(p.id)));
-
     if (!prods.length) { section.style.display = 'none'; updateWishlistNav(0); return; }
     section.style.display = '';
-
     updateWishlistNav(prods.length);
-
     const track = section.querySelector('.wl-track');
     if (!track) return;
     track.innerHTML = prods.map(p => `
@@ -141,17 +114,11 @@ window.__alzahraaFeaturesInit = true;
         </div>
       </div>`).join('');
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     2. SEARCH AUTOCOMPLETE — live dropdown
-  ═══════════════════════════════════════════════════════════ */
   const RS_KEY = 'candles-recent-search';
-
   function getRecentSearches() {
     try { return JSON.parse(localStorage.getItem(RS_KEY) || '[]'); }
     catch { return []; }
   }
-
   function saveSearch(q) {
     if (!q || q.length < 2) return;
     let rs = getRecentSearches().filter(s => s !== q);
@@ -159,11 +126,9 @@ window.__alzahraaFeaturesInit = true;
     rs = rs.slice(0, 5);
     localStorage.setItem(RS_KEY, JSON.stringify(rs));
   }
-
   function initSearchAutocomplete() {
     const input = document.getElementById('productSearchInput');
     if (!input) return;
-
     // Build dropdown
     const dropdown = document.createElement('div');
     dropdown.id = 'searchDropdown';
@@ -172,31 +137,25 @@ window.__alzahraaFeaturesInit = true;
     dropdown.setAttribute('aria-label', 'اقتراحات البحث');
     input.parentElement?.parentElement?.style.setProperty('position', 'relative');
     input.closest('.products-search-field')?.parentElement?.appendChild(dropdown);
-
     let debounceTimer;
-
     input.addEventListener('input', () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => updateDropdown(input.value.trim()), 120);
     });
-
     input.addEventListener('focus', () => {
       if (!input.value.trim()) showRecentSearches(dropdown);
     });
-
     document.addEventListener('click', e => {
       if (!dropdown.contains(e.target) && e.target !== input) {
         dropdown.classList.remove('open');
       }
     });
-
     // Keyboard navigation
     input.addEventListener('keydown', e => {
       if (!dropdown.classList.contains('open')) return;
       const items = $$('.sd-item', dropdown);
       const current = dropdown.querySelector('.sd-item.focused');
       const idx = items.indexOf(current);
-
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         const next = items[idx + 1] || items[0];
@@ -217,13 +176,10 @@ window.__alzahraaFeaturesInit = true;
       }
     });
   }
-
   function updateDropdown(query) {
     const dropdown = document.getElementById('searchDropdown');
     if (!dropdown) return;
-
     if (!query) { showRecentSearches(dropdown); return; }
-
     const prods = getProds();
     const matches = prods
       .filter(p => p.name.toLowerCase().includes(query) ||
@@ -231,9 +187,7 @@ window.__alzahraaFeaturesInit = true;
                    (p.description || '').toLowerCase().includes(query) ||
                    (p.category || '').toLowerCase().includes(query))
       .slice(0, 6);
-
     if (!matches.length) { dropdown.classList.remove('open'); return; }
-
     dropdown.innerHTML = matches.map(p => `
       <button class="sd-item" role="option" data-id="${p.id}" data-value="${escH(p.name)}" type="button">
         <span class="sd-icon">🕯️</span>
@@ -243,9 +197,7 @@ window.__alzahraaFeaturesInit = true;
         </span>
         <span class="sd-price">${money(p.price)}</span>
       </button>`).join('');
-
     dropdown.classList.add('open');
-
     // Click on suggestion
     $$('.sd-item', dropdown).forEach(item => {
       item.addEventListener('click', () => {
@@ -263,11 +215,9 @@ window.__alzahraaFeaturesInit = true;
       });
     });
   }
-
   function showRecentSearches(dropdown) {
     const rs = getRecentSearches();
     if (!rs.length) { dropdown.classList.remove('open'); return; }
-
     dropdown.innerHTML = `
       <div class="sd-section-label">🕐 بحثت مؤخرًا</div>
       ${rs.map(s => `
@@ -276,9 +226,7 @@ window.__alzahraaFeaturesInit = true;
           <span class="sd-text"><span class="sd-name">${escH(s)}</span></span>
           <button class="sd-remove" data-remove="${escH(s)}" aria-label="حذف" type="button">✕</button>
         </button>`).join('')}`;
-
     dropdown.classList.add('open');
-
     $$('.sd-recent', dropdown).forEach(item => {
       item.addEventListener('click', e => {
         if (e.target.closest('.sd-remove')) return;
@@ -291,7 +239,6 @@ window.__alzahraaFeaturesInit = true;
         dropdown.classList.remove('open');
       });
     });
-
     $$('.sd-remove', dropdown).forEach(btn => {
       btn.addEventListener('click', e => {
         e.stopPropagation();
@@ -302,15 +249,10 @@ window.__alzahraaFeaturesInit = true;
       });
     });
   }
-
   function highlightMatch(text, query) {
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     return escH(text).replace(regex, '<mark class="search-highlight">$1</mark>');
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     3. SCENT FINDER QUIZ — 3-step interactive quiz
-  ═══════════════════════════════════════════════════════════ */
   const quiz = {
     steps: [
       {
@@ -347,7 +289,6 @@ window.__alzahraaFeaturesInit = true;
     answers: [],
     current: 0,
   };
-
   function buildQuizModal() {
     const modal = document.createElement('div');
     modal.id = 'quizModal';
@@ -361,14 +302,12 @@ window.__alzahraaFeaturesInit = true;
         <div id="quizContent"></div>
       </div>`;
     document.body.appendChild(modal);
-
     document.getElementById('quizBackdrop')?.addEventListener('click', closeQuiz);
     document.getElementById('quizClose')?.addEventListener('click', closeQuiz);
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && modal.classList.contains('open')) closeQuiz();
     });
   }
-
   function openQuiz() {
     quiz.answers = [];
     quiz.current = 0;
@@ -378,7 +317,6 @@ window.__alzahraaFeaturesInit = true;
     document.body.classList.add('modal-open');
     renderQuizStep();
   }
-
   function closeQuiz() {
     const modal = document.getElementById('quizModal');
     modal?.classList.remove('open');
@@ -386,15 +324,12 @@ window.__alzahraaFeaturesInit = true;
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
     if (typeof window.__alzahraaUnlockScroll === 'function') window.__alzahraaUnlockScroll();
   }
-
   function renderQuizStep() {
     const content = document.getElementById('quizContent');
     if (!content) return;
-
     const step = quiz.steps[quiz.current];
     const total = quiz.steps.length;
     const progress = ((quiz.current) / total) * 100;
-
     content.innerHTML = `
       <div class="quiz-header">
         <p class="quiz-step-label">خطوة ${quiz.current + 1} من ${total}</p>
@@ -411,10 +346,8 @@ window.__alzahraaFeaturesInit = true;
             <span class="qc-label">${escH(c.label)}</span>
           </button>`).join('')}
       </div>`;
-
     // Animate in
     requestAnimationFrame(() => content.classList.add('quiz-animated'));
-
     $$('.quiz-choice', content).forEach(btn => {
       btn.addEventListener('click', () => {
         quiz.answers.push(btn.dataset.value);
@@ -428,14 +361,11 @@ window.__alzahraaFeaturesInit = true;
       });
     });
   }
-
   function renderQuizResult() {
     const content = document.getElementById('quizContent');
     if (!content) return;
-
     const prods = getProds();
     const answers = quiz.answers.join(' ');
-
     // Score products against answers
     const scored = prods.map(p => {
       let score = 0;
@@ -450,11 +380,9 @@ window.__alzahraaFeaturesInit = true;
       if (answers.includes('gift') && haystack.match(/هدية|gift|box/)) score += 2;
       return { ...p, _score: score };
     });
-
     const top = scored
       .sort((a, b) => b._score - a._score || Math.random() - 0.5)
       .slice(0, 4);
-
     content.innerHTML = `
       <div class="quiz-result-header">
         <span class="quiz-result-icon">🕯️</span>
@@ -477,9 +405,7 @@ window.__alzahraaFeaturesInit = true;
         <button class="btn btn-ghost" id="quizRetry" type="button">🔄 إعادة الاختبار</button>
         <button class="btn btn-primary" id="quizClose2" type="button">✓ موافق، عودة للمتجر</button>
       </div>`;
-
     requestAnimationFrame(() => content.classList.add('quiz-animated'));
-
     document.getElementById('quizRetry')?.addEventListener('click', () => {
       quiz.answers = []; quiz.current = 0;
       content.classList.remove('quiz-animated');
@@ -487,26 +413,18 @@ window.__alzahraaFeaturesInit = true;
     });
     document.getElementById('quizClose2')?.addEventListener('click', closeQuiz);
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     4. PRICE RANGE FILTER
-  ═══════════════════════════════════════════════════════════ */
   function injectPriceFilter() {
     const filtersEl = document.getElementById('filters');
     if (!filtersEl || document.getElementById('priceFilterWrap')) return;
-
     // Wait for products to load
     const checkProds = setInterval(() => {
       const prods = getProds();
       if (!prods.length) return;
       clearInterval(checkProds);
-
       const prices = prods.map(p => p.price).filter(Boolean);
       const minP = Math.floor(Math.min(...prices) / 10) * 10;
       const maxP = Math.ceil(Math.max(...prices) / 10) * 10;
-
       if (maxP <= minP) return;
-
       const wrap = document.createElement('div');
       wrap.id = 'priceFilterWrap';
       wrap.className = 'price-filter-wrap';
@@ -525,18 +443,14 @@ window.__alzahraaFeaturesInit = true;
                  value="${maxP}" step="5" class="range-track" aria-label="الحد الأقصى للسعر">
           <div class="range-fill" id="rangeFill"></div>
         </div>`;
-
       filtersEl.parentElement?.insertBefore(wrap, filtersEl.nextSibling);
-
       let currentMin = minP, currentMax = maxP;
-
       function updatePriceDisplay() {
         const display = document.getElementById('priceFilterDisplay');
         if (display) display.textContent = `${currentMin} — ${currentMax} ج.م`;
         updateRangeFill(minP, maxP, currentMin, currentMax);
         filterByPrice(currentMin, currentMax);
       }
-
       function updateRangeFill(absMin, absMax, curMin, curMax) {
         const fill = document.getElementById('rangeFill');
         if (!fill) return;
@@ -546,19 +460,16 @@ window.__alzahraaFeaturesInit = true;
         fill.style.left = `${left}%`;
         fill.style.right = `${right}%`;
       }
-
       document.getElementById('priceMin')?.addEventListener('input', e => {
         currentMin = Math.min(Number(e.target.value), currentMax - 10);
         e.target.value = currentMin;
         updatePriceDisplay();
       });
-
       document.getElementById('priceMax')?.addEventListener('input', e => {
         currentMax = Math.max(Number(e.target.value), currentMin + 10);
         e.target.value = currentMax;
         updatePriceDisplay();
       });
-
       document.getElementById('priceReset')?.addEventListener('click', () => {
         currentMin = minP; currentMax = maxP;
         document.getElementById('priceMin').value = minP;
@@ -567,16 +478,13 @@ window.__alzahraaFeaturesInit = true;
         window.__priceFilter = null;
         triggerRender();
       });
-
       updateRangeFill(minP, maxP, currentMin, currentMax);
     }, 500);
   }
-
   function filterByPrice(min, max) {
     window.__priceFilter = { min, max };
     triggerRender();
   }
-
   function triggerRender() {
     // Trigger script.js to re-render by dispatching input on search field
     const inp = document.getElementById('productSearchInput');
@@ -585,16 +493,13 @@ window.__alzahraaFeaturesInit = true;
       inp.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
-
   // Hook into script.js getVisibleProducts via product grid observer
   function hookPriceFilter() {
     const grid = document.getElementById('productGrid');
     if (!grid) return;
-
     const mo = new MutationObserver(() => {
       const filter = window.__priceFilter;
       if (!filter) return;
-
       $$('.product-card:not(.skeleton-card)', grid).forEach(card => {
         const id = Number(card.dataset.id);
         const prod = getProds().find(p => Number(p.id) === id);
@@ -603,14 +508,9 @@ window.__alzahraaFeaturesInit = true;
         card.style.display = show ? '' : 'none';
       });
     });
-
     mo.observe(grid, { childList: true });
     window.__priceFilterObs = mo;
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     5. "BACK TO PRODUCTS" STICKY BUTTON
-  ═══════════════════════════════════════════════════════════ */
   function initBackToProducts() {
     const btn = document.createElement('button');
     btn.id = 'backToProdsBtn';
@@ -618,44 +518,30 @@ window.__alzahraaFeaturesInit = true;
     btn.setAttribute('aria-label', 'العودة للمنتجات');
     btn.innerHTML = '⬆ المنتجات';
     document.body.appendChild(btn);
-
     const prodSection = document.getElementById('products');
     if (!prodSection) return;
-
     const io = new IntersectionObserver(([entry]) => {
       btn.classList.toggle('visible', !entry.isIntersecting && window.scrollY > 200);
     }, { threshold: 0 });
     io.observe(prodSection);
-
     btn.addEventListener('click', () => {
       prodSection.scrollIntoView({ behavior: 'smooth' });
     });
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     QUIZ TRIGGER — add to guide section
-  ═══════════════════════════════════════════════════════════ */
   function injectQuizTrigger() {
     const guide = document.getElementById('guide');
     if (!guide) return;
-
     const existing = guide.querySelector('.quiz-trigger-btn');
     if (existing) return;
-
     const btn = document.createElement('button');
     btn.className = 'btn btn-primary quiz-trigger-btn';
     btn.type = 'button';
     btn.innerHTML = '✨ ساعدني أختار الشمعة المناسبة';
     btn.addEventListener('click', openQuiz);
-
     // Insert at top of guide section container
     const container = guide.querySelector('.container');
     if (container) container.insertBefore(btn, container.firstChild);
   }
-
-  /* ═══════════════════════════════════════════════════════════
-     INIT
-  ═══════════════════════════════════════════════════════════ */
   function init() {
     injectHeartButtons();
     initSearchAutocomplete();
@@ -663,25 +549,20 @@ window.__alzahraaFeaturesInit = true;
     injectPriceFilter();
     hookPriceFilter();
     initBackToProducts();
-
     // Inject quiz trigger — just try immediately, no observer needed
     injectQuizTrigger();
-
     // Wishlist section
     renderWishlistSection();
     window.addEventListener('storage', e => {
       if (e.key === WL_KEY) { updateHearts(); renderWishlistSection(); }
     });
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-
   // Expose for other scripts
   window.openScentQuiz = openQuiz;
-
 })();
 } // end features guard
