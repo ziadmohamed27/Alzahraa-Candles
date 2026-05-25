@@ -132,6 +132,7 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
 }</script>
   <link rel="preload" href="/assets/css/mobile-unified.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/mobile-unified.css"></noscript>
   <link rel="stylesheet" href="/assets/css/ux-v11-cleanup.css">
+  <link rel="stylesheet" href="/assets/css/replit-luxury-merge.css">
 </head>
 <body class="storefront-body">
   <a href="#products" class="skip-link">تخطي للمنتجات</a>
@@ -206,19 +207,15 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
             </div>
           </div>
 
-          <!-- Visual side -->
-          <div class="hero-visual" data-reveal data-reveal-delay="2">
-            <div class="hero-img-main brand-hero-card">
-              <img src="/assets/images/brand/siraj-logo-512.webp" width="512" height="512" alt="SIRAJ Candles — Light with Soul" decoding="async" fetchpriority="high">
-            </div>
-            <div class="hero-img-sm-1">
-              <img src="/assets/images/brand/siraj-icon-256.webp" width="256" height="256" alt="أيقونة SIRAJ Candles" loading="lazy" decoding="async">
-            </div>
-            <div class="hero-img-sm-2">
-              <img src="/assets/images/candle-hero-3.svg" width="640" height="640" loading="lazy" decoding="async" alt="شموع SIRAJ بروائح مميزة">
-            </div>
-            <div class="hero-float-1"><span>💜</span> Light with Soul</div>
-            <div class="hero-float-2"><span>🕯️</span> SIRAJ Candles</div>
+          <!-- Visual side — Replit-inspired luxury editorial product composition -->
+          <div class="hero-visual hero-visual-editorial" data-reveal data-reveal-delay="2" aria-label="صورة شمعة فاخرة من SIRAJ">
+            <div class="hero-glow-orb" aria-hidden="true"></div>
+            <figure class="hero-product-frame">
+              <img id="heroProductImage" src="https://wihhfwdaysupjpfzshfq.supabase.co/storage/v1/object/public/products/candles/vanilla.webp" width="600" height="750" alt="شمعة Vanilla Serenity من SIRAJ" decoding="async" fetchpriority="high">
+              <figcaption>Vanilla Serenity · Light with Soul</figcaption>
+            </figure>
+            <div class="hero-note-card hero-note-card--top"><span>✦</span><strong>صب يدوي</strong><small>Hand poured</small></div>
+            <div class="hero-note-card hero-note-card--bottom"><span>🎁</span><strong>تغليف فاخر</strong><small>Gift ready</small></div>
           </div>
 
         </div>
@@ -378,6 +375,23 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
       </div>
     </section>
 
+    <!-- ═══════════════════════════════ GIFT EXPERIENCE — borrowed from Replit concept ═══ -->
+    <section class="section siraj-gift-experience" id="gift-experience" aria-labelledby="gift-title">
+      <div class="container">
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ تجربة هدية</span>
+          <h2 id="gift-title">هدية دافئة بتفاصيل فاخرة</h2>
+          <p>اختيار مناسب للبيت، المناسبات، ولمسة تقدير شخصية — من أول الرائحة حتى التغليف.</p>
+        </div>
+        <div class="siraj-lux-grid" data-reveal>
+          <article class="siraj-lux-card"><span class="lux-icon">♡</span><h3>اختيار حسب المزاج</h3><p>روائح هادئة، دافئة، شرقية أو منعشة لتناسب كل لحظة.</p></article>
+          <article class="siraj-lux-card"><span class="lux-icon">✦</span><h3>تفاصيل مصنوعة يدويًا</h3><p>كل شمعة تُصب بعناية لتخرج بروح مختلفة لا تشبه الإنتاج التجاري.</p></article>
+          <article class="siraj-lux-card"><span class="lux-icon">⌁</span><h3>إحساس فاخر بصريًا</h3><p>شكل أنيق يضيف للديكور قبل أن يملأ المكان بالرائحة.</p></article>
+          <article class="siraj-lux-card"><span class="lux-icon">▱</span><h3>جاهزة للإهداء</h3><p>تجربة طلب بسيطة عبر واتساب ومراجعة التفاصيل قبل الإرسال.</p></article>
+        </div>
+      </div>
+    </section>
+
     <!-- ═══════════════════════════════ BENEFITS ═══ -->
     <section class="section" id="about">
       <div class="container">
@@ -502,6 +516,22 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
           <p>إجابات مختصرة قبل أي قرار شراء.</p>
         </div>
         <div class="faq-list" id="faqList" data-reveal></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ TESTIMONIALS — editorial trust layer ═══ -->
+    <section class="section alt siraj-testimonials" id="testimonials" aria-labelledby="testimonials-title">
+      <div class="container">
+        <div class="section-head center" data-reveal>
+          <span class="pill small">✦ آراء العملاء</span>
+          <h2 id="testimonials-title">كلمات بسيطة من لحظات دافئة</h2>
+          <p>لمسة ثقة إضافية قبل اختيار شمعتك القادمة.</p>
+        </div>
+        <div class="testimonial-grid" data-reveal>
+          <article class="testimonial-card"><span class="quote-mark">“</span><p>الرائحة هادئة وفخمة جدًا، والتغليف كان مناسب كهدية من غير أي إضافة.</p><strong>منى · هدية منزلية</strong></article>
+          <article class="testimonial-card"><span class="quote-mark">“</span><p>أكتر حاجة عجبتني إن الشمعة شكلها ديكور لوحدها، مش مجرد منتج.</p><strong>سارة · ديكور غرفة</strong></article>
+          <article class="testimonial-card"><span class="quote-mark">“</span><p>طلبت عبر واتساب وكان الاختيار سهل جدًا، والترشيح كان مناسب لذوقي.</p><strong>أحمد · اختيار سريع</strong></article>
+        </div>
       </div>
     </section>
 
