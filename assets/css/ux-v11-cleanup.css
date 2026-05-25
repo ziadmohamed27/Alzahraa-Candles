@@ -1,9 +1,0 @@
-/* SIRAJ v11: accessibility and validator cleanup */
-:root{--muted:#5f4b40;--text-mid:#3f2a34;}
-.brand-sub,.products-search-hint,.ship-item span,.section-head p,.brand-story-copy p,.faq-a,.footer-muted,.subtitle{color:#4f3a32!important;}
-.ship-item strong,.ship-item span:first-child{color:#2c1810!important;}
-.product-grid .product-card{cursor:pointer;}
-#lbImg{max-width:min(92vw,900px);max-height:86vh;width:auto;height:auto;object-fit:contain;}
-.pill.small,#scrollProgressBar{animation:none!important;background-position:0 0!important;}
-.eyebrow-line{animation:none!important;}
-@media (max-width:768px){.hero-badge,.stat-card,.collection-tile,.btn,.icon-btn,.floating-wa{transition:transform .2s ease,opacity .2s ease!important;box-shadow:0 8px 22px rgba(44,24,16,.10)!important;}}
