@@ -155,15 +155,15 @@
     );
     wrap.innerHTML = `
       <div class="account-menu-wrap">
-        <button type="button" class="account-nav-btn account-menu-toggle" data-account-menu-toggle aria-label="قائمة الحساب" aria-haspopup="menu" aria-expanded="false" title="قائمة الحساب — ${escapeHtml(displayName)}">
+        <button type="button" class="account-nav-btn account-menu-toggle" data-account-menu-toggle aria-label="قائمة الحساب" aria-haspopup="true" aria-expanded="false" title="قائمة الحساب — ${escapeHtml(displayName)}">
           <span class="account-nav-label">${escapeHtml(displayName)}</span>
           <span style="font-size:1.05rem">👤</span>
         </button>
-        <div class="account-dropdown" role="menu" aria-label="قائمة الحساب">
-          <a role="menuitem" href="./account.html">👤 حسابي</a>
-          <a role="menuitem" href="./my-orders.html">📦 طلباتي</a>
-          <a role="menuitem" href="${wishlistHref}">❤ المفضلة <span class="menu-count">${wishlistCount}</span></a>
-          <button role="menuitem" type="button" data-account-logout>🚪 تسجيل الخروج</button>
+        <div class="account-dropdown" aria-label="قائمة الحساب">
+          <a href="./account.html">👤 حسابي</a>
+          <a href="./my-orders.html">📦 طلباتي</a>
+          <a href="${wishlistHref}">❤ المفضلة <span class="menu-count">${wishlistCount}</span></a>
+          <button type="button" data-account-logout>🚪 تسجيل الخروج</button>
         </div>
       </div>
     `;
@@ -199,11 +199,11 @@
     }
     wrap.innerHTML = `
       <div class="notification-wrap">
-        <button type="button" class="icon-btn notification-btn" data-notification-toggle aria-label="الإشعارات" aria-haspopup="menu" aria-expanded="false" title="الإشعارات">
+        <button type="button" class="icon-btn notification-btn" data-notification-toggle aria-label="الإشعارات" aria-haspopup="true" aria-expanded="false" title="الإشعارات">
           <span class="notification-emoji">🔔</span>
           <span class="notification-count ${unreadCount ? '' : 'is-zero'}">${unreadCount}</span>
         </button>
-        <div class="notification-panel" role="menu" aria-label="الإشعارات">
+        <div class="notification-panel" aria-label="الإشعارات">
           <div class="notification-title">الإشعارات</div>
           ${body}
           <a href="./my-orders.html" class="notification-all">عرض كل الطلبات</a>

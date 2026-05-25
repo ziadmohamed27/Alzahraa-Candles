@@ -110,10 +110,10 @@ window.__alzahraaEnhancementsInit = true;
     const money = v => `${Number(v || 0).toFixed(0)} ج.م`;
     const escH = str => String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     track.innerHTML = rv.map(p => `
-      <div class="rv-card view-product" data-id="${p.id}" role="button" tabindex="0"
+      <div class="rv-card view-product" data-id="${p.id}"
            aria-label="عرض ${escH(p.name)}">
         <div class="rv-img">
-          ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" loading="lazy">` : '<span class="rv-fallback">🕯️</span>'}
+          ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" width="400" height="500" loading="lazy">` : '<span class="rv-fallback">🕯️</span>'}
         </div>
         <div class="rv-info">
           <p class="rv-name">${escH(p.name)}</p>
@@ -155,7 +155,7 @@ window.__alzahraaEnhancementsInit = true;
       <div id="lbBackdrop"></div>
       <div id="lbContent">
         <button id="lbClose" aria-label="إغلاق">×</button>
-        <img id="lbImg" alt="">
+        <img id="lbImg" alt="" width="900" height="900" decoding="async">
         <p id="lbCaption"></p>
       </div>`;
     document.body.appendChild(lb);

@@ -173,8 +173,19 @@ function toArray(val) {
   }
   return [];
 }
+function preferWebPProductImage(value) {
+  const imageValue = String(value || '').trim();
+  if (!imageValue) return '';
+  return imageValue
+    .replace(/(candles\/amber-oud)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/coffee-shake)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/fresh-linen)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/lavender)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/rose-bloom)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/vanilla)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp');
+}
 function getProductImageUrl(imagePath) {
-  const value = String(imagePath || '').trim();
+  const value = preferWebPProductImage(imagePath);
   if (!value) return '';
   if (/^https?:\/\//i.test(value)) {
     return value;
@@ -342,10 +353,9 @@ function renderProducts() {
     return moodHtml + (short ? `<p class="card-scent">${escHtml(short)}</p>` : '');
   }
   el.innerHTML = list.map((p) => `
-    <article class="product-card" data-id="${p.id}" tabindex="0" role="button"
-      aria-label="${escHtml(p.name)} — ${money(p.price)} — اضغط لعرض التفاصيل">
+    <article class="product-card" data-id="${p.id}">
       <div class="card-img-wrap">
-        <img class="product-image" src="${p.image}" alt="${escHtml(p.name)}"
+        <img class="product-image" src="${p.image}" alt="${escHtml(p.name)}" width="736" height="920"
           loading="lazy" onerror="this.closest('article').classList.add('img-missing')">
         ${getBadge(p)}
       </div>
@@ -840,10 +850,9 @@ function renderRecentlyViewed() {
   const track = section.querySelector('.rv-track');
   if (!track) return;
   track.innerHTML = products.map(p => `
-    <article class="rv-card" data-id="${p.id}" tabindex="0" role="button"
-      aria-label="${escHtml(p.name)}">
+    <article class="rv-card" data-id="${p.id}">
       <div class="rv-img-wrap">
-        <img src="${p.image}" alt="${escHtml(p.name)}" loading="lazy"
+        <img src="${p.image}" alt="${escHtml(p.name)}" width="400" height="500" loading="lazy"
           onerror="this.closest('.rv-img-wrap').style.background='var(--cream-mid)'">
       </div>
       <div class="rv-body">

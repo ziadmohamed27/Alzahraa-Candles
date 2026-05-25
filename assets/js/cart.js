@@ -807,11 +807,22 @@ function resetSuccessState() {
   lastWhatsAppOrderUrl = '';
   hideOrderSuccess();
 }
+function preferWebPProductImage(value) {
+  const imageValue = String(value || '').trim();
+  if (!imageValue) return '';
+  return imageValue
+    .replace(/(candles\/amber-oud)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/coffee-shake)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/fresh-linen)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/lavender)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/rose-bloom)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp')
+    .replace(/(candles\/vanilla)\.(jpe?g|png)(?=($|[?#]))/i, '$1.webp');
+}
 function getCartProductImageUrl(imagePath) {
-  const value = String(imagePath || '').trim();
+  const value = preferWebPProductImage(imagePath);
   if (!value) return '';
   if (/^https?:\/\//i.test(value)) return value;
-  const bucket = 'product-images';
+  const bucket = 'products';
   const cleanPath = value.replace(/^\/+/, '').replace(new RegExp(`^${bucket}\/`), '');
   return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${cleanPath}`;
 }

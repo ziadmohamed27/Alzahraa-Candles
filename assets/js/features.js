@@ -103,10 +103,10 @@ window.__alzahraaFeaturesInit = true;
     const track = section.querySelector('.wl-track');
     if (!track) return;
     track.innerHTML = prods.map(p => `
-      <div class="rv-card view-product" data-id="${p.id}" role="button" tabindex="0"
+      <div class="rv-card view-product" data-id="${p.id}"
            aria-label="${escH(p.name)}">
         <div class="rv-img">
-          ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" loading="lazy">` : '<span class="rv-fallback">🕯️</span>'}
+          ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" width="400" height="500" loading="lazy">` : '<span class="rv-fallback">🕯️</span>'}
         </div>
         <div class="rv-info">
           <p class="rv-name">${escH(p.name)}</p>
@@ -393,7 +393,7 @@ window.__alzahraaFeaturesInit = true;
         ${top.map(p => `
           <button class="quiz-result-card view-product" data-id="${p.id}" type="button">
             <div class="qrc-img">
-              ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" loading="lazy">` : '<span>🕯️</span>'}
+              ${p.image ? `<img src="${escH(p.image)}" alt="${escH(p.name)}" width="400" height="500" loading="lazy">` : '<span>🕯️</span>'}
             </div>
             <div class="qrc-info">
               <p class="qrc-name">${escH(p.name)}</p>
