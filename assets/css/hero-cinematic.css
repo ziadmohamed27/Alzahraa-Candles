@@ -1,0 +1,597 @@
+/* ═══════════════════════════════════════════════════════════
+   SIRAJ · CINEMATIC HERO  ·  hero-cinematic.css
+   Place at: /assets/css/hero-cinematic.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Custom Properties ───────────────────────────────────── */
+:root {
+  --sh-gold:         #C9A46A;
+  --sh-gold-light:   #E8D4A8;
+  --sh-gold-bright:  #F5E4BC;
+  --sh-amber:        #D4884A;
+  --sh-dark:         #0A0603;
+  --sh-dark-mid:     #130B04;
+  --sh-text-light:   rgba(250,240,220,0.95);
+  --sh-text-muted:   rgba(220,200,170,0.70);
+  --sh-overlay-1:    rgba(8,4,2,0.55);
+  --sh-overlay-2:    rgba(12,6,2,0.45);
+  --sh-ease:         cubic-bezier(0.22,1,0.36,1);
+  --sh-ease-out:     cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── Section Reset + Fullscreen ──────────────────────────── */
+.siraj-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--sh-dark);
+
+  /* Override existing .hero / .section styles */
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ── Video Background ────────────────────────────────────── */
+.sh-video-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.sh-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  /* Subtle Ken-Burns warmth */
+  animation: sh-ken-burns 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes sh-ken-burns {
+  0%   { transform: scale(1.00) translate(0%,  0%); }
+  100% { transform: scale(1.07) translate(-1%, 0.5%); }
+}
+
+/* Layered cinematic overlay */
+.sh-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    /* top vignette — dark brand colour */
+    linear-gradient(180deg,
+      rgba(8,4,2,0.72) 0%,
+      rgba(8,4,2,0.10) 32%,
+      rgba(8,4,2,0.00) 58%,
+      rgba(8,4,2,0.55) 100%
+    ),
+    /* amber warmth from bottom-left */
+    radial-gradient(ellipse 70% 55% at 20% 100%,
+      rgba(212,136,74,0.28) 0%,
+      transparent 65%
+    ),
+    /* gold glow from top-right */
+    radial-gradient(ellipse 55% 45% at 80% 5%,
+      rgba(201,164,106,0.18) 0%,
+      transparent 60%
+    );
+}
+
+/* ── Ambient Light Streaks ───────────────────────────────── */
+.sh-light {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: sh-light-drift var(--dur, 8s) ease-in-out infinite alternate;
+  will-change: opacity, transform;
+}
+.sh-light-1 {
+  width: 3px;
+  height: 65vh;
+  top: 0;
+  left: 38%;
+  background: linear-gradient(180deg, transparent, rgba(201,164,106,0.35), transparent);
+  --dur: 7s;
+  animation-delay: 0.8s;
+}
+.sh-light-2 {
+  width: 2px;
+  height: 50vh;
+  top: 5%;
+  left: 62%;
+  background: linear-gradient(180deg, transparent, rgba(232,212,168,0.22), transparent);
+  --dur: 9s;
+  animation-delay: 2s;
+}
+.sh-light-3 {
+  width: 1px;
+  height: 40vh;
+  top: 10%;
+  left: 50%;
+  background: linear-gradient(180deg, transparent, rgba(245,228,188,0.18), transparent);
+  --dur: 11s;
+  animation-delay: 4s;
+}
+
+@keyframes sh-light-drift {
+  0%   { opacity: 0;    transform: translateY(-20px) scaleY(0.8); }
+  30%  { opacity: 1; }
+  100% { opacity: 0.6;  transform: translateY(20px)  scaleY(1.1); }
+}
+
+/* ── Gold Dust Particles ─────────────────────────────────── */
+.sh-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.sh-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--sh-gold-bright);
+  opacity: 0;
+  animation: sh-particle-rise var(--p-dur, 6s) ease-in infinite;
+  will-change: transform, opacity;
+}
+/* Scatter 8 particles at various positions */
+.sh-particle:nth-child(1)  { left: 15%; bottom: 20%; --p-dur: 7s;  animation-delay: 0s; }
+.sh-particle:nth-child(2)  { left: 30%; bottom: 10%; --p-dur: 9s;  animation-delay: 1s; }
+.sh-particle:nth-child(3)  { left: 48%; bottom: 5%;  --p-dur: 8s;  animation-delay: 2.5s; }
+.sh-particle:nth-child(4)  { left: 63%; bottom: 15%; --p-dur: 11s; animation-delay: 0.5s; }
+.sh-particle:nth-child(5)  { left: 78%; bottom: 25%; --p-dur: 7s;  animation-delay: 3s; }
+.sh-particle:nth-child(6)  { left: 22%; bottom: 35%; --p-dur: 10s; animation-delay: 1.8s; }
+.sh-particle:nth-child(7)  { left: 55%; bottom: 30%; --p-dur: 6s;  animation-delay: 4s; }
+.sh-particle:nth-child(8)  { left: 88%; bottom: 18%; --p-dur: 8s;  animation-delay: 2s; }
+
+@keyframes sh-particle-rise {
+  0%   { opacity: 0;    transform: translateY(0)    scale(1); }
+  10%  { opacity: 0.9; }
+  80%  { opacity: 0.4; }
+  100% { opacity: 0;    transform: translateY(-60vh) scale(0.4); }
+}
+
+/* ── Hero Content Layout ─────────────────────────────────── */
+.sh-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 120px 24px 100px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  gap: 0;
+}
+
+/* ── Logo ────────────────────────────────────────────────── */
+.sh-logo-wrap {
+  margin-bottom: 32px;
+}
+.sh-logo {
+  width: clamp(80px, 12vw, 140px);
+  height: auto;
+  filter:
+    drop-shadow(0 0 28px rgba(201,164,106,0.45))
+    drop-shadow(0 0 60px rgba(201,164,106,0.18))
+    brightness(1.1);
+  display: block;
+  margin: 0 auto;
+}
+
+/* ── Eyebrow ─────────────────────────────────────────────── */
+.sh-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+  justify-content: center;
+}
+.sh-eyebrow-rule {
+  display: block;
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sh-gold), transparent);
+  flex-shrink: 0;
+}
+.sh-eyebrow-text {
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sh-gold);
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: 'Cormorant Garamond', 'El Messiri', serif;
+}
+
+/* ── Headline ────────────────────────────────────────────── */
+.sh-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+.sh-headline-main {
+  font-family: 'Cormorant Garamond', 'El Messiri', Georgia, serif;
+  font-size: clamp(3.6rem, 9vw, 8.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  background: linear-gradient(
+    135deg,
+    #F5E4BC  0%,
+    #E8D4A8 30%,
+    #C9A46A 60%,
+    #F0D898 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  /* Shimmer sweep */
+  background-size: 200% auto;
+  animation: sh-shimmer 5s linear infinite;
+}
+
+@keyframes sh-shimmer {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 200% center; }
+}
+
+.sh-headline-sub {
+  font-family: 'El Messiri', 'Tajawal', serif;
+  font-size: clamp(1.1rem, 2.8vw, 1.85rem);
+  font-weight: 500;
+  color: var(--sh-text-muted);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* ── Subtitle ────────────────────────────────────────────── */
+.sh-subtitle {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(0.97rem, 1.8vw, 1.15rem);
+  color: rgba(230,210,180,0.75);
+  line-height: 1.9;
+  max-width: 500px;
+  margin-bottom: 36px;
+  margin-top: 4px;
+}
+
+/* ── CTA Buttons ─────────────────────────────────────────── */
+.sh-ctas {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.sh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 34px;
+  border-radius: 6px;
+  font-family: 'El Messiri', 'Tajawal', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s var(--sh-ease), box-shadow 0.3s ease, background 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Primary — gold gradient */
+.sh-btn-primary {
+  background: linear-gradient(135deg, #C9A46A 0%, #A07840 50%, #C9A46A 100%);
+  background-size: 200% auto;
+  color: #0A0603;
+  box-shadow:
+    0 0 0 1px rgba(201,164,106,0.5),
+    0 8px 28px rgba(160,120,64,0.45),
+    0 0 40px rgba(201,164,106,0.10) inset;
+  animation: sh-btn-gold-flow 3s linear infinite;
+}
+@keyframes sh-btn-gold-flow {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 200% center; }
+}
+.sh-btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(201,164,106,0.8),
+    0 14px 40px rgba(160,120,64,0.55),
+    0 0 60px rgba(201,164,106,0.15) inset;
+}
+.sh-btn-primary:active { transform: translateY(-1px) scale(0.98); }
+
+/* Ghost — outlined */
+.sh-btn-ghost {
+  background: rgba(255,255,255,0.04);
+  color: var(--sh-gold-light);
+  border: 1px solid rgba(201,164,106,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.sh-btn-ghost:hover {
+  background: rgba(201,164,106,0.10);
+  border-color: rgba(201,164,106,0.75);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(160,120,64,0.20);
+}
+.sh-btn-ghost:active { transform: translateY(-1px) scale(0.98); }
+
+.sh-btn-icon {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* ── Decorative Badges ───────────────────────────────────── */
+.sh-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 44px;
+}
+.sh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: rgba(220,200,170,0.70);
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 500;
+}
+.sh-badge-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--sh-gold);
+  opacity: 0.8;
+  animation: sh-dot-pulse 2.5s ease-in-out infinite;
+}
+.sh-badge:nth-child(3) .sh-badge-dot { animation-delay: 0.5s; }
+.sh-badge:nth-child(5) .sh-badge-dot { animation-delay: 1s; }
+@keyframes sh-dot-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1.0; transform: scale(1.4); }
+}
+.sh-badge-divider {
+  color: rgba(201,164,106,0.35);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ── Scroll Indicator ────────────────────────────────────── */
+.sh-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+.sh-scroll:hover { opacity: 0.75; }
+.sh-scroll-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(201,164,106,0.6);
+  font-family: 'Cormorant Garamond', serif;
+}
+.sh-scroll-line {
+  width: 1px;
+  height: 48px;
+  background: rgba(201,164,106,0.2);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+}
+.sh-scroll-dot {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, var(--sh-gold));
+  animation: sh-scroll-drop 2s ease-in-out infinite;
+}
+@keyframes sh-scroll-drop {
+  0%   { top: -12px; opacity: 0; }
+  20%  { opacity: 1; }
+  100% { top: 52px;  opacity: 0; }
+}
+
+/* ── Corner Ornaments ────────────────────────────────────── */
+.sh-ornament {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.sh-ornament-tl { top: 24px;    left: 24px; }
+.sh-ornament-br { bottom: 24px; right: 24px; transform: rotate(0deg); }
+
+/* ── Entrance Animations ─────────────────────────────────── */
+.sh-anim-fade,
+.sh-anim-slide {
+  opacity: 0;
+}
+
+/* Triggered by JS once page loads */
+.siraj-hero.sh-ready .sh-anim-fade {
+  animation: sh-fade-in 0.9s var(--sh-ease) forwards;
+  animation-delay: var(--sh-delay, 0s);
+}
+.siraj-hero.sh-ready .sh-anim-slide {
+  animation: sh-slide-up 0.85s var(--sh-ease) forwards;
+  animation-delay: var(--sh-delay, 0s);
+}
+
+@keyframes sh-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes sh-slide-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Prefers-reduced-motion ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .sh-video       { animation: none; }
+  .sh-headline-main { animation: none; }
+  .sh-btn-primary { animation: none; }
+  .sh-particle    { animation: none; opacity: 0; }
+  .sh-light       { animation: none; opacity: 0; }
+  .sh-scroll-dot  { animation: none; top: 20px; opacity: 0.6; }
+  .sh-anim-fade,
+  .sh-anim-slide  { opacity: 1 !important; transform: none !important; animation: none !important; }
+}
+
+/* ── Responsive: Tablet ──────────────────────────────────── */
+@media (max-width: 1024px) {
+  .sh-content { padding: 100px 32px 88px; }
+}
+
+/* ── Responsive: Mobile ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .siraj-hero { min-height: 100svh; }
+
+  .sh-content {
+    padding: 90px 20px 80px;
+    gap: 0;
+  }
+
+  .sh-logo { width: clamp(64px, 18vw, 100px); }
+  .sh-logo-wrap { margin-bottom: 20px; }
+
+  .sh-eyebrow-text { font-size: 0.62rem; letter-spacing: 0.18em; }
+  .sh-eyebrow-rule { width: 28px; }
+  .sh-eyebrow { gap: 10px; margin-bottom: 16px; }
+
+  .sh-headline { gap: 6px; margin-bottom: 14px; }
+  .sh-headline-main  { font-size: clamp(2.8rem, 12vw, 4.5rem); }
+  .sh-headline-sub   { font-size: clamp(0.95rem, 3.5vw, 1.2rem); }
+
+  .sh-subtitle { font-size: 0.92rem; margin-bottom: 28px; }
+
+  .sh-ctas { gap: 10px; margin-bottom: 28px; }
+  .sh-btn  { padding: 13px 26px; font-size: 0.93rem; }
+
+  .sh-badges { gap: 8px; margin-bottom: 32px; }
+
+  .sh-ornament { display: none; }
+
+  .sh-light-1, .sh-light-2, .sh-light-3 { display: none; }
+}
+
+@media (max-width: 480px) {
+  .sh-content { padding: 80px 16px 72px; }
+  .sh-ctas    { flex-direction: column; align-items: stretch; }
+  .sh-btn     { width: 100%; justify-content: center; }
+  .sh-badges  { flex-direction: column; align-items: center; gap: 6px; }
+  .sh-badge-divider { display: none; }
+}
+
+/* ── SIRAJ final polish by ChatGPT ─────────────────────────
+   Keeps the redesign scoped to the homepage hero only. */
+.siraj-hero {
+  isolation: isolate;
+  color: var(--sh-text-light);
+}
+
+.siraj-hero::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  z-index: 6;
+  pointer-events: none;
+  border: 1px solid rgba(201,164,106,0.16);
+  border-radius: 28px;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+}
+
+.sh-video-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 0%, transparent 38%, rgba(0,0,0,0.62) 100%),
+    linear-gradient(90deg, rgba(0,0,0,0.45), transparent 24%, transparent 76%, rgba(0,0,0,0.45));
+}
+
+.sh-logo-wrap {
+  position: relative;
+}
+
+.sh-logo-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: clamp(118px, 18vw, 220px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,164,106,0.20), transparent 66%);
+  filter: blur(10px);
+  z-index: -1;
+}
+
+.sh-logo {
+  max-height: clamp(72px, 12vw, 140px);
+  object-fit: contain;
+}
+
+.sh-headline-main {
+  text-wrap: balance;
+}
+
+.sh-subtitle {
+  text-wrap: balance;
+}
+
+.sh-btn:focus-visible,
+.sh-scroll:focus-visible {
+  outline: 2px solid var(--sh-gold-bright);
+  outline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  .siraj-hero::before { inset: 10px; border-radius: 20px; }
+  .sh-video { object-position: center center; }
+  .sh-content { max-width: 94vw; }
+}
+
+@media (max-height: 690px) and (orientation: landscape) {
+  .sh-content { padding: 72px 24px 54px; }
+  .sh-logo-wrap, .sh-badges { margin-bottom: 16px; }
+  .sh-headline-main { font-size: clamp(3rem, 8vw, 6.5rem); }
+  .sh-scroll { display: none; }
+}
