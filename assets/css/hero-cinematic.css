@@ -947,3 +947,276 @@
   .sh-headline-main { font-size: clamp(3rem, 5vw, 4.8rem) !important; }
   .sh-content { padding-inline: 28px 46px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   v12 fix: show the full video on the left without cropping
+   ═══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  .sh-video-wrap {
+    background: #050302 !important;
+  }
+
+  .sh-video {
+    object-fit: contain !important;
+    object-position: center center !important;
+    animation: none !important;
+    transform: none !important;
+    background: #050302 !important;
+  }
+
+  .sh-overlay {
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.14) 66%, rgba(7,4,2,0.70)),
+      radial-gradient(ellipse 75% 55% at 50% 52%, transparent 0%, rgba(0,0,0,0.18) 100%) !important;
+  }
+
+  .sh-video-wrap::after {
+    background: linear-gradient(90deg, transparent 0%, transparent 72%, rgba(7,4,2,0.82) 100%) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   v13 fix: replace large hero logo card with premium text wordmark
+   ═══════════════════════════════════════════════════════════ */
+.sh-brand-wordmark,
+.sh-brand-tagline {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  .sh-logo-wrap {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+    margin-bottom: 28px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .sh-brand-wordmark {
+    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+    font-size: clamp(2.15rem, 3vw, 3.25rem);
+    line-height: 0.95;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--sh-gold-bright);
+    text-transform: uppercase;
+    text-shadow:
+      0 12px 34px rgba(0,0,0,0.92),
+      0 0 32px rgba(201,164,106,0.18);
+  }
+
+  .sh-brand-tagline {
+    margin-top: 10px;
+    font-family: 'Cormorant Garamond', 'El Messiri', serif;
+    font-size: clamp(0.92rem, 1.05vw, 1.18rem);
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    color: rgba(232,212,168,0.78);
+    text-shadow: 0 8px 24px rgba(0,0,0,0.82);
+  }
+}
+
+@media (max-width: 768px) {
+  .sh-logo-wrap {
+    margin-bottom: 24px !important;
+  }
+
+  .sh-brand-wordmark {
+    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+    font-size: clamp(2rem, 10vw, 3rem);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--sh-gold-bright);
+    text-transform: uppercase;
+    text-shadow: 0 10px 32px rgba(0,0,0,0.88);
+  }
+
+  .sh-brand-tagline {
+    margin-top: 8px;
+    font-family: 'Cormorant Garamond', 'El Messiri', serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(232,212,168,0.78);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   v14 header polish: make the navigation match the cinematic hero
+   ═══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  .storefront-body .site-header {
+    position: fixed !important;
+    top: 14px !important;
+    left: 50% !important;
+    right: auto !important;
+    width: min(1280px, calc(100% - 48px)) !important;
+    transform: translateX(-50%) !important;
+    z-index: 1000 !important;
+    background: linear-gradient(135deg, rgba(9,5,3,0.78), rgba(28,15,8,0.58)) !important;
+    border: 1px solid rgba(201,164,106,0.26) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 20px 70px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    backdrop-filter: blur(22px) saturate(1.25) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(1.25) !important;
+    overflow: visible !important;
+  }
+
+  .storefront-body .site-header.scrolled {
+    background: linear-gradient(135deg, rgba(9,5,3,0.88), rgba(28,15,8,0.72)) !important;
+    border-color: rgba(201,164,106,0.34) !important;
+    box-shadow: 0 18px 58px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+  }
+
+  .storefront-body .site-header .container.nav {
+    width: 100% !important;
+    min-height: 74px !important;
+    padding: 0 18px !important;
+    display: grid !important;
+    grid-template-columns: minmax(210px, 1fr) auto minmax(210px, 1fr) !important;
+    align-items: center !important;
+    gap: 16px !important;
+  }
+
+  .storefront-body .site-header .brand {
+    justify-self: center !important;
+    align-items: center !important;
+    gap: 2px !important;
+    transform: translateY(0) !important;
+  }
+
+  .storefront-body .site-header .brand-logo {
+    width: 72px !important;
+    height: 72px !important;
+    object-fit: contain !important;
+    border-radius: 18px !important;
+    padding: 6px !important;
+    background: rgba(255,249,236,0.96) !important;
+    border: 1px solid rgba(232,212,168,0.42) !important;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.34), 0 0 24px rgba(201,164,106,0.13) !important;
+  }
+
+  .storefront-body .site-header .brand-sub {
+    margin-top: 4px !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 0.56rem !important;
+    letter-spacing: 0.38em !important;
+    color: rgba(232,212,168,0.84) !important;
+    text-shadow: 0 6px 18px rgba(0,0,0,0.70) !important;
+  }
+
+  .storefront-body .site-header .nav-end-group {
+    justify-self: start !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .storefront-body .site-header .home-candle-btn {
+    justify-self: end !important;
+  }
+
+  .storefront-body .site-header .icon-btn,
+  .storefront-body .site-header .account-menu-toggle,
+  .storefront-body .site-header .notification-btn,
+  .storefront-body .site-header .wishlist-btn,
+  .storefront-body .site-header .cart-btn {
+    background: rgba(255,249,236,0.09) !important;
+    color: rgba(255,246,228,0.94) !important;
+    border: 1px solid rgba(201,164,106,0.30) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 28px rgba(0,0,0,0.20) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+  }
+
+  .storefront-body .site-header .icon-btn:hover,
+  .storefront-body .site-header .account-menu-toggle:hover,
+  .storefront-body .site-header .notification-btn:hover,
+  .storefront-body .site-header .wishlist-btn:hover,
+  .storefront-body .site-header .cart-btn:hover {
+    background: rgba(201,164,106,0.18) !important;
+    border-color: rgba(232,212,168,0.58) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .storefront-body .site-header .account-nav-label,
+  .storefront-body .site-header .account-nav-chevron {
+    color: rgba(255,246,228,0.92) !important;
+  }
+
+  .storefront-body .site-header .cart-count,
+  .storefront-body .site-header .notification-badge,
+  .storefront-body .site-header .wishlist-count {
+    background: #c9a46a !important;
+    color: #160b05 !important;
+    border-color: rgba(255,246,228,0.72) !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.30) !important;
+  }
+
+  .storefront-body .mobile-menu {
+    display: none !important;
+  }
+
+  .storefront-body .siraj-hero {
+    min-height: 100svh !important;
+  }
+
+  .storefront-body .sh-video-wrap,
+  .storefront-body .sh-content {
+    min-height: 100svh !important;
+  }
+
+  .storefront-body .sh-content {
+    padding-top: clamp(112px, 14vh, 150px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .storefront-body .site-header {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    z-index: 1000 !important;
+    border-radius: 20px !important;
+    background: linear-gradient(135deg, rgba(9,5,3,0.84), rgba(28,15,8,0.66)) !important;
+    border: 1px solid rgba(201,164,106,0.28) !important;
+    box-shadow: 0 16px 44px rgba(0,0,0,0.40) !important;
+    backdrop-filter: blur(20px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+    overflow: visible !important;
+  }
+
+  .storefront-body .site-header .nav {
+    min-height: 58px !important;
+    padding: 0 10px !important;
+  }
+
+  .storefront-body .site-header .brand-logo {
+    width: 52px !important;
+    height: 52px !important;
+    object-fit: contain !important;
+    border-radius: 14px !important;
+    padding: 4px !important;
+    background: rgba(255,249,236,0.96) !important;
+    border: 1px solid rgba(232,212,168,0.40) !important;
+  }
+
+  .storefront-body .site-header .brand-sub {
+    display: none !important;
+  }
+
+  .storefront-body .site-header .icon-btn {
+    background: rgba(255,249,236,0.10) !important;
+    color: rgba(255,246,228,0.94) !important;
+    border-color: rgba(201,164,106,0.30) !important;
+  }
+
+  .storefront-body .sh-content {
+    padding-top: 108px !important;
+  }
+}
