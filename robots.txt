@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://siraj-candles.netlify.app/sitemap.xml
