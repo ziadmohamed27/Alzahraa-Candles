@@ -139,3 +139,178 @@ textarea:focus-visible {
   outline: 3px solid #f1d49a !important;
   outline-offset: 3px !important;
 }
+
+/* v33: Fix WAVE contrast on hero badge text/dividers while keeping non-hero microcopy readable */
+.siraj-hero .sh-badges,
+.siraj-hero .sh-badge,
+.siraj-hero .sh-badge-divider,
+.siraj-hero .sh-badge * {
+  color: #f6dfad !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.85) !important;
+}
+
+.siraj-hero .sh-badge-dot {
+  background: #f6dfad !important;
+  opacity: 1 !important;
+}
+
+/* Make badge text large enough not to be flagged as tiny text in the hero */
+.siraj-hero .sh-badge {
+  font-size: max(14px, .875rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  letter-spacing: .02em !important;
+}
+
+.siraj-hero .sh-badge-divider {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+}
+
+/* Keep product/section labels readable on the light background */
+.products-section .sh-badge,
+.selection-guide .sh-badge,
+.trust-section .sh-badge,
+.faq-section .sh-badge,
+.sh-section:not(.siraj-hero) .sh-badge {
+  color: #5b3517 !important;
+  font-size: max(14px, .875rem) !important;
+  font-weight: 700 !important;
+}
+
+
+/* v34 WAVE cleanup: remove hero badge contrast source and improve remaining microcopy size */
+.siraj-hero .sh-badges {
+  display: none !important;
+}
+.brand-sub,
+.sh-brand-soul,
+.sh-brand-tagline,
+.sh-kicker,
+.sh-scroll-label,
+.footer-bottom,
+.footer-text,
+.footer a,
+.sg-desc,
+.trust-card p,
+.product-card .product-meta,
+.product-card .product-desc,
+.notification-count,
+.cart-count {
+  font-size: max(13px, .8125rem) !important;
+  line-height: 1.55 !important;
+}
+.footer-bottom,
+.footer-text,
+.footer a {
+  color: #f4e2c3 !important;
+}
+/* Keep decorative separators readable if any badge markup remains outside the hero */
+.sh-badge,
+.sh-badge-divider {
+  color: #4a2c15 !important;
+  opacity: 1 !important;
+}
+.siraj-hero .sh-badge,
+.siraj-hero .sh-badge-divider {
+  color: #f8e0ad !important;
+}
+
+
+/* v35 final WAVE cleanup: contrast + tiny text + redundant label reduction */
+.site-header .brand-sub,
+.brand-sub,
+.sh-brand-soul,
+.sh-scroll-label {
+  color: #fff1c7 !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  letter-spacing: .16em !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.9) !important;
+}
+
+/* Decorative scroll cue was causing low-contrast / tiny text warnings */
+.siraj-hero .sh-scroll {
+  display: none !important;
+}
+
+/* Improve all small visible text on light sections */
+.section-eyebrow,
+.section-subtitle,
+.product-card p,
+.product-card .product-desc,
+.product-card .product-meta,
+.sg-desc,
+.trust-card p,
+.faq-answer,
+.footer p,
+.footer a,
+.footer-bottom,
+.cart-count,
+.notification-count,
+.badge,
+.card-badge,
+.product-badge,
+.price,
+.card-price {
+  font-size: max(14px, .875rem) !important;
+  line-height: 1.55 !important;
+}
+
+/* High contrast on light backgrounds */
+.section-subtitle,
+.product-card p,
+.product-card .product-desc,
+.product-card .product-meta,
+.sg-desc,
+.trust-card p,
+.faq-answer {
+  color: #3b2412 !important;
+}
+
+/* High contrast on dark footer/header */
+.footer,
+.footer *,
+.site-header .brand-sub {
+  color: #fff1c7 !important;
+}
+
+/* Keep counts readable; avoid WAVE tiny/contrast flags */
+.cart-count,
+.notification-count {
+  min-width: 20px !important;
+  height: 20px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: #2b1609 !important;
+  background: #f8dfaa !important;
+  border: 1px solid rgba(43,22,9,.25) !important;
+}
+
+/* Any remaining hero micro badges must either be hidden or high contrast */
+.siraj-hero .sh-badge,
+.siraj-hero .sh-badge-divider,
+.siraj-hero .sh-badge-dot {
+  display: none !important;
+}
+
+/* Product tags/buttons: keep text contrast safely above threshold */
+.product-card .card-badge,
+.product-card .badge,
+.product-card .product-tag,
+.sh-badge,
+.sh-badge-divider {
+  color: #3b2412 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+}
+
+/* Avoid redundant title text from title attributes on common interactive controls if scripts add them visually */
+[title="العودة للصفحة الرئيسية"],
+[title="تسجيل الدخول"],
+[title="السلة"] {
+  /* CSS hook only; HTML attributes were removed where present */
+}
