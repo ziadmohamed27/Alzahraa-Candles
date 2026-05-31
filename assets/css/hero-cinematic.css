@@ -2393,3 +2393,64 @@ body.storefront-body .sh-video-wrap .video-fallback {
 body.storefront-body .sh-video {
   background: transparent !important;
 }
+
+/* v29: FORCE HERO TRUE BLACK BACKGROUND
+   Purpose: remove all remaining brown/sepia gradients from the hero background.
+   Gold is kept only for text/buttons/borders. */
+body.storefront-body .siraj-hero,
+body.storefront-body section.siraj-hero,
+body.storefront-body #hero-section {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body.storefront-body .siraj-hero::before,
+body.storefront-body .siraj-hero::after {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+body.storefront-body .sh-video-wrap,
+body.storefront-body .sh-content {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body.storefront-body .sh-video-wrap::before,
+body.storefront-body .sh-video-wrap::after,
+body.storefront-body .sh-content::before,
+body.storefront-body .sh-content::after,
+body.storefront-body .sh-overlay {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body.storefront-body .sh-overlay {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+body.storefront-body .sh-light,
+body.storefront-body .sh-particles,
+body.storefront-body .sh-particle {
+  display: none !important;
+}
+
+/* remove the brown block seen below the video on desktop */
+body.storefront-body .siraj-hero,
+body.storefront-body .sh-video-wrap,
+body.storefront-body .sh-content {
+  border-bottom-color: rgba(0,0,0,0) !important;
+}
+
+@media (min-width: 769px) {
+  body.storefront-body .siraj-hero {
+    min-height: 100vh !important;
+  }
+}
