@@ -1,0 +1,141 @@
+/* Accessibility fixes for WAVE: contrast, small text, focus visibility, ARIA-related UI polish */
+.brand-sub,
+.hero-brand-tagline,
+.hero-benefits,
+.hero-benefits span,
+.section-kicker,
+.pill.small,
+.products-search-hint,
+.section-head p,
+.subtitle,
+.footer-muted,
+.product-meta,
+.trust-card p,
+.feature p,
+.faq-a {
+  font-size: max(12px, 0.75rem) !important;
+  line-height: 1.65 !important;
+}
+
+/* Improve contrast of small gold/brown text on light backgrounds */
+.products-search-hint,
+.section-head p,
+.subtitle,
+.footer-muted,
+.faq-a,
+.trust-card p,
+.feature p,
+.product-meta,
+.ship-item span,
+.brand-story-copy p {
+  color: #4f2f16 !important;
+}
+
+/* Improve contrast of tiny text on dark hero/header */
+.brand-sub,
+.hero-brand-tagline,
+.hero-benefits,
+.hero-benefits span,
+.siraj-hero .eyebrow,
+.siraj-hero .micro-copy,
+.siraj-hero .hero-subtitle {
+  color: #f7e6bd !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.75) !important;
+}
+
+/* Make icon-only / compact controls easier to see and focus */
+.icon-btn:focus-visible,
+.btn:focus-visible,
+.filter-btn:focus-visible,
+.back-to-prods-btn:focus-visible,
+.floating-wa:focus-visible,
+.scroll-top-btn:focus-visible,
+.close-btn:focus-visible {
+  outline: 3px solid #f7e6bd !important;
+  outline-offset: 3px !important;
+}
+
+/* Keep brand block visually identical after converting it from link to labelled image group */
+.site-header .brand {
+  cursor: default;
+}
+
+/* Pure black hero background guard: keep gold only in text/buttons, not in page background */
+.siraj-hero,
+.hero-section,
+.hero-visual,
+.hero-content,
+.hero-copy,
+.hero-video-panel,
+.siraj-hero::before,
+.siraj-hero::after {
+  background-color: #000 !important;
+  background-image: none !important;
+}
+
+/* v32 WAVE cleanup: stronger contrast, readable microcopy, and safer anchor labels */
+.brand-sub,
+.sh-brand-tagline,
+.sh-kicker,
+.sh-badge,
+.sh-micro-trust,
+.hero-meta,
+.footer-bottom,
+.footer-text,
+.footer a,
+.products-search-hint,
+.section-head p,
+.trust-item p,
+.guide-copy p,
+.faq-answer,
+.small,
+.pill.small {
+  color: #7a5426 !important;
+  font-size: max(12px, 0.75rem) !important;
+  line-height: 1.6 !important;
+}
+
+.siraj-hero .brand-sub,
+.siraj-hero .sh-brand-tagline,
+.siraj-hero .sh-kicker,
+.site-header .brand-sub,
+.sh-features,
+.sh-features span {
+  color: #f1d49a !important;
+  font-size: max(12px, 0.75rem) !important;
+  letter-spacing: 0.18em !important;
+}
+
+.footer,
+.footer * {
+  color: #f4e2c3;
+}
+.footer a,
+.footer .footer-text,
+.footer-bottom {
+  color: #efd4a8 !important;
+}
+
+/* Keep the hero pure black while leaving gold only for text/buttons */
+.siraj-hero,
+.siraj-hero::before,
+.siraj-hero::after,
+.sh-content,
+.sh-content::before,
+.sh-content::after,
+.sh-video-panel,
+.sh-text-panel {
+  background-color: #000 !important;
+  background-image: none !important;
+}
+
+/* Visible focus improves keyboard accessibility and WAVE usability */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #f1d49a !important;
+  outline-offset: 3px !important;
+}

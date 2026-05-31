@@ -36,15 +36,15 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
   <link rel="preconnect" href="https://wihhfwdaysupjpfzshfq.supabase.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap">
 
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="preload" href="/assets/css/premium.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/premium.css"></noscript>
-  <link rel="preload" href="/assets/css/luxury-polish.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/luxury-polish.css"></noscript>
-  <link rel="preload" href="/assets/css/candle-fx.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/candle-fx.css"></noscript>
-  <link rel="preload" href="/assets/css/ux-improvements.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/ux-improvements.css"></noscript>
-  <link rel="preload" href="/assets/css/ux-v09.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/ux-v09.css"></noscript>
-  <link rel="preload" href="/assets/css/deep-fixes.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/deep-fixes.css"></noscript>
+  <link rel="stylesheet" href="/assets/css/premium.css">
+  <link rel="stylesheet" href="/assets/css/luxury-polish.css">
+  <link rel="stylesheet" href="/assets/css/candle-fx.css">
+  <link rel="stylesheet" href="/assets/css/ux-improvements.css">
+  <link rel="stylesheet" href="/assets/css/ux-v09.css">
+  <link rel="stylesheet" href="/assets/css/deep-fixes.css">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://siraj-candles.netlify.app/">
@@ -130,9 +130,10 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
     }
   ]
 }</script>
-  <link rel="preload" href="/assets/css/mobile-unified.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/mobile-unified.css"></noscript>
+  <link rel="stylesheet" href="/assets/css/mobile-unified.css">
   <link rel="stylesheet" href="/assets/css/ux-v11-cleanup.css">
   <link rel="stylesheet" href="/assets/css/hero-cinematic.css?v=29">
+  <link rel="stylesheet" href="/assets/css/accessibility-fixes.css?v=32">
   <script src="/assets/js/hero-cinematic.js?v=22" defer></script>
 </head>
 <body class="storefront-body">
@@ -141,7 +142,7 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
   <!-- ═══════════════════════════════ HEADER ═══ -->
   <header class="site-header" id="top">
     <div class="container nav">
-      <a class="icon-btn menu-btn home-candle-btn" href="#top" aria-label="العودة للصفحة الرئيسية" title="الصفحة الرئيسية">
+      <a class="icon-btn menu-btn home-candle-btn" href="./index.html" aria-label="العودة للصفحة الرئيسية" title="الصفحة الرئيسية">
         <span class="sr-only">الصفحة الرئيسية</span>
         <span class="candle-home" aria-hidden="true">
           <span class="candle-roof"></span>
@@ -150,11 +151,11 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
         </span>
       </a>
 
-      <a class="brand" href="#top">
+      <div class="brand" role="img" aria-label="SIRAJ Candles logo">
         <img class="brand-logo" src="/assets/images/brand/siraj-logo.svg" width="256" height="256" alt="SIRAJ Candles logo" decoding="async">
         <span class="brand-title sr-only">SIRAJ</span>
         <span class="brand-sub">LIGHT WITH SOUL</span>
-      </a>
+      </div>
 
       <div class="nav-end-group">
         <span id="accountNavWrap"></span>
@@ -262,7 +263,7 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
     </section>
 
     <!-- ═══════════════════════════════ TRUST STRIP ═══ -->
-    <section class="section section-tight" id="trust" aria-labelledby="trust-title">
+    <section class="section section-tight" id="trust" aria-label="مميزات الثقة في SIRAJ">
       <div class="container" data-reveal>
         <h2 class="sr-only" id="trust-title">مميزات الثقة في SIRAJ</h2>
         <div class="trust-strip" id="trustStrip"></div>
@@ -361,6 +362,7 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
     </section>
 
 <!-- ═══════════════════════════════ BENEFITS ═══ -->
+    <span id="story" class="sr-only" aria-hidden="true"></span>
     <section class="section" id="about">
       <div class="container">
         <div class="section-head center" data-reveal>
@@ -540,8 +542,8 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
         <p class="footer-text">شموع يدوية مصنوعة بعناية لتمنح كل مكان دفئًا حقيقيًا وأناقة هادئة تدوم.</p>
         <div class="footer-social">
           <a href="https://wa.me/201095314011" target="_blank" rel="noopener" aria-label="واتساب">💬</a>
-          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="إنستغرام">📷</a>
-          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="فيسبوك">📘</a>
+          <a href="https://instagram.com/" target="_blank" rel="noopener" aria-label="إنستغرام">📷</a>
+          <a href="https://facebook.com/" target="_blank" rel="noopener" aria-label="فيسبوك">📘</a>
         </div>
       </div>
 
@@ -549,7 +551,7 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
         <h3>روابط سريعة</h3>
         <a href="#top">الرئيسية</a>
         <a href="#products">المنتجات</a>
-        <a href="#story">قصتنا</a>
+        <a href="#about">قصتنا</a>
         <a href="#guide">اختيار سريع</a>
         <a href="#faq">الأسئلة الشائعة</a>
       </div>
@@ -588,9 +590,9 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
 
   <!-- ═══════════════════════════════ MODAL ═══ -->
   <div class="overlay hidden" id="productModalOverlay">
-    <div class="modal product-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal product-modal" role="dialog" aria-modal="true" aria-label="تفاصيل المنتج">
       <button class="close-btn" id="closeProductModal" aria-label="إغلاق">×</button>
-      <div class="modal-content" id="productModalContent"></div>
+      <div class="modal-content" id="productModalContent" aria-live="polite"></div>
     </div>
   </div>
 
