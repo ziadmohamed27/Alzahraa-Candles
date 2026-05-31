@@ -132,8 +132,8 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
 }</script>
   <link rel="preload" href="/assets/css/mobile-unified.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="/assets/css/mobile-unified.css"></noscript>
   <link rel="stylesheet" href="/assets/css/ux-v11-cleanup.css">
-  <link rel="stylesheet" href="/assets/css/hero-cinematic.css?v=19">
-  <script src="/assets/js/hero-cinematic.js" defer></script>
+  <link rel="stylesheet" href="/assets/css/hero-cinematic.css?v=22">
+  <script src="/assets/js/hero-cinematic.js?v=22" defer></script>
 </head>
 <body class="storefront-body">
   <a href="#products" class="skip-link">تخطي للمنتجات</a>
@@ -184,7 +184,7 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
 
       <!-- Video Background -->
       <div class="sh-video-wrap" aria-hidden="true">
-        <video class="sh-video" autoplay muted loop playsinline preload="auto" poster="/assets/images/brand/siraj-logo-transparent.svg">
+        <video class="sh-video" autoplay muted loop playsinline preload="metadata">
           <source src="/assets/video/hero-bg.mp4" type="video/mp4">
         </video>
         <div class="sh-overlay"></div>
@@ -600,10 +600,10 @@ body{margin:0;font-family:Tajawal,Arial,sans-serif;background:#fff8ee;color:#2a1
   <!-- ═══════════════════════════════ SCRIPTS ═══ -->
   <!-- site-config MUST load first, synchronously — no defer -->
   <script defer src="/assets/js/cache-cleanup.js"></script>
-  <script defer src="./site-config.js"></script>
-  <script defer src="/assets/js/app-config.js"></script>
+  <script src="./site-config.js"></script>
+  <script src="/assets/js/app-config.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="/assets/js/auth-config.js"></script>
+  <script src="/assets/js/auth-config.js"></script>
   <script defer src="/assets/js/script.js"></script>
   <script defer src="/assets/js/interactions.js"></script>
   <script defer src="/assets/js/enhancements.js"></script>

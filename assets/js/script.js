@@ -687,6 +687,15 @@ function closeProduct() {
 function guardMedia() {
   $$('video').forEach((video) => {
     video.addEventListener('error', () => {
+      // لا نستبدل فيديو الهيرو بلوجو كبير أو poster قديم عند فشل التحميل.
+      if (video.classList.contains('sh-video')) {
+        const wrap = video.closest('.sh-video-wrap');
+        if (wrap) {
+          video.remove();
+          wrap.style.background = 'radial-gradient(ellipse 80% 70% at 30% 100%, rgba(160,100,40,0.22), transparent 60%), linear-gradient(160deg, #0d0804 0%, #1a0e06 50%, #0d0804 100%)';
+        }
+        return;
+      }
       const poster = video.getAttribute('poster');
       if (poster && video.parentElement) {
         video.parentElement.innerHTML = `<img class="video-fallback" src="${poster}" alt="شمعة يدوية">`;
