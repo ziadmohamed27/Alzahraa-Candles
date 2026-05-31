@@ -910,7 +910,18 @@ function renderCartItems() {
           </div>
           <div class="qty-row qty-row-lg" dir="ltr" aria-label="الكمية الحالية ${item.qty}">
             <button data-action="dec" data-id="${item.id}" type="button" aria-label="تقليل الكمية">-</button>
-            <span class="qty-value" aria-hidden="true">${item.qty}</span>
+            <input
+              class="qty-value qty-input"
+              data-action="set-qty"
+              data-id="${item.id}"
+              type="tel"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              min="1"
+              value="${item.qty}"
+              aria-label="اكتب الكمية المطلوبة"
+              autocomplete="off"
+            >
             <button data-action="inc" data-id="${item.id}" type="button" aria-label="زيادة الكمية">+</button>
           </div>
         </div>
