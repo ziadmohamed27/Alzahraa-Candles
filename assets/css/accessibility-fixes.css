@@ -314,3 +314,108 @@ textarea:focus-visible {
 [title="السلة"] {
   /* CSS hook only; HTML attributes were removed where present */
 }
+
+/* v36 final WAVE polish: remove remaining contrast/tiny-text hotspots */
+.site-header .brand-sub,
+.brand-sub {
+  display: none !important;
+}
+
+/* The logo image already contains the tagline; keep any remaining visible micro text readable */
+.sh-brand-soul,
+.footer-bottom,
+.footer-text,
+.footer a,
+.trust-card p,
+.sg-desc,
+.card-scent,
+.product-card p,
+.product-card .product-desc,
+.product-card .product-meta,
+.products-search-hint,
+.section-head p,
+.pill,
+.pill.small,
+.card-mood-tag,
+.mvc,
+.modal-micro-trust {
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+  opacity: 1 !important;
+}
+
+/* Safe contrast on light backgrounds */
+.sg-label,
+.card-badge,
+.product-badge,
+.card-mood-tag,
+.pill,
+.pill.small,
+.products-search-hint,
+.section-head p,
+.trust-card p,
+.sg-desc,
+.card-scent,
+.product-card p,
+.product-card .product-desc,
+.product-card .product-meta,
+.mvc {
+  color: #3b2412 !important;
+  font-weight: 700 !important;
+}
+
+/* Safe contrast on dark footer/CTA blocks */
+.footer,
+.footer a,
+.footer p,
+.footer span,
+.footer-bottom,
+.final-cta-card,
+.final-cta-card p,
+.consult-banner,
+.consult-banner p {
+  color: #fff1c7 !important;
+}
+.footer h3,
+.footer strong,
+.final-cta-card h2,
+.consult-banner strong {
+  color: #ffffff !important;
+}
+
+/* Hide decorative hero scroll cue and separators that trigger WAVE contrast alerts */
+.sh-scroll,
+.sh-badge-divider,
+.sh-badge-dot {
+  display: none !important;
+}
+.sh-badge,
+.sg-label {
+  background: #fff7e8 !important;
+  color: #3b2412 !important;
+  border-color: rgba(59,36,18,.32) !important;
+}
+
+/* Counts are decorative enough visually but need readable contrast */
+.cart-count,
+.notification-count,
+.sticky-cart-count {
+  color: #2b1609 !important;
+  background: #fff1c7 !important;
+  border: 1px solid rgba(43,22,9,.28) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+
+/* Keep visually hidden text out of WAVE visible tiny-text issues */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

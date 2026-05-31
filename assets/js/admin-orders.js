@@ -309,7 +309,7 @@ function renderOrders(orders) {
             <div class="admin-order-title-row">
               <h3 class="admin-order-number">
                 <span>${escapeHtml(order.order_number || '-')}</span>
-                <button type="button" class="admin-inline-copy copyOrderBtn" data-number="${escapeHtml(order.order_number || '')}" aria-label="نسخ رقم الطلب" title="نسخ رقم الطلب">⧉</button>
+                <button type="button" class="admin-inline-copy copyOrderBtn" data-number="${escapeHtml(order.order_number || '')}" aria-label="نسخ رقم الطلب">⧉</button>
               </h3>
               <div class="admin-order-badges">
                 ${isOrderNew ? '<span class="admin-meta-chip is-new">جديد</span>' : ''}
@@ -320,7 +320,7 @@ function renderOrders(orders) {
             </div>
             <div class="admin-order-identity">
               <p><strong>الاسم:</strong> <span>${escapeHtml(order.customer_name || '-')}</span></p>
-              <p class="admin-copy-field"><strong>الهاتف:</strong> <span class="admin-phone-value" dir="ltr">${escapeHtml(order.phone || '-')}</span><button type="button" class="admin-inline-copy copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}" aria-label="نسخ الهاتف" title="نسخ الهاتف">⧉</button></p>
+              <p class="admin-copy-field"><strong>الهاتف:</strong> <span class="admin-phone-value" dir="ltr">${escapeHtml(order.phone || '-')}</span><button type="button" class="admin-inline-copy copyPhoneBtn" data-phone="${escapeHtml(order.phone || '')}" aria-label="نسخ الهاتف">⧉</button></p>
               <p><strong>المدينة:</strong> <span>${escapeHtml(order.city || '-')}</span></p>
             </div>
             <div class="admin-order-highlights">

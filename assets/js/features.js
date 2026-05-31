@@ -434,7 +434,7 @@ window.__alzahraaFeaturesInit = true;
           <span id="priceFilterDisplay" class="price-filter-val">
             ${minP} — ${maxP} ج.م
           </span>
-          <button class="price-filter-reset" id="priceReset" type="button" title="إعادة تعيين">✕</button>
+          <button class="price-filter-reset" id="priceReset" type="button">✕</button>
         </div>
         <div class="price-range-slider">
           <input type="range" id="priceMin" min="${minP}" max="${maxP}"

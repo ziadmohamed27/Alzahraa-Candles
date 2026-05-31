@@ -922,7 +922,6 @@ function renderCartItems() {
               step="1"
               value="${item.qty}"
               aria-label="اكتب الكمية المطلوبة"
-              title="اضغط واكتب الكمية"
               autocomplete="off"
             >
             <button data-action="inc" data-id="${item.id}" type="button" aria-label="زيادة الكمية">+</button>

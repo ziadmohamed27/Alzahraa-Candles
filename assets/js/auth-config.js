@@ -155,7 +155,7 @@
     );
     wrap.innerHTML = `
       <div class="account-menu-wrap">
-        <button type="button" class="account-nav-btn account-menu-toggle" data-account-menu-toggle aria-label="قائمة الحساب" aria-haspopup="true" aria-expanded="false" title="قائمة الحساب — ${escapeHtml(displayName)}">
+        <button type="button" class="account-nav-btn account-menu-toggle" data-account-menu-toggle aria-label="قائمة الحساب" aria-haspopup="true" aria-expanded="false">
           <span class="account-nav-label">${escapeHtml(displayName)}</span>
           <span style="font-size:1.05rem">👤</span>
         </button>
@@ -199,7 +199,7 @@
     }
     wrap.innerHTML = `
       <div class="notification-wrap">
-        <button type="button" class="icon-btn notification-btn" data-notification-toggle aria-label="الإشعارات" aria-haspopup="true" aria-expanded="false" title="الإشعارات">
+        <button type="button" class="icon-btn notification-btn" data-notification-toggle aria-label="الإشعارات" aria-haspopup="true" aria-expanded="false">
           <span class="notification-emoji">🔔</span>
           <span class="notification-count ${unreadCount ? '' : 'is-zero'}">${unreadCount}</span>
         </button>
