@@ -914,12 +914,15 @@ function renderCartItems() {
               class="qty-value qty-input"
               data-action="set-qty"
               data-id="${item.id}"
-              type="tel"
+              type="number"
               inputmode="numeric"
+              enterkeyhint="done"
               pattern="[0-9]*"
               min="1"
+              step="1"
               value="${item.qty}"
               aria-label="اكتب الكمية المطلوبة"
+              title="اضغط واكتب الكمية"
               autocomplete="off"
             >
             <button data-action="inc" data-id="${item.id}" type="button" aria-label="زيادة الكمية">+</button>
@@ -1266,6 +1269,32 @@ document.addEventListener('input', (e) => {
   if (e.target.dataset.action !== 'set-qty') return;
   const onlyDigits = String(e.target.value || '').replace(/[^0-9]/g, '');
   e.target.value = onlyDigits;
+
+  // Keep cart state in sync while typing without re-rendering the item card,
+  // so the mobile numeric keyboard stays open and the cursor does not jump.
+  const id = Number(e.target.dataset.id);
+  const item = state.cart.find((i) => Number(i.id) === id);
+  if (!item || !onlyDigits) return;
+  item.qty = normalizeQtyValue(onlyDigits);
+  writeCart(state.cart);
+  updateCartCount();
+  renderSummary();
+});
+document.addEventListener('blur', (e) => {
+  if (e.target.dataset.action !== 'set-qty') return;
+  const id = Number(e.target.dataset.id);
+  const item = state.cart.find((i) => Number(i.id) === id);
+  if (!item) return;
+  item.qty = normalizeQtyValue(e.target.value);
+  e.target.value = item.qty;
+  persistAndRender();
+}, true);
+document.addEventListener('keydown', (e) => {
+  if (e.target.dataset.action !== 'set-qty') return;
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    e.target.blur();
+  }
 });
 document.addEventListener('focusin', (e) => {
   if (e.target.dataset.action === 'set-qty') {

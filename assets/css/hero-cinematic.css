@@ -2385,8 +2385,7 @@ body.storefront-body .site-header .account-menu-toggle .account-nav-label {
 
 /* v22: remove old logo flash/poster from hero loading state */
 body.storefront-body .sh-video-wrap {
-  background: radial-gradient(ellipse 80% 70% at 30% 100%, rgba(160,100,40,0.22), transparent 60%),
-              linear-gradient(160deg, #0d0804 0%, #1a0e06 50%, #0d0804 100%) !important;
+  background: linear-gradient(180deg, #000000 0%, #050505 50%, #080808 100%) !important;
 }
 body.storefront-body .sh-video-wrap .video-fallback {
   display: none !important;
