@@ -1309,6 +1309,9 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('click', (e) => {
   const action = e.target.dataset.action;
+  // Quantity input is handled by input/change/blur events. Do not re-render on click,
+  // otherwise the input loses focus and users cannot type on desktop or mobile.
+  if (action === 'set-qty') return;
   if (action) {
     const id = Number(e.target.dataset.id);
     const item = state.cart.find((i) => Number(i.id) === id);
